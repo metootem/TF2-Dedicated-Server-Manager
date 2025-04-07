@@ -11,6 +11,7 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
@@ -52,6 +53,7 @@ public:
     QPushButton *btnInstallServer;
     QPushButton *btnStopServer;
     QPushButton *btnConnectToServer;
+    QCheckBox *chkConsole;
     QPushButton *btnApply;
     QLabel *lblFolderError;
     QListWidget *listProps;
@@ -218,7 +220,7 @@ public:
 
         gridLayoutWidget_2 = new QWidget(PropsMain);
         gridLayoutWidget_2->setObjectName("gridLayoutWidget_2");
-        gridLayoutWidget_2->setGeometry(QRect(10, 10, 464, 83));
+        gridLayoutWidget_2->setGeometry(QRect(10, 10, 464, 85));
         gridLayout_2 = new QGridLayout(gridLayoutWidget_2);
         gridLayout_2->setObjectName("gridLayout_2");
         gridLayout_2->setContentsMargins(0, 0, 0, 0);
@@ -249,6 +251,12 @@ public:
         btnConnectToServer->setMaximumSize(QSize(100, 25));
 
         gridLayout_2->addWidget(btnConnectToServer, 1, 1, 1, 1);
+
+        chkConsole = new QCheckBox(gridLayoutWidget_2);
+        chkConsole->setObjectName("chkConsole");
+        chkConsole->setChecked(true);
+
+        gridLayout_2->addWidget(chkConsole, 1, 2, 1, 1);
 
         btnApply = new QPushButton(PropsMain);
         btnApply->setObjectName("btnApply");
@@ -331,7 +339,7 @@ public:
         lblServerName->setText(QCoreApplication::translate("ServerWindow", "Server Name:", nullptr));
         lineIP->setText(QCoreApplication::translate("ServerWindow", "0.0.0.0", nullptr));
         lblIPSplit->setText(QCoreApplication::translate("ServerWindow", ":", nullptr));
-        linePort->setText(QCoreApplication::translate("ServerWindow", "65535", nullptr));
+        linePort->setText(QCoreApplication::translate("ServerWindow", "27015", nullptr));
         lblParameters->setText(QCoreApplication::translate("ServerWindow", "Parameters:", nullptr));
         lblMap->setText(QCoreApplication::translate("ServerWindow", "Map:", nullptr));
         lblIP->setText(QCoreApplication::translate("ServerWindow", "IP:", nullptr));
@@ -340,6 +348,7 @@ public:
         btnInstallServer->setText(QCoreApplication::translate("ServerWindow", "Install/Update", nullptr));
         btnStopServer->setText(QCoreApplication::translate("ServerWindow", "Stop", nullptr));
         btnConnectToServer->setText(QCoreApplication::translate("ServerWindow", "Connect", nullptr));
+        chkConsole->setText(QCoreApplication::translate("ServerWindow", "Console", nullptr));
         btnApply->setText(QCoreApplication::translate("ServerWindow", "Apply", nullptr));
         lblFolderError->setText(QCoreApplication::translate("ServerWindow", "Folder name needs to be specified!", nullptr));
 

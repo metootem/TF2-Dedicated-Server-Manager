@@ -68,6 +68,8 @@ void MainWindow::on_btnAddServer_clicked()
     {
         newServerWindow = new ServerWindow(this, servername, "");
         ui->tabServers->addTab(newServerWindow, servername);
+
+        connect(newServerWindow, &ServerWindow::ServerApplied, this, &MainWindow::ServerApplied);
     }
     else
     {
@@ -81,6 +83,8 @@ void MainWindow::on_btnAddServer_clicked()
         } while (ServerTabExists(name));
         newServerWindow = new ServerWindow(this, name, "");
         ui->tabServers->addTab(newServerWindow, name);
+
+        connect(newServerWindow, &ServerWindow::ServerApplied, this, &MainWindow::ServerApplied);
     }
 }
 
@@ -94,14 +98,31 @@ void MainWindow::on_tabServers_tabCloseRequested(int index)
     msgBox.exec();
     if (msgBox.clickedButton() == full)
     {
-        QDir dir(tr("%0/%1").arg(ServerDir.path()).arg(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder, 1));
-        dir.removeRecursively();
-        ui->tabServers->removeTab(index);
+        QMessageBox msgBox2(QMessageBox::Icon::Warning, "Are you double sure?",
+                            "Remove ALL server files?", {}, this);
+        auto *remove = msgBox2.addButton("I'm sure.", QMessageBox::DestructiveRole);
+        msgBox2.addButton("Nevermind.", QMessageBox::RejectRole);
+        msgBox2.exec();
+        if (msgBox2.clickedButton() == remove)
+        {
+            QDir dir(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder);
+            dir.removeRecursively();
+
+            QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
+            IniSettings.remove(dir.dirName());
+
+            ui->tabServers->removeTab(index);
+        }
     }
     else if (msgBox.clickedButton() == keepFiles)
     {
-        QFile serverFile(tr("%0/%1/server.ini").arg(ServerDir.path()).arg(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder, 1));
+        QFile serverFile(tr("%0/server.ini").arg(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder));
         serverFile.remove();
+
+        QString folder = QDir(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder).dirName();
+        QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
+        IniSettings.remove(folder);
+
         ui->tabServers->removeTab(index);
     }
 }
@@ -119,7 +140,7 @@ void MainWindow::on_tabServers_tabBarDoubleClicked(int index)
     if (ServerFolder.isEmpty())
         return;
     QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
-    IniSettings.setValue(tr("%0/nick").arg(ServerFolder), servername);
+    IniSettings.setValue(tr("%0/nick").arg(QDir(ServerFolder).dirName()), servername);
 }
 
 bool MainWindow::ServerTabExists(QString name)
@@ -130,6 +151,14 @@ bool MainWindow::ServerTabExists(QString name)
             return true;
     }
     return false;
+}
+
+void MainWindow::ServerApplied(QString ServerFolder)
+{
+    qInfo() << ServerFolder;
+    QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
+    QString folder = QDir(ServerFolder).dirName();
+    IniSettings.setValue(tr("%0/nick").arg(folder), ui->tabServers->tabText(ui->tabServers->currentIndex()));
 }
 
 void MainWindow::RefreshServerTab()
@@ -145,6 +174,8 @@ void MainWindow::RefreshServerTab()
             ServerWindow *newServerWindow = new ServerWindow(this, "", file.filePath());
             ui->tabServers->addTab(newServerWindow, IniSettings.value(tr("%0/nick").arg(file.fileName())).toString());
             ui->tabServers->setCurrentIndex(ui->tabServers->count()-1);
+
+            connect(newServerWindow, &ServerWindow::ServerApplied, this, &MainWindow::ServerApplied);
         }
     }
 }

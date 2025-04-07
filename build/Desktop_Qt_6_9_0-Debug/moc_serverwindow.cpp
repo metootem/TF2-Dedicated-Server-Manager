@@ -39,26 +39,38 @@ template <> constexpr inline auto ServerWindow::qt_create_metaobjectdata<qt_meta
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
         "ServerWindow",
-        "LoadServerConfig",
+        "ServerApplied",
         "",
+        "ServerFolder",
+        "LoadServerConfig",
         "QDir",
         "directory",
         "on_listProps_currentRowChanged",
         "currentRow",
-        "on_btnApply_clicked"
+        "on_btnApply_clicked",
+        "on_btnInstallServer_clicked",
+        "on_btnStartServer_clicked"
     };
 
     QtMocHelpers::UintData qt_methods {
+        // Signal 'ServerApplied'
+        QtMocHelpers::SignalData<void(QString)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 3 },
+        }}),
         // Slot 'LoadServerConfig'
-        QtMocHelpers::SlotData<void(QDir)>(1, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { 0x80000000 | 3, 4 },
+        QtMocHelpers::SlotData<void(QDir)>(4, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 5, 6 },
         }}),
         // Slot 'on_listProps_currentRowChanged'
-        QtMocHelpers::SlotData<void(int)>(5, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 6 },
+        QtMocHelpers::SlotData<void(int)>(7, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 8 },
         }}),
         // Slot 'on_btnApply_clicked'
-        QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(9, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_btnInstallServer_clicked'
+        QtMocHelpers::SlotData<void()>(10, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_btnStartServer_clicked'
+        QtMocHelpers::SlotData<void()>(11, 2, QMC::AccessPrivate, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -82,11 +94,18 @@ void ServerWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
     auto *_t = static_cast<ServerWindow *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->LoadServerConfig((*reinterpret_cast< std::add_pointer_t<QDir>>(_a[1]))); break;
-        case 1: _t->on_listProps_currentRowChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 2: _t->on_btnApply_clicked(); break;
+        case 0: _t->ServerApplied((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 1: _t->LoadServerConfig((*reinterpret_cast< std::add_pointer_t<QDir>>(_a[1]))); break;
+        case 2: _t->on_listProps_currentRowChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 3: _t->on_btnApply_clicked(); break;
+        case 4: _t->on_btnInstallServer_clicked(); break;
+        case 5: _t->on_btnStartServer_clicked(); break;
         default: ;
         }
+    }
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (ServerWindow::*)(QString )>(_a, &ServerWindow::ServerApplied, 0))
+            return;
     }
 }
 
@@ -109,15 +128,21 @@ int ServerWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 6)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 6;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 3)
+        if (_id < 6)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 3;
+        _id -= 6;
     }
     return _id;
+}
+
+// SIGNAL 0
+void ServerWindow::ServerApplied(QString _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
 }
 QT_WARNING_POP

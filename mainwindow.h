@@ -28,6 +28,7 @@ public:
 
     bool LoadConfig();
     void SettingsChanged( SettingsStruct settings );
+    void ServerApplied( QString ServerFolder );
 
     ~MainWindow();
 

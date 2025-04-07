@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QDir>
 #include <QFile>
+#include <QProcess>
 
 #include "settingsdialog.h"
 
@@ -24,6 +25,7 @@ public:
     ~ServerWindow();
 
 signals:
+    void ServerApplied( QString ServerFolder );
 
 private slots:
     void LoadServerConfig( QDir directory );
@@ -32,8 +34,14 @@ private slots:
 
     void on_btnApply_clicked();
 
+    void on_btnInstallServer_clicked();
+
+    void on_btnStartServer_clicked();
+
 private:
     Ui::ServerWindow *ui;
+
+    QString OS;
 };
 
 #endif // SERVERWINDOW_H

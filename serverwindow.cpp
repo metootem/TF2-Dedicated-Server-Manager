@@ -19,6 +19,9 @@ ServerWindow::ServerWindow(QWidget *parent, QString name, QString directory)
     ui->lblFolderError->hide();
     if (!directory.isEmpty())
         LoadServerConfig(QDir(directory));
+    OS = QSysInfo::productType();
+    if (OS != "windows" && OS != "macos")
+        OS = "linux";
 }
 
 ServerWindow::~ServerWindow()
@@ -32,8 +35,8 @@ void ServerWindow::LoadServerConfig(QDir directory)
 
     ui->lineServerName->setText(IniSettings.value("server_name").toString());
 
-    ServerFolder = directory.dirName();
-    ui->lineFolderName->setText(ServerFolder);
+    ServerFolder = directory.path();
+    ui->lineFolderName->setText(QDir(ServerFolder).dirName());
 
     ui->lineIP->setText(IniSettings.value("ip").toString());
 
@@ -87,7 +90,7 @@ void ServerWindow::on_btnApply_clicked()
     {
         ui->lblFolderError->hide();
 
-        ServerFolder = ui->lineFolderName->text();
+        QDir(ServerFolder).dirName() = ui->lineFolderName->text();
 
         SettingsDialog* settingsDialog = new SettingsDialog(parentWidget());
         SettingsStruct settings = settingsDialog->ParseSettings();
@@ -97,7 +100,7 @@ void ServerWindow::on_btnApply_clicked()
             return;
         }
         QString path = tr("%0/%1/server.ini").arg(settings.ServerDirectory.path()).arg(ui->lineFolderName->text(), 1);
-        qInfo() << path;
+        ServerFolder = tr("%0/%1").arg(settings.ServerDirectory.path()).arg(ui->lineFolderName->text(), 1);
 
         QSettings IniSettings(path, QSettings::Format::IniFormat);
         IniSettings.setValue("server_name", ui->lineServerName->text());
@@ -106,6 +109,47 @@ void ServerWindow::on_btnApply_clicked()
         IniSettings.setValue("players", ui->spinMaxPlayers->value());
         IniSettings.setValue("map", ui->lineMap->text());
         IniSettings.setValue("parameters", ui->lineParameters->text());
+
+        emit ServerApplied( ServerFolder );
     }
+}
+
+
+void ServerWindow::on_btnInstallServer_clicked()
+{
+
+}
+
+
+void ServerWindow::on_btnStartServer_clicked()
+{
+    QProcess Process;
+    QString Command;
+    if (OS == "linux")
+        Command = tr("%0/Server/srcds_run").arg(ServerFolder);
+    else
+        Command = tr("%0/Server/srcds_run").arg(ServerFolder);
+
+    QStringList args =  {"-game tf "} ;
+
+    if (ui->chkConsole->checkState())
+        args << "-console ";
+
+    args << tr("+ip %0 ").arg(ui->lineIP->text());
+    args << tr("-port %0 ").arg(ui->linePort->text());
+
+    if (ui->lineMap->text().isEmpty())
+        args << "+randommap ";
+    else
+        args << tr("+map %0 ").arg(ui->lineMap->text());
+
+    qInfo() << Command;
+    qInfo() << args;
+
+    Process.start(Command, args, QIODevice::OpenModeFlag::ReadOnly);
+    Process.waitForFinished();
+
+    qInfo() << Process.readAllStandardOutput();
+    qInfo() << Process.readAllStandardError();
 }
 
