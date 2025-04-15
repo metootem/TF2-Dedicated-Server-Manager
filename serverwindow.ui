@@ -280,7 +280,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>601</width>
+     <width>631</width>
      <height>410</height>
     </rect>
    </property>
@@ -302,7 +302,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>601</width>
+     <width>631</width>
      <height>411</height>
     </rect>
    </property>
@@ -310,20 +310,25 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>90</y>
-      <width>581</width>
-      <height>311</height>
+      <y>100</y>
+      <width>611</width>
+      <height>301</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="4" column="1">
-      <widget class="QLineEdit" name="lineMap"/>
+     <item row="3" column="0">
+      <widget class="QLabel" name="lblPlayers">
+       <property name="text">
+        <string>Players:</string>
+       </property>
+      </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="lineServerName"/>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="lineFolderName"/>
+     <item row="1" column="0">
+      <widget class="QLabel" name="lblFolder">
+       <property name="text">
+        <string>Folder:</string>
+       </property>
+      </widget>
      </item>
      <item row="4" column="2">
       <widget class="QPushButton" name="btnSelectMap">
@@ -332,10 +337,23 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="lblFolder">
+     <item row="4" column="0">
+      <widget class="QLabel" name="lblMap">
        <property name="text">
-        <string>Folder:</string>
+        <string>Map:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="lblIP">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>IP:</string>
        </property>
       </widget>
      </item>
@@ -352,8 +370,24 @@
        </property>
       </widget>
      </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="lblParameters">
+       <property name="text">
+        <string>Parameters:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="lineServerName"/>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="lineMap"/>
+     </item>
      <item row="5" column="1">
       <widget class="QLineEdit" name="lineParameters"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineFolderName"/>
      </item>
      <item row="0" column="0">
       <widget class="QLabel" name="lblServerName">
@@ -426,37 +460,10 @@
        </item>
       </layout>
      </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="lblParameters">
+     <item row="2" column="2">
+      <widget class="QPushButton" name="btnCopyIp">
        <property name="text">
-        <string>Parameters:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="lblMap">
-       <property name="text">
-        <string>Map:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="lblIP">
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>IP:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="lblPlayers">
-       <property name="text">
-        <string>Players:</string>
+        <string>CopyIP</string>
        </property>
       </widget>
      </item>
@@ -467,11 +474,14 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>464</width>
-      <height>85</height>
+      <width>511</width>
+      <height>89</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_2">
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <item row="0" column="1">
       <widget class="QPushButton" name="btnStartServer">
        <property name="minimumSize">
@@ -512,6 +522,9 @@
      </item>
      <item row="0" column="2">
       <widget class="QPushButton" name="btnStopServer">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimumSize">
         <size>
          <width>150</width>
@@ -529,42 +542,80 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QPushButton" name="btnConnectToServer">
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>100</width>
-         <height>25</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Connect</string>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="2">
       <widget class="QCheckBox" name="chkConsole">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
-        <string>Console</string>
+        <string>OS Console</string>
        </property>
        <property name="checked">
         <bool>true</bool>
        </property>
       </widget>
      </item>
+     <item row="1" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QPushButton" name="btnConnectToServer">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Connect</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnShowConsole">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>42</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>42</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset theme="QIcon::ThemeIcon::WindowNew"/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
     </layout>
    </widget>
    <widget class="QPushButton" name="btnApply">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>10</y>
+      <x>530</x>
+      <y>20</y>
       <width>91</width>
       <height>29</height>
      </rect>
@@ -577,7 +628,7 @@
     <property name="geometry">
      <rect>
       <x>110</x>
-      <y>134</y>
+      <y>140</y>
       <width>381</width>
       <height>21</height>
      </rect>
@@ -623,9 +674,9 @@
   <widget class="QListWidget" name="listProps">
    <property name="geometry">
     <rect>
-     <x>600</x>
+     <x>630</x>
      <y>-1</y>
-     <width>201</width>
+     <width>171</width>
      <height>421</height>
     </rect>
    </property>

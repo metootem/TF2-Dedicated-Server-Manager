@@ -309,12 +309,16 @@ QTabWidget::pane {
 
 QPushButton {
 	border: none;
-	background-color: #552861;
+border-bottom: 3px solid #552861;
+	background-color: #303030;
 	font: 13pt &quot;Noto Sans&quot;;
 }
 
 QPushButton::hover {
 	background-color: #673176;
+}
+QPushButton::pressed {
+	background-color: #452150;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">

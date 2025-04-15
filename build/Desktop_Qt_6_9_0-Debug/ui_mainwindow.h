@@ -111,12 +111,16 @@ public:
 "\n"
 "QPushButton {\n"
 "	border: none;\n"
-"	background-color: #552861;\n"
+"border-bottom: 3px solid #552861;\n"
+"	background-color: #303030;\n"
 "	font: 13pt \"Noto Sans\";\n"
 "}\n"
 "\n"
 "QPushButton::hover {\n"
 "	background-color: #673176;\n"
+"}\n"
+"QPushButton::pressed {\n"
+"	background-color: #452150;\n"
 "}"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");

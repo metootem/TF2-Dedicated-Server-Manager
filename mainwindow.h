@@ -12,6 +12,7 @@
 #include <QPushButton>
 
 #include "settingsdialog.h"
+#include "serverwindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -28,16 +29,21 @@ public:
 
     bool LoadConfig();
     void SettingsChanged( SettingsStruct settings );
-    void ServerApplied( QString ServerFolder );
 
     ~MainWindow();
+
+public slots:
+    void ServerApplied( QString ServerFolder );
 
 signals:
 
 private slots:
     void on_btnAddServer_clicked();
 
+    void AddServer(QString name, QString serverFolder);
     bool ServerTabExists(QString);
+    void ServerActivated();
+    void ServerDeactivated();
     void RefreshServerTab();
 
     void on_btnSettings_clicked();

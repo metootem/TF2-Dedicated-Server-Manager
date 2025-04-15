@@ -40,9 +40,16 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
         "MainWindow",
-        "on_btnAddServer_clicked",
+        "ServerApplied",
         "",
+        "ServerFolder",
+        "on_btnAddServer_clicked",
+        "AddServer",
+        "name",
+        "serverFolder",
         "ServerTabExists",
+        "ServerActivated",
+        "ServerDeactivated",
         "RefreshServerTab",
         "on_btnSettings_clicked",
         "on_tabServers_tabCloseRequested",
@@ -51,23 +58,35 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
     };
 
     QtMocHelpers::UintData qt_methods {
+        // Slot 'ServerApplied'
+        QtMocHelpers::SlotData<void(QString)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 3 },
+        }}),
         // Slot 'on_btnAddServer_clicked'
-        QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'AddServer'
+        QtMocHelpers::SlotData<void(QString, QString)>(5, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QString, 6 }, { QMetaType::QString, 7 },
+        }}),
         // Slot 'ServerTabExists'
-        QtMocHelpers::SlotData<bool(QString)>(3, 2, QMC::AccessPrivate, QMetaType::Bool, {{
+        QtMocHelpers::SlotData<bool(QString)>(8, 2, QMC::AccessPrivate, QMetaType::Bool, {{
             { QMetaType::QString, 2 },
         }}),
+        // Slot 'ServerActivated'
+        QtMocHelpers::SlotData<void()>(9, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'ServerDeactivated'
+        QtMocHelpers::SlotData<void()>(10, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'RefreshServerTab'
-        QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(11, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_btnSettings_clicked'
-        QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(12, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_tabServers_tabCloseRequested'
-        QtMocHelpers::SlotData<void(int)>(6, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 7 },
+        QtMocHelpers::SlotData<void(int)>(13, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 14 },
         }}),
         // Slot 'on_tabServers_tabBarDoubleClicked'
-        QtMocHelpers::SlotData<void(int)>(8, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 7 },
+        QtMocHelpers::SlotData<void(int)>(15, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 14 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -92,13 +111,17 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
     auto *_t = static_cast<MainWindow *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->on_btnAddServer_clicked(); break;
-        case 1: { bool _r = _t->ServerTabExists((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])));
+        case 0: _t->ServerApplied((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 1: _t->on_btnAddServer_clicked(); break;
+        case 2: _t->AddServer((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
+        case 3: { bool _r = _t->ServerTabExists((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])));
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
-        case 2: _t->RefreshServerTab(); break;
-        case 3: _t->on_btnSettings_clicked(); break;
-        case 4: _t->on_tabServers_tabCloseRequested((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 5: _t->on_tabServers_tabBarDoubleClicked((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 4: _t->ServerActivated(); break;
+        case 5: _t->ServerDeactivated(); break;
+        case 6: _t->RefreshServerTab(); break;
+        case 7: _t->on_btnSettings_clicked(); break;
+        case 8: _t->on_tabServers_tabCloseRequested((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 9: _t->on_tabServers_tabBarDoubleClicked((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         default: ;
         }
     }
@@ -123,14 +146,14 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 10)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 10;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 6)
+        if (_id < 10)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 6;
+        _id -= 10;
     }
     return _id;
 }

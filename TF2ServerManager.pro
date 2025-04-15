@@ -1,4 +1,5 @@
 QT       += core gui
+QT       += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -11,16 +12,19 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    serverconsoledialog.cpp \
     serverwindow.cpp \
     settingsdialog.cpp
 
 HEADERS += \
     mainwindow.h \
+    serverconsoledialog.h \
     serverwindow.h \
     settingsdialog.h
 
 FORMS += \
     mainwindow.ui \
+    serverconsoledialog.ui \
     serverwindow.ui \
     settingsdialog.ui
 
