@@ -20,6 +20,7 @@
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QWidget>
 
@@ -32,23 +33,22 @@ public:
     QWidget *PropsMain;
     QWidget *gridLayoutWidget;
     QGridLayout *gridLayout;
-    QLabel *lblPlayers;
-    QLabel *lblFolder;
-    QPushButton *btnSelectMap;
-    QLabel *lblMap;
-    QLabel *lblIP;
-    QSpinBox *spinMaxPlayers;
-    QLabel *lblParameters;
-    QLineEdit *lineServerName;
-    QLineEdit *lineMap;
-    QLineEdit *lineParameters;
-    QLineEdit *lineFolderName;
     QLabel *lblServerName;
+    QPushButton *btnCopyIp;
+    QLabel *lblMap;
+    QLabel *lblPlayers;
+    QPushButton *btnSelectMap;
+    QLineEdit *lineMap;
+    QLabel *lblIP;
+    QLineEdit *lineFolderName;
+    QLabel *lblFolder;
+    QSpinBox *spinMaxPlayers;
     QHBoxLayout *horizontalLayout;
     QLineEdit *lineIP;
     QLabel *lblIPSplit;
     QLineEdit *linePort;
-    QPushButton *btnCopyIp;
+    QLineEdit *lineServerName;
+    QPushButton *btnParameters;
     QWidget *gridLayoutWidget_2;
     QGridLayout *gridLayout_2;
     QPushButton *btnStartServer;
@@ -58,6 +58,9 @@ public:
     QHBoxLayout *horizontalLayout_2;
     QPushButton *btnConnectToServer;
     QPushButton *btnShowConsole;
+    QHBoxLayout *horizontalLayout_3;
+    QSpacerItem *horizontalSpacer;
+    QPushButton *btnSteamCMDConsole;
     QPushButton *btnApply;
     QLabel *lblFolderError;
     QListWidget *listProps;
@@ -118,7 +121,44 @@ public:
         frame = new QFrame(ServerWindow);
         frame->setObjectName("frame");
         frame->setGeometry(QRect(0, 0, 631, 410));
-        frame->setStyleSheet(QString::fromUtf8("border: 3px solid #552861;"));
+        QPalette palette1;
+        palette1.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::WindowText, brush);
+        QBrush brush8(QColor(207, 106, 50, 255));
+        brush8.setStyle(Qt::BrushStyle::SolidPattern);
+        palette1.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Button, brush8);
+        palette1.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Dark, brush2);
+        palette1.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Mid, brush3);
+        palette1.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Base, brush4);
+        palette1.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Window, brush5);
+        palette1.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Highlight, brush8);
+        QBrush brush9(QColor(255, 158, 105, 255));
+        brush9.setStyle(Qt::BrushStyle::SolidPattern);
+        palette1.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::LinkVisited, brush9);
+        palette1.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::AlternateBase, brush6);
+        palette1.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::ToolTipBase, brush7);
+        palette1.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::WindowText, brush);
+        palette1.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Button, brush8);
+        palette1.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Dark, brush2);
+        palette1.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Mid, brush3);
+        palette1.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Base, brush4);
+        palette1.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Window, brush5);
+        palette1.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Highlight, brush8);
+        palette1.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::LinkVisited, brush9);
+        palette1.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::AlternateBase, brush6);
+        palette1.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::ToolTipBase, brush7);
+        palette1.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::WindowText, brush2);
+        palette1.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Button, brush8);
+        palette1.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Dark, brush2);
+        palette1.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Mid, brush3);
+        palette1.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Text, brush2);
+        palette1.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::ButtonText, brush2);
+        palette1.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Base, brush5);
+        palette1.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Window, brush5);
+        palette1.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::LinkVisited, brush9);
+        palette1.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::AlternateBase, brush6);
+        palette1.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::ToolTipBase, brush7);
+        frame->setPalette(palette1);
+        frame->setStyleSheet(QString::fromUtf8("border: 3px solid #cf6a32;"));
         frame->setFrameShape(QFrame::Shape::StyledPanel);
         frame->setFrameShadow(QFrame::Shadow::Raised);
         PropsMain = new QWidget(ServerWindow);
@@ -131,31 +171,51 @@ public:
         gridLayout = new QGridLayout(gridLayoutWidget);
         gridLayout->setObjectName("gridLayout");
         gridLayout->setContentsMargins(0, 0, 0, 0);
-        lblPlayers = new QLabel(gridLayoutWidget);
-        lblPlayers->setObjectName("lblPlayers");
+        lblServerName = new QLabel(gridLayoutWidget);
+        lblServerName->setObjectName("lblServerName");
 
-        gridLayout->addWidget(lblPlayers, 3, 0, 1, 1);
+        gridLayout->addWidget(lblServerName, 0, 0, 1, 1);
 
-        lblFolder = new QLabel(gridLayoutWidget);
-        lblFolder->setObjectName("lblFolder");
+        btnCopyIp = new QPushButton(gridLayoutWidget);
+        btnCopyIp->setObjectName("btnCopyIp");
 
-        gridLayout->addWidget(lblFolder, 1, 0, 1, 1);
-
-        btnSelectMap = new QPushButton(gridLayoutWidget);
-        btnSelectMap->setObjectName("btnSelectMap");
-
-        gridLayout->addWidget(btnSelectMap, 4, 2, 1, 1);
+        gridLayout->addWidget(btnCopyIp, 2, 2, 1, 1);
 
         lblMap = new QLabel(gridLayoutWidget);
         lblMap->setObjectName("lblMap");
 
         gridLayout->addWidget(lblMap, 4, 0, 1, 1);
 
+        lblPlayers = new QLabel(gridLayoutWidget);
+        lblPlayers->setObjectName("lblPlayers");
+
+        gridLayout->addWidget(lblPlayers, 3, 0, 1, 1);
+
+        btnSelectMap = new QPushButton(gridLayoutWidget);
+        btnSelectMap->setObjectName("btnSelectMap");
+
+        gridLayout->addWidget(btnSelectMap, 4, 2, 1, 1);
+
+        lineMap = new QLineEdit(gridLayoutWidget);
+        lineMap->setObjectName("lineMap");
+
+        gridLayout->addWidget(lineMap, 4, 1, 1, 1);
+
         lblIP = new QLabel(gridLayoutWidget);
         lblIP->setObjectName("lblIP");
         lblIP->setMaximumSize(QSize(16777215, 25));
 
         gridLayout->addWidget(lblIP, 2, 0, 1, 1);
+
+        lineFolderName = new QLineEdit(gridLayoutWidget);
+        lineFolderName->setObjectName("lineFolderName");
+
+        gridLayout->addWidget(lineFolderName, 1, 1, 1, 1);
+
+        lblFolder = new QLabel(gridLayoutWidget);
+        lblFolder->setObjectName("lblFolder");
+
+        gridLayout->addWidget(lblFolder, 1, 0, 1, 1);
 
         spinMaxPlayers = new QSpinBox(gridLayoutWidget);
         spinMaxPlayers->setObjectName("spinMaxPlayers");
@@ -164,36 +224,6 @@ public:
         spinMaxPlayers->setValue(32);
 
         gridLayout->addWidget(spinMaxPlayers, 3, 1, 1, 1);
-
-        lblParameters = new QLabel(gridLayoutWidget);
-        lblParameters->setObjectName("lblParameters");
-
-        gridLayout->addWidget(lblParameters, 5, 0, 1, 1);
-
-        lineServerName = new QLineEdit(gridLayoutWidget);
-        lineServerName->setObjectName("lineServerName");
-
-        gridLayout->addWidget(lineServerName, 0, 1, 1, 1);
-
-        lineMap = new QLineEdit(gridLayoutWidget);
-        lineMap->setObjectName("lineMap");
-
-        gridLayout->addWidget(lineMap, 4, 1, 1, 1);
-
-        lineParameters = new QLineEdit(gridLayoutWidget);
-        lineParameters->setObjectName("lineParameters");
-
-        gridLayout->addWidget(lineParameters, 5, 1, 1, 1);
-
-        lineFolderName = new QLineEdit(gridLayoutWidget);
-        lineFolderName->setObjectName("lineFolderName");
-
-        gridLayout->addWidget(lineFolderName, 1, 1, 1, 1);
-
-        lblServerName = new QLabel(gridLayoutWidget);
-        lblServerName->setObjectName("lblServerName");
-
-        gridLayout->addWidget(lblServerName, 0, 0, 1, 1);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
@@ -222,10 +252,15 @@ public:
 
         gridLayout->addLayout(horizontalLayout, 2, 1, 1, 1);
 
-        btnCopyIp = new QPushButton(gridLayoutWidget);
-        btnCopyIp->setObjectName("btnCopyIp");
+        lineServerName = new QLineEdit(gridLayoutWidget);
+        lineServerName->setObjectName("lineServerName");
 
-        gridLayout->addWidget(btnCopyIp, 2, 2, 1, 1);
+        gridLayout->addWidget(lineServerName, 0, 1, 1, 1);
+
+        btnParameters = new QPushButton(gridLayoutWidget);
+        btnParameters->setObjectName("btnParameters");
+
+        gridLayout->addWidget(btnParameters, 5, 1, 1, 1);
 
         gridLayoutWidget_2 = new QWidget(PropsMain);
         gridLayoutWidget_2->setObjectName("gridLayoutWidget_2");
@@ -236,6 +271,7 @@ public:
         gridLayout_2->setContentsMargins(0, 0, 0, 0);
         btnStartServer = new QPushButton(gridLayoutWidget_2);
         btnStartServer->setObjectName("btnStartServer");
+        btnStartServer->setEnabled(true);
         btnStartServer->setMinimumSize(QSize(150, 50));
         btnStartServer->setMaximumSize(QSize(150, 50));
 
@@ -286,6 +322,24 @@ public:
 
         gridLayout_2->addLayout(horizontalLayout_2, 1, 1, 1, 1);
 
+        horizontalLayout_3 = new QHBoxLayout();
+        horizontalLayout_3->setObjectName("horizontalLayout_3");
+        horizontalSpacer = new QSpacerItem(82, 25, QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Minimum);
+
+        horizontalLayout_3->addItem(horizontalSpacer);
+
+        btnSteamCMDConsole = new QPushButton(gridLayoutWidget_2);
+        btnSteamCMDConsole->setObjectName("btnSteamCMDConsole");
+        btnSteamCMDConsole->setEnabled(false);
+        btnSteamCMDConsole->setMinimumSize(QSize(60, 25));
+        btnSteamCMDConsole->setMaximumSize(QSize(60, 25));
+        btnSteamCMDConsole->setIcon(icon);
+
+        horizontalLayout_3->addWidget(btnSteamCMDConsole);
+
+
+        gridLayout_2->addLayout(horizontalLayout_3, 1, 0, 1, 1);
+
         btnApply = new QPushButton(PropsMain);
         btnApply->setObjectName("btnApply");
         btnApply->setEnabled(true);
@@ -293,12 +347,12 @@ public:
         lblFolderError = new QLabel(PropsMain);
         lblFolderError->setObjectName("lblFolderError");
         lblFolderError->setGeometry(QRect(110, 140, 381, 21));
-        QPalette palette1;
-        QBrush brush8(QColor(223, 94, 96, 255));
-        brush8.setStyle(Qt::BrushStyle::SolidPattern);
-        palette1.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::WindowText, brush8);
-        palette1.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::WindowText, brush8);
-        lblFolderError->setPalette(palette1);
+        QPalette palette2;
+        QBrush brush10(QColor(223, 94, 96, 255));
+        brush10.setStyle(Qt::BrushStyle::SolidPattern);
+        palette2.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::WindowText, brush10);
+        palette2.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::WindowText, brush10);
+        lblFolderError->setPalette(palette2);
         QFont font;
         font.setBold(false);
         font.setItalic(true);
@@ -314,26 +368,39 @@ public:
         __qlistwidgetitem1->setFont(font1);
         listProps->setObjectName("listProps");
         listProps->setGeometry(QRect(630, -1, 171, 421));
-        QPalette palette2;
-        palette2.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Button, brush1);
-        palette2.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Dark, brush2);
-        QBrush brush9(QColor(127, 127, 127, 0));
-        brush9.setStyle(Qt::BrushStyle::SolidPattern);
-        palette2.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Mid, brush9);
-        palette2.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Base, brush5);
-        palette2.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Highlight, brush1);
-        palette2.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Button, brush1);
-        palette2.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Dark, brush2);
-        palette2.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Mid, brush9);
-        palette2.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Base, brush5);
-        palette2.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Highlight, brush1);
-        palette2.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::WindowText, brush2);
-        palette2.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Button, brush1);
-        palette2.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Dark, brush2);
-        palette2.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Mid, brush9);
-        palette2.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Text, brush2);
-        palette2.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::ButtonText, brush2);
-        listProps->setPalette(palette2);
+        QPalette palette3;
+        palette3.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::WindowText, brush);
+        palette3.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Button, brush8);
+        palette3.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Dark, brush2);
+        palette3.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Mid, brush3);
+        palette3.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Base, brush4);
+        palette3.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Window, brush5);
+        palette3.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Highlight, brush8);
+        palette3.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::LinkVisited, brush9);
+        palette3.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::AlternateBase, brush6);
+        palette3.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::ToolTipBase, brush7);
+        palette3.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::WindowText, brush);
+        palette3.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Button, brush8);
+        palette3.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Dark, brush2);
+        palette3.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Mid, brush3);
+        palette3.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Base, brush4);
+        palette3.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Window, brush5);
+        palette3.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Highlight, brush8);
+        palette3.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::LinkVisited, brush9);
+        palette3.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::AlternateBase, brush6);
+        palette3.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::ToolTipBase, brush7);
+        palette3.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::WindowText, brush2);
+        palette3.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Button, brush8);
+        palette3.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Dark, brush2);
+        palette3.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Mid, brush3);
+        palette3.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Text, brush2);
+        palette3.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::ButtonText, brush2);
+        palette3.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Base, brush5);
+        palette3.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Window, brush5);
+        palette3.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::LinkVisited, brush9);
+        palette3.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::AlternateBase, brush6);
+        palette3.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::ToolTipBase, brush7);
+        listProps->setPalette(palette3);
         listProps->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
         listProps->setSpacing(0);
         listProps->setModelColumn(0);
@@ -363,23 +430,24 @@ public:
     void retranslateUi(QWidget *ServerWindow)
     {
         ServerWindow->setWindowTitle(QCoreApplication::translate("ServerWindow", "Form", nullptr));
-        lblPlayers->setText(QCoreApplication::translate("ServerWindow", "Players:", nullptr));
-        lblFolder->setText(QCoreApplication::translate("ServerWindow", "Folder:", nullptr));
-        btnSelectMap->setText(QCoreApplication::translate("ServerWindow", "Select", nullptr));
-        lblMap->setText(QCoreApplication::translate("ServerWindow", "Map:", nullptr));
-        lblIP->setText(QCoreApplication::translate("ServerWindow", "IP:", nullptr));
-        lblParameters->setText(QCoreApplication::translate("ServerWindow", "Parameters:", nullptr));
         lblServerName->setText(QCoreApplication::translate("ServerWindow", "Server Name:", nullptr));
+        btnCopyIp->setText(QCoreApplication::translate("ServerWindow", "CopyIP", nullptr));
+        lblMap->setText(QCoreApplication::translate("ServerWindow", "Map:", nullptr));
+        lblPlayers->setText(QCoreApplication::translate("ServerWindow", "Players:", nullptr));
+        btnSelectMap->setText(QCoreApplication::translate("ServerWindow", "Select", nullptr));
+        lblIP->setText(QCoreApplication::translate("ServerWindow", "IP:", nullptr));
+        lblFolder->setText(QCoreApplication::translate("ServerWindow", "Folder:", nullptr));
         lineIP->setText(QCoreApplication::translate("ServerWindow", "0.0.0.0", nullptr));
         lblIPSplit->setText(QCoreApplication::translate("ServerWindow", ":", nullptr));
         linePort->setText(QCoreApplication::translate("ServerWindow", "27015", nullptr));
-        btnCopyIp->setText(QCoreApplication::translate("ServerWindow", "CopyIP", nullptr));
+        btnParameters->setText(QCoreApplication::translate("ServerWindow", "Set Additional Parameters", nullptr));
         btnStartServer->setText(QCoreApplication::translate("ServerWindow", "Start", nullptr));
         btnInstallServer->setText(QCoreApplication::translate("ServerWindow", "Install/Update", nullptr));
         btnStopServer->setText(QCoreApplication::translate("ServerWindow", "Stop", nullptr));
         chkConsole->setText(QCoreApplication::translate("ServerWindow", "OS Console", nullptr));
         btnConnectToServer->setText(QCoreApplication::translate("ServerWindow", "Connect", nullptr));
         btnShowConsole->setText(QString());
+        btnSteamCMDConsole->setText(QCoreApplication::translate("ServerWindow", "CMD", nullptr));
         btnApply->setText(QCoreApplication::translate("ServerWindow", "Apply", nullptr));
         lblFolderError->setText(QCoreApplication::translate("ServerWindow", "Folder name needs to be specified!", nullptr));
 

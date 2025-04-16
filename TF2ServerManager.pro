@@ -10,23 +10,29 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    additionalparametersdialog.cpp \
     main.cpp \
     mainwindow.cpp \
     serverconsoledialog.cpp \
     serverwindow.cpp \
-    settingsdialog.cpp
+    settingsdialog.cpp \
+    steamcmddialog.cpp
 
 HEADERS += \
+    additionalparametersdialog.h \
     mainwindow.h \
     serverconsoledialog.h \
     serverwindow.h \
-    settingsdialog.h
+    settingsdialog.h \
+    steamcmddialog.h
 
 FORMS += \
+    additionalparametersdialog.ui \
     mainwindow.ui \
     serverconsoledialog.ui \
     serverwindow.ui \
-    settingsdialog.ui
+    settingsdialog.ui \
+    steamcmddialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -13,12 +13,15 @@
 #include <QTimer>
 #include <QClipboard>
 #include <QSystemTrayIcon>
+#include <QIcon>
 
 #include <QHostAddress>
 #include <QNetworkInterface>
 
 #include "settingsdialog.h"
 #include "serverconsoledialog.h"
+#include "steamcmddialog.h"
+#include "additionalparametersdialog.h"
 
 enum VisualState
 {
@@ -39,8 +42,12 @@ public:
     ServerWindow(QWidget *parent = nullptr, QString name = "New Server", QString directory = "");
 
     QString ServerFolder;
+    bool ServerInstalling = false;
 
     ~ServerWindow();
+
+public slots:
+    void InstallServerFinished();
 
 signals:
     void ServerApplied( QString ServerFolder );
@@ -50,7 +57,12 @@ signals:
 
 private slots:
     void LoadServerConfig( QDir directory );
+    void LoadServerFirstTimeSetup();
     QString GetPublicIP();
+    bool SteamCMDExists();
+    bool SRCDSExists();
+    void InstallSteamCMD();
+    void InstallServer();
 
     void on_listProps_currentRowChanged(int currentRow);
 
@@ -62,9 +74,7 @@ private slots:
 
     void on_btnStopServer_clicked();
 
-    void ServerStateChanged( QProcess::ProcessState state );
     void SetServerVisualState(VisualState state);
-    void ReadOutput();
 
     void on_btnShowConsole_clicked();
 
@@ -72,14 +82,21 @@ private slots:
 
     void on_btnCopyIp_clicked();
 
+    void on_btnSteamCMDConsole_clicked();
+
+    void on_btnParameters_clicked();
+
 private:
     Ui::ServerWindow *ui;
 
     QString OS;
     QString PublicIP;
 
+    QSettings *IniSettings;
     QProcess *ServerProcess;
     ServerConsoleDialog *ServerConsole;
+    SteamCMDDialog *SteamCMDWindow;
+    AdditionalParametersDialog *AdditionalParametersWindow;
 
     QTimer *ConsoleRefreshRate;
     int RefreshCount;

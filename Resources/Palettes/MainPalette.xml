@@ -13,9 +13,9 @@
   <colorrole role="Button">
    <brush brushstyle="SolidPattern">
     <color alpha="255">
-     <red>84</red>
-     <green>67</green>
-     <blue>136</blue>
+     <red>207</red>
+     <green>106</green>
+     <blue>50</blue>
     </color>
    </brush>
   </colorrole>
@@ -58,9 +58,18 @@
   <colorrole role="Highlight">
    <brush brushstyle="SolidPattern">
     <color alpha="255">
-     <red>84</red>
-     <green>67</green>
-     <blue>136</blue>
+     <red>207</red>
+     <green>106</green>
+     <blue>50</blue>
+    </color>
+   </brush>
+  </colorrole>
+  <colorrole role="LinkVisited">
+   <brush brushstyle="SolidPattern">
+    <color alpha="255">
+     <red>255</red>
+     <green>158</green>
+     <blue>105</blue>
     </color>
    </brush>
   </colorrole>
@@ -96,9 +105,9 @@
   <colorrole role="Button">
    <brush brushstyle="SolidPattern">
     <color alpha="255">
-     <red>84</red>
-     <green>67</green>
-     <blue>136</blue>
+     <red>207</red>
+     <green>106</green>
+     <blue>50</blue>
     </color>
    </brush>
   </colorrole>
@@ -141,9 +150,18 @@
   <colorrole role="Highlight">
    <brush brushstyle="SolidPattern">
     <color alpha="255">
-     <red>84</red>
-     <green>67</green>
-     <blue>136</blue>
+     <red>207</red>
+     <green>106</green>
+     <blue>50</blue>
+    </color>
+   </brush>
+  </colorrole>
+  <colorrole role="LinkVisited">
+   <brush brushstyle="SolidPattern">
+    <color alpha="255">
+     <red>255</red>
+     <green>158</green>
+     <blue>105</blue>
     </color>
    </brush>
   </colorrole>
@@ -179,9 +197,9 @@
   <colorrole role="Button">
    <brush brushstyle="SolidPattern">
     <color alpha="255">
-     <red>84</red>
-     <green>67</green>
-     <blue>136</blue>
+     <red>207</red>
+     <green>106</green>
+     <blue>50</blue>
     </color>
    </brush>
   </colorrole>
@@ -236,6 +254,15 @@
      <red>18</red>
      <green>18</green>
      <blue>18</blue>
+    </color>
+   </brush>
+  </colorrole>
+  <colorrole role="LinkVisited">
+   <brush brushstyle="SolidPattern">
+    <color alpha="255">
+     <red>255</red>
+     <green>158</green>
+     <blue>105</blue>
     </color>
    </brush>
   </colorrole>

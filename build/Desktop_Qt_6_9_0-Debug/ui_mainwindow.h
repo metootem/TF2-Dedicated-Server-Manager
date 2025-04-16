@@ -48,7 +48,7 @@ public:
         QBrush brush(QColor(255, 255, 255, 255));
         brush.setStyle(Qt::BrushStyle::SolidPattern);
         palette.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::WindowText, brush);
-        QBrush brush1(QColor(85, 40, 97, 255));
+        QBrush brush1(QColor(207, 106, 50, 255));
         brush1.setStyle(Qt::BrushStyle::SolidPattern);
         palette.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Button, brush1);
         QBrush brush2(QColor(92, 92, 92, 255));
@@ -64,12 +64,15 @@ public:
         brush5.setStyle(Qt::BrushStyle::SolidPattern);
         palette.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Window, brush5);
         palette.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::Highlight, brush1);
-        QBrush brush6(QColor(45, 45, 45, 255));
+        QBrush brush6(QColor(255, 158, 105, 255));
         brush6.setStyle(Qt::BrushStyle::SolidPattern);
-        palette.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::AlternateBase, brush6);
-        QBrush brush7(QColor(97, 97, 97, 255));
+        palette.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::LinkVisited, brush6);
+        QBrush brush7(QColor(45, 45, 45, 255));
         brush7.setStyle(Qt::BrushStyle::SolidPattern);
-        palette.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::ToolTipBase, brush7);
+        palette.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::AlternateBase, brush7);
+        QBrush brush8(QColor(97, 97, 97, 255));
+        brush8.setStyle(Qt::BrushStyle::SolidPattern);
+        palette.setBrush(QPalette::ColorGroup::Active, QPalette::ColorRole::ToolTipBase, brush8);
         palette.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::WindowText, brush);
         palette.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Button, brush1);
         palette.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Dark, brush2);
@@ -77,8 +80,9 @@ public:
         palette.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Base, brush4);
         palette.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Window, brush5);
         palette.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Highlight, brush1);
-        palette.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::AlternateBase, brush6);
-        palette.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::ToolTipBase, brush7);
+        palette.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::LinkVisited, brush6);
+        palette.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::AlternateBase, brush7);
+        palette.setBrush(QPalette::ColorGroup::Inactive, QPalette::ColorRole::ToolTipBase, brush8);
         palette.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::WindowText, brush2);
         palette.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Button, brush1);
         palette.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Dark, brush2);
@@ -87,21 +91,20 @@ public:
         palette.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::ButtonText, brush2);
         palette.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Base, brush5);
         palette.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Window, brush5);
-        palette.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::AlternateBase, brush6);
-        palette.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::ToolTipBase, brush7);
+        palette.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::LinkVisited, brush6);
+        palette.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::AlternateBase, brush7);
+        palette.setBrush(QPalette::ColorGroup::Disabled, QPalette::ColorRole::ToolTipBase, brush8);
         MainWindow->setPalette(palette);
         MainWindow->setStyleSheet(QString::fromUtf8("QTabBar::tab {\n"
 "	border: 0px solid;\n"
 "	background-color: #2b2b2b;\n"
-"	padding-bottom: 10px;\n"
-"	padding-left: 5px;\n"
-"	padding-right: 5px;\n"
+"	padding: 5px;\n"
 "	border-top-left-radius: 3px;\n"
 "	border-top-right-radius: 3px;\n"
 "}\n"
 "\n"
 "QTabBar::tab:selected {\n"
-"	background-color: #552861;\n"
+"	background-color: #cf6a32;\n"
 "}\n"
 "\n"
 "QTabWidget::pane {\n"
@@ -111,16 +114,16 @@ public:
 "\n"
 "QPushButton {\n"
 "	border: none;\n"
-"border-bottom: 3px solid #552861;\n"
+"border-bottom: 3px solid #cf6a32;\n"
 "	background-color: #303030;\n"
 "	font: 13pt \"Noto Sans\";\n"
 "}\n"
 "\n"
 "QPushButton::hover {\n"
-"	background-color: #673176;\n"
+"	background-color: #dd7036;\n"
 "}\n"
 "QPushButton::pressed {\n"
-"	background-color: #452150;\n"
+"	background-color: #aa5629;\n"
 "}"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");

@@ -17,13 +17,24 @@ ServerWindow::ServerWindow(QWidget *parent, QString name, QString directory)
     ui->PropsConfigs->setGeometry(0, 0, 601, 411);
     ui->PropsConfigs->hide();
     ui->lblFolderError->hide();
+
+    IniSettings = new QSettings(tr("%0/server.ini").arg(directory), QSettings::Format::IniFormat);
+
     if (!directory.isEmpty())
         LoadServerConfig(QDir(directory));
+    else
+        LoadServerFirstTimeSetup();
     OS = QSysInfo::productType();
     if (OS != "windows" && OS != "macos")
         OS = "linux";
-    ServerProcess = NULL;
+
+    ServerProcess = nullptr;
+    SteamCMDWindow = nullptr;
+
     PublicIP = GetPublicIP();
+
+    ui->btnInstallServer->setText((SteamCMDExists() ? "Update" : "Install"));
+    ui->btnStartServer->setEnabled(SRCDSExists());
 }
 
 ServerWindow::~ServerWindow()
@@ -33,23 +44,30 @@ ServerWindow::~ServerWindow()
 
 void ServerWindow::LoadServerConfig(QDir directory)
 {
-    QSettings IniSettings(tr("%0/server.ini").arg(directory.path()), QSettings::Format::IniFormat);
-
-    ui->lineServerName->setText(IniSettings.value("server_name").toString());
+    ui->lineServerName->setText(IniSettings->value("server_name").toString());
 
     ServerFolder = directory.path();
     ui->lineFolderName->setText(QDir(ServerFolder).dirName());
 
-    ui->lineIP->setText(IniSettings.value("ip").toString());
+    ui->lineIP->setText(IniSettings->value("ip").toString());
 
-    ui->linePort->setText(IniSettings.value("port").toString());
+    ui->linePort->setText(IniSettings->value("port").toString());
 
-    ui->spinMaxPlayers->setValue(IniSettings.value("players").toInt());
+    ui->spinMaxPlayers->setValue(IniSettings->value("players").toInt());
 
-    ui->lineMap->setText(IniSettings.value("map").toString());
+    ui->lineMap->setText(IniSettings->value("map").toString());
 
-    ui->lineParameters->setText(IniSettings.value("parameters").toString());
+    //ui->lineParameters->setText(IniSettings.value("parameters").toString());
+    //AdditionalParametersWindow->LoadParameters(IniSettings);
+    AdditionalParametersWindow = new AdditionalParametersDialog(this, IniSettings);
 }
+
+
+void ServerWindow::LoadServerFirstTimeSetup()
+{
+    AdditionalParametersWindow->FirstTimeSetup();
+}
+
 
 QString ServerWindow::GetPublicIP()
 {
@@ -59,6 +77,140 @@ QString ServerWindow::GetPublicIP()
     QString IP = GetIP.readAllStandardOutput();
     GetIP.terminate();
     return IP;
+}
+
+
+bool ServerWindow::SteamCMDExists()
+{
+    if (OS == "windows")
+    {
+        QFile SteamCMD(ServerFolder+"/SteamCMD/steamcmd.exe");
+        return SteamCMD.exists();
+    }
+    else if (OS == "linux")
+    {
+        QFile SteamCMD(ServerFolder+"/SteamCMD/steamcmd.sh");
+        return SteamCMD.exists();
+    }
+
+    return false;
+}
+
+bool ServerWindow::SRCDSExists()
+{
+    if (OS == "windows")
+    {
+        QFile Srcds(ServerFolder+"/Server/srcds.exe");
+        return Srcds.exists();
+    }
+    else if (OS == "linux")
+    {
+        QFile Srcds(ServerFolder+"/Server/srcds_run");
+        return Srcds.exists();
+    }
+
+    return false;
+}
+
+void ServerWindow::InstallSteamCMD()
+{
+    QString SteamCMDPath = ServerFolder + "/SteamCMD";
+    if (OS == "linux")
+    {
+        QMessageBox msgBox(QMessageBox::Icon::Question, "",
+                           tr("Make sure you have the requirements:\n"
+                              "https://wiki.teamfortress.com/wiki/Linux_dedicated_server#Requirements"), {}, this);
+        auto *accept = msgBox.addButton("Download", QMessageBox::ButtonRole::AcceptRole);
+        msgBox.addButton("Cancel", QMessageBox::ButtonRole::RejectRole);
+        msgBox.exec();
+        if (msgBox.clickedButton() != accept)
+            return;
+
+        ServerInstalling = true;
+
+        QProcess::execute("mkdir", QStringList() << SteamCMDPath);
+
+
+        QProcess::execute("wget", QStringList() << "-P" << SteamCMDPath << "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" );
+        QProcess unpack;
+        unpack.setWorkingDirectory(SteamCMDPath);
+        unpack.start("tar", QStringList() << "zxf" << "steamcmd_linux.tar.gz");
+        unpack.waitForFinished();
+
+        //QProcess::execute("tar", QStringList() << "zxf" << SteamCMDPath +  "/steamcmd_linux.tar.gz");
+
+        if (QSysInfo::productType() == "nobara" || QSysInfo::productType() == "fedora")
+        {
+            QProcess::execute("mkdir", QStringList() << "-p" << "~/.steam/sdk32");
+
+            QProcess::execute("ln", QStringList() << "-s" << SteamCMDPath + "/linux32/steamclient.so" << "~/.steam/sdk32");
+
+            QProcess::execute("ln", QStringList() << "-s" << "/usr/lib/libcurl.so.4" << "/usr/lib/libcurl-gnutls.so.4");
+        }
+
+        InstallServer();
+
+    }
+}
+
+void ServerWindow::InstallServer()
+{
+    if (!QFile(ServerFolder+"/SteamCMD/steamcmd.sh").exists() && OS == "linux")
+        return;
+    if (!QFile(ServerFolder+"/SteamCMD/steamcmd.exe").exists() && OS == "windows")
+        return;
+
+    auto process = new QProcess(this);
+    process->setWorkingDirectory(ServerFolder + "/SteamCMD");
+    process->setProcessChannelMode(QProcess::MergedChannels);
+
+    if (SteamCMDWindow == nullptr)
+        SteamCMDWindow = new SteamCMDDialog(this, process, QDir(ServerFolder).dirName());
+    else
+        SteamCMDWindow->NewProcess(process);
+
+    if (SteamCMDWindow->isHidden())
+        SteamCMDWindow->show();
+
+    ui->btnSteamCMDConsole->setEnabled(true);
+    ui->btnInstallServer->setEnabled(false);
+    ui->btnInstallServer->setText("Installing...");
+
+
+    QProcess::execute("mkdir", QStringList() << ServerFolder + "/Server");
+/*
+    QMessageBox msgBox(QMessageBox::Icon::Question, "",
+                       tr("Opt into beta?"), {}, this);
+    auto *accept = msgBox.addButton("Yes", QMessageBox::ButtonRole::AcceptRole);
+    msgBox.addButton("No", QMessageBox::ButtonRole::RejectRole);
+    msgBox.exec();
+    if (msgBox.clickedButton() == accept)
+        return;
+*/
+    if (OS == "linux")
+    {
+        process->start("./steamcmd.sh", QStringList() << "+force_install_dir" << ServerFolder + "/Server" << "+login" << "anonymous" << "+app_update" << "232250" << "+quit");
+    }
+    else if (OS == "windows")
+        process->start("./steamcmd.exe", QStringList() << "+force_install_dir" << ServerFolder + "/Server" << "+login" << "anonymous" << "+app_update" << "232250" << "+quit");
+
+    process->waitForStarted();
+    connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(InstallServerFinished()));
+}
+
+void ServerWindow::InstallServerFinished()
+{
+    ui->btnInstallServer->setEnabled(true);
+    ui->btnInstallServer->setText((SteamCMDExists() ? "Update" : "Install"));
+    if (SRCDSExists())
+        ui->btnStartServer->setEnabled(true);
+    ServerInstalling = false;
+}
+
+void ServerWindow::on_btnSteamCMDConsole_clicked()
+{
+    if (SteamCMDWindow != nullptr)
+        SteamCMDWindow->show();
 }
 
 void ServerWindow::on_listProps_currentRowChanged(int currentRow)
@@ -80,6 +232,23 @@ void ServerWindow::on_listProps_currentRowChanged(int currentRow)
         break;
     }
     }
+}
+
+
+void ServerWindow::on_btnInstallServer_clicked()
+{
+    if (!SteamCMDExists())
+    {
+        QMessageBox msgBox(QMessageBox::Icon::Question, "",
+                           tr("SteamCMD not found.\nDo you want to download automatically?"), {}, this);
+        auto *accept = msgBox.addButton("Accept", QMessageBox::ButtonRole::AcceptRole);
+        msgBox.addButton("Cancel", QMessageBox::ButtonRole::RejectRole);
+        msgBox.exec();
+        if (msgBox.clickedButton() == accept)
+            InstallSteamCMD();
+    }
+    else
+        InstallServer();
 }
 
 
@@ -111,31 +280,36 @@ void ServerWindow::on_btnApply_clicked()
             settingsDialog->show();
             return;
         }
-        QString path = tr("%0/%1/server.ini").arg(settings.ServerDirectory.path()).arg(ui->lineFolderName->text(), 1);
         ServerFolder = tr("%0/%1").arg(settings.ServerDirectory.path()).arg(ui->lineFolderName->text(), 1);
 
-        QSettings IniSettings(path, QSettings::Format::IniFormat);
-        IniSettings.setValue("server_name", ui->lineServerName->text());
-        IniSettings.setValue("ip", ui->lineIP->text());
-        IniSettings.setValue("port", ui->linePort->text());
-        IniSettings.setValue("players", ui->spinMaxPlayers->value());
-        IniSettings.setValue("map", ui->lineMap->text());
-        IniSettings.setValue("parameters", ui->lineParameters->text());
+        IniSettings->setValue("server_name", ui->lineServerName->text());
+        IniSettings->setValue("ip", ui->lineIP->text());
+        IniSettings->setValue("port", ui->linePort->text());
+        IniSettings->setValue("players", ui->spinMaxPlayers->value());
+        IniSettings->setValue("map", ui->lineMap->text());
+        IniSettings->setValue("parameters", AdditionalParametersWindow->GetParameters());
+        IniSettings->setValue("os", OS);
+
+        if (QSystemTrayIcon::isSystemTrayAvailable())
+        {
+            QSystemTrayIcon icon;
+            icon.show();
+            icon.showMessage(ui->lineServerName->text(), "Settings applied");
+            icon.hide();
+        }
 
         emit ServerApplied( ServerFolder );
     }
 }
 
-
-void ServerWindow::on_btnInstallServer_clicked()
+void ServerWindow::on_btnParameters_clicked()
 {
-
+    AdditionalParametersWindow->show();
 }
 
 
 void ServerWindow::on_btnStartServer_clicked()
 {
-
     QString Command;
     if (OS == "linux")
         Command = tr("%0/Server/srcds_run").arg(ServerFolder);
@@ -146,7 +320,6 @@ void ServerWindow::on_btnStartServer_clicked()
 
     args << tr("+ip %0").arg(ui->lineIP->text());
     args << tr("-port %0").arg(ui->linePort->text());
-    args << "+sv_pure 0";
 
     if (ui->lineMap->text().isEmpty())
         args << "+randommap";
@@ -155,6 +328,16 @@ void ServerWindow::on_btnStartServer_clicked()
 
     if (!ui->lineServerName->text().isEmpty())
         args << "+hostname \"" + ui->lineServerName->text() + "\"";
+
+    QStringList additionalParams = AdditionalParametersWindow->GetParameters();
+    for (int i = 2; i < additionalParams.count(); i+=3)
+    {
+        if (additionalParams[i] != "True")
+            continue;
+        args << additionalParams[i-2];
+        if (!additionalParams[i-1].isEmpty())
+            args << additionalParams[i-1];
+    }
 
     qInfo() << Command;
     qInfo() << args;
@@ -199,7 +382,6 @@ void ServerWindow::on_btnStartServer_clicked()
 
                 Process->startDetached(term, QStringList() << "-e" << Command << args);
             }
-            qInfo() << Process->processId();
         }
         return;
     }
@@ -227,6 +409,7 @@ void ServerWindow::on_btnStartServer_clicked()
     }
 
 }
+
 
 void ServerWindow::on_btnStopServer_clicked()
 {
@@ -270,56 +453,6 @@ void ServerWindow::on_btnStopServer_clicked()
     SetServerVisualState(VisualState::ServerFinished);
 }
 
-void ServerWindow::ServerStateChanged(QProcess::ProcessState state)
-{
-    qInfo() << state;
-    qInfo() << ServerProcess->exitCode();
-    qInfo() << ServerProcess->exitStatus();
-    qInfo() << ServerProcess->processId();
-
-    if (state == QProcess::NotRunning)
-        SetServerVisualState(VisualState::ServerFinished);
-
-}
-
-void ServerWindow::ReadOutput()
-{
-    qInfo() << ServerProcess->state();
-    qInfo() << ServerProcess->exitCode();
-    qInfo() << ServerProcess->exitStatus();
-    qInfo() << ServerProcess->processId();
-}
-
-void ServerWindow::SetServerVisualState(VisualState state)
-{
-    switch (state)
-    {
-    case ServerStarted:
-    {
-        ui->btnStopServer->setEnabled(true);
-        //ui->btnConnectToServer->setEnabled(true);
-        ui->btnShowConsole->setEnabled(true);
-
-        ui->chkConsole->setEnabled(false);
-        ui->btnStartServer->setEnabled(false);
-        ui->btnApply->setEnabled(false);
-        break;
-    }
-    case VisualState::ServerFinished: // ok
-    {
-        ui->btnStartServer->setEnabled(true);
-        ui->btnApply->setEnabled(true);
-        ui->chkConsole->setEnabled(true);
-
-        //ui->btnConnectToServer->setEnabled(false);
-        ui->btnShowConsole->setEnabled(false);
-        ui->btnStopServer->setEnabled(false);
-        break;
-    }
-    }
-}
-
-
 
 void ServerWindow::on_btnShowConsole_clicked()
 {
@@ -358,6 +491,7 @@ void ServerWindow::on_btnConnectToServer_clicked()
         QDesktopServices::openUrl(QUrl("steam://connect/" + LocalServerAddress));
 }
 
+
 void ServerWindow::on_btnCopyIp_clicked()
 {
     QClipboard *clip = QApplication::clipboard();
@@ -375,6 +509,36 @@ void ServerWindow::on_btnCopyIp_clicked()
         icon.show();
         icon.showMessage("Copied Public IP to clipboard", IP);
         icon.hide();
+    }
+}
+
+
+void ServerWindow::SetServerVisualState(VisualState state)
+{
+    switch (state)
+    {
+    case ServerStarted:
+    {
+        ui->btnStopServer->setEnabled(true);
+        //ui->btnConnectToServer->setEnabled(true);
+        ui->btnShowConsole->setEnabled(true);
+
+        ui->chkConsole->setEnabled(false);
+        ui->btnStartServer->setEnabled(false);
+        ui->btnApply->setEnabled(false);
+        break;
+    }
+    case VisualState::ServerFinished: // ok
+    {
+        ui->btnStartServer->setEnabled(true);
+        ui->btnApply->setEnabled(true);
+        ui->chkConsole->setEnabled(true);
+
+        //ui->btnConnectToServer->setEnabled(false);
+        ui->btnShowConsole->setEnabled(false);
+        ui->btnStopServer->setEnabled(false);
+        break;
+    }
     }
 }
 

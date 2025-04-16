@@ -6,6 +6,9 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    OS = QSysInfo::productType();
+    if (OS != "windows" && OS != "macos")
+        OS = "linux";
 }
 
 MainWindow::~MainWindow()
@@ -117,6 +120,7 @@ void MainWindow::on_tabServers_tabBarDoubleClicked(int index)
         return;
     QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
     IniSettings.setValue(tr("%0/nick").arg(QDir(ServerFolder).dirName()), servername);
+    IniSettings.setValue(tr("%0/os").arg(QDir(ServerFolder).dirName()), OS);
 }
 
 void MainWindow::AddServer(QString servername, QString serverFolder)
@@ -155,7 +159,6 @@ bool MainWindow::ServerTabExists(QString name)
 
 void MainWindow::ServerApplied(QString ServerFolder)
 {
-    qInfo() << ServerFolder;
     QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
     QString folder = QDir(ServerFolder).dirName();
     int index = ui->tabServers->currentIndex();
@@ -163,6 +166,7 @@ void MainWindow::ServerApplied(QString ServerFolder)
     ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
 
     IniSettings.setValue(tr("%0/nick").arg(folder), ui->tabServers->tabText(index));
+    IniSettings.setValue(tr("%0/os").arg(folder), OS);
 }
 
 void MainWindow::ServerActivated()
@@ -185,8 +189,9 @@ void MainWindow::RefreshServerTab()
     {
         if (QFile(tr("%0/server.ini").arg(file.filePath())).exists())
         {
-            if (ServerTabExists(IniSettings.value(tr("%0/nick").arg(file.fileName())).toString()))
+            if (ServerTabExists(IniSettings.value(tr("%0/nick").arg(file.fileName())).toString()) || IniSettings.value(tr("%0/os").arg(file.fileName())).toString() != OS)
                 continue;
+
             AddServer(IniSettings.value(tr("%0/nick").arg(file.fileName())).toString(), file.filePath());
             //ServerWindow *newServerWindow = new ServerWindow(this, "", file.filePath());
             //ui->tabServers->addTab(newServerWindow, IniSettings.value(tr("%0/nick").arg(file.fileName())).toString());

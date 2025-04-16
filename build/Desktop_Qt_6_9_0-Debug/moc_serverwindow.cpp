@@ -45,25 +45,30 @@ template <> constexpr inline auto ServerWindow::qt_create_metaobjectdata<qt_meta
         "ServerFolder",
         "ServerActivated",
         "ServerDeactivated",
+        "InstallServerFinished",
         "LoadServerConfig",
         "QDir",
         "directory",
+        "LoadServerFirstTimeSetup",
         "GetPublicIP",
+        "SteamCMDExists",
+        "SRCDSExists",
+        "InstallSteamCMD",
+        "InstallServer",
         "on_listProps_currentRowChanged",
         "currentRow",
         "on_btnApply_clicked",
         "on_btnInstallServer_clicked",
         "on_btnStartServer_clicked",
         "on_btnStopServer_clicked",
-        "ServerStateChanged",
-        "QProcess::ProcessState",
-        "state",
         "SetServerVisualState",
         "VisualState",
-        "ReadOutput",
+        "state",
         "on_btnShowConsole_clicked",
         "on_btnConnectToServer_clicked",
-        "on_btnCopyIp_clicked"
+        "on_btnCopyIp_clicked",
+        "on_btnSteamCMDConsole_clicked",
+        "on_btnParameters_clicked"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -75,40 +80,50 @@ template <> constexpr inline auto ServerWindow::qt_create_metaobjectdata<qt_meta
         QtMocHelpers::SignalData<void()>(4, 2, QMC::AccessPublic, QMetaType::Void),
         // Signal 'ServerDeactivated'
         QtMocHelpers::SignalData<void()>(5, 2, QMC::AccessPublic, QMetaType::Void),
+        // Slot 'InstallServerFinished'
+        QtMocHelpers::SlotData<void()>(6, 2, QMC::AccessPublic, QMetaType::Void),
         // Slot 'LoadServerConfig'
-        QtMocHelpers::SlotData<void(QDir)>(6, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { 0x80000000 | 7, 8 },
+        QtMocHelpers::SlotData<void(QDir)>(7, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 8, 9 },
         }}),
+        // Slot 'LoadServerFirstTimeSetup'
+        QtMocHelpers::SlotData<void()>(10, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'GetPublicIP'
-        QtMocHelpers::SlotData<QString()>(9, 2, QMC::AccessPrivate, QMetaType::QString),
+        QtMocHelpers::SlotData<QString()>(11, 2, QMC::AccessPrivate, QMetaType::QString),
+        // Slot 'SteamCMDExists'
+        QtMocHelpers::SlotData<bool()>(12, 2, QMC::AccessPrivate, QMetaType::Bool),
+        // Slot 'SRCDSExists'
+        QtMocHelpers::SlotData<bool()>(13, 2, QMC::AccessPrivate, QMetaType::Bool),
+        // Slot 'InstallSteamCMD'
+        QtMocHelpers::SlotData<void()>(14, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'InstallServer'
+        QtMocHelpers::SlotData<void()>(15, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_listProps_currentRowChanged'
-        QtMocHelpers::SlotData<void(int)>(10, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 11 },
+        QtMocHelpers::SlotData<void(int)>(16, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 17 },
         }}),
         // Slot 'on_btnApply_clicked'
-        QtMocHelpers::SlotData<void()>(12, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(18, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_btnInstallServer_clicked'
-        QtMocHelpers::SlotData<void()>(13, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(19, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_btnStartServer_clicked'
-        QtMocHelpers::SlotData<void()>(14, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(20, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_btnStopServer_clicked'
-        QtMocHelpers::SlotData<void()>(15, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'ServerStateChanged'
-        QtMocHelpers::SlotData<void(QProcess::ProcessState)>(16, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { 0x80000000 | 17, 18 },
-        }}),
-        // Slot 'SetServerVisualState'
-        QtMocHelpers::SlotData<void(VisualState)>(19, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { 0x80000000 | 20, 18 },
-        }}),
-        // Slot 'ReadOutput'
         QtMocHelpers::SlotData<void()>(21, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'SetServerVisualState'
+        QtMocHelpers::SlotData<void(VisualState)>(22, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 23, 24 },
+        }}),
         // Slot 'on_btnShowConsole_clicked'
-        QtMocHelpers::SlotData<void()>(22, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(25, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_btnConnectToServer_clicked'
-        QtMocHelpers::SlotData<void()>(23, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(26, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_btnCopyIp_clicked'
-        QtMocHelpers::SlotData<void()>(24, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(27, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_btnSteamCMDConsole_clicked'
+        QtMocHelpers::SlotData<void()>(28, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_btnParameters_clicked'
+        QtMocHelpers::SlotData<void()>(29, 2, QMC::AccessPrivate, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -135,20 +150,28 @@ void ServerWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 0: _t->ServerApplied((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
         case 1: _t->ServerActivated(); break;
         case 2: _t->ServerDeactivated(); break;
-        case 3: _t->LoadServerConfig((*reinterpret_cast< std::add_pointer_t<QDir>>(_a[1]))); break;
-        case 4: { QString _r = _t->GetPublicIP();
+        case 3: _t->InstallServerFinished(); break;
+        case 4: _t->LoadServerConfig((*reinterpret_cast< std::add_pointer_t<QDir>>(_a[1]))); break;
+        case 5: _t->LoadServerFirstTimeSetup(); break;
+        case 6: { QString _r = _t->GetPublicIP();
             if (_a[0]) *reinterpret_cast< QString*>(_a[0]) = std::move(_r); }  break;
-        case 5: _t->on_listProps_currentRowChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 6: _t->on_btnApply_clicked(); break;
-        case 7: _t->on_btnInstallServer_clicked(); break;
-        case 8: _t->on_btnStartServer_clicked(); break;
-        case 9: _t->on_btnStopServer_clicked(); break;
-        case 10: _t->ServerStateChanged((*reinterpret_cast< std::add_pointer_t<QProcess::ProcessState>>(_a[1]))); break;
-        case 11: _t->SetServerVisualState((*reinterpret_cast< std::add_pointer_t<VisualState>>(_a[1]))); break;
-        case 12: _t->ReadOutput(); break;
-        case 13: _t->on_btnShowConsole_clicked(); break;
-        case 14: _t->on_btnConnectToServer_clicked(); break;
-        case 15: _t->on_btnCopyIp_clicked(); break;
+        case 7: { bool _r = _t->SteamCMDExists();
+            if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
+        case 8: { bool _r = _t->SRCDSExists();
+            if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
+        case 9: _t->InstallSteamCMD(); break;
+        case 10: _t->InstallServer(); break;
+        case 11: _t->on_listProps_currentRowChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 12: _t->on_btnApply_clicked(); break;
+        case 13: _t->on_btnInstallServer_clicked(); break;
+        case 14: _t->on_btnStartServer_clicked(); break;
+        case 15: _t->on_btnStopServer_clicked(); break;
+        case 16: _t->SetServerVisualState((*reinterpret_cast< std::add_pointer_t<VisualState>>(_a[1]))); break;
+        case 17: _t->on_btnShowConsole_clicked(); break;
+        case 18: _t->on_btnConnectToServer_clicked(); break;
+        case 19: _t->on_btnCopyIp_clicked(); break;
+        case 20: _t->on_btnSteamCMDConsole_clicked(); break;
+        case 21: _t->on_btnParameters_clicked(); break;
         default: ;
         }
     }
@@ -181,14 +204,14 @@ int ServerWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 16)
+        if (_id < 22)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 16;
+        _id -= 22;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 16)
+        if (_id < 22)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 16;
+        _id -= 22;
     }
     return _id;
 }

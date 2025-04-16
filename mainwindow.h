@@ -55,6 +55,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    QString OS;
     SettingsStruct Settings;
     QDir ServerDir;
 
