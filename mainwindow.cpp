@@ -38,6 +38,87 @@ void MainWindow::SettingsChanged( SettingsStruct settings )
     RefreshServerTab();
 }
 
+
+void MainWindow::AddServer(QString servername, QString serverFolder)
+{
+    QString name = servername;
+    int found_count = 0;
+    do
+    {
+        found_count++;
+        if (found_count > 1)
+            name = tr("%0 %1").arg(servername).arg(found_count, 1);
+    } while (ServerTabExists(name));
+
+    auto newServerWindow = new ServerWindow(this, name, serverFolder);
+    int index = ui->tabServers->addTab(newServerWindow, name);
+
+    connect(newServerWindow, SIGNAL(ServerApplied(QString)), this, SLOT(ServerApplied(QString)));
+    connect(newServerWindow, SIGNAL(ServerActivated()), this, SLOT(ServerActivated()));
+    connect(newServerWindow, SIGNAL(ServerDeactivated()), this, SLOT(ServerDeactivated()));
+
+    if (serverFolder.isEmpty())
+        ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::FolderNew));
+    else
+        ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
+}
+
+bool MainWindow::ServerTabExists(QString name)
+{
+    for (int i=0; i<ui->tabServers->count(); i++)
+    {
+        if (ui->tabServers->tabText(i) == name)
+            return true;
+    }
+    return false;
+}
+
+void MainWindow::ServerApplied(QString ServerFolder)
+{
+    QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
+    QString folder = QDir(ServerFolder).dirName();
+    int index = ui->tabServers->currentIndex();
+
+    ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
+
+    IniSettings.setValue(tr("%0/nick").arg(folder), ui->tabServers->tabText(index));
+    IniSettings.setValue(tr("%0/os").arg(folder), OS);
+}
+
+void MainWindow::ServerActivated()
+{
+    int index = ui->tabServers->currentIndex();
+    ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::MediaPlaybackStart));
+}
+
+void MainWindow::ServerDeactivated()
+{
+    int index = ui->tabServers->currentIndex();
+    ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
+}
+
+void MainWindow::RefreshServerTab()
+{
+    QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
+    QFileInfoList fileList = ServerDir.entryInfoList(QDir::Filter::Dirs);
+    for (QFileInfo file : fileList)
+    {
+        if (QFile(tr("%0/server.ini").arg(file.filePath())).exists())
+        {
+            if (ServerTabExists(IniSettings.value(tr("%0/nick").arg(file.fileName())).toString()) || IniSettings.value(tr("%0/os").arg(file.fileName())).toString() != OS)
+                continue;
+
+            AddServer(IniSettings.value(tr("%0/nick").arg(file.fileName())).toString(), file.filePath());
+            //ServerWindow *newServerWindow = new ServerWindow(this, "", file.filePath());
+            //ui->tabServers->addTab(newServerWindow, IniSettings.value(tr("%0/nick").arg(file.fileName())).toString());
+            ui->tabServers->setCurrentIndex(ui->tabServers->count()-1);
+
+            //connect(newServerWindow, &ServerWindow::ServerApplied, this, &MainWindow::ServerApplied);
+        }
+    }
+}
+
+
 void MainWindow::on_btnSettings_clicked()
 {
     SettingsDialog* settingsDialog = new SettingsDialog(this);
@@ -121,84 +202,5 @@ void MainWindow::on_tabServers_tabBarDoubleClicked(int index)
     QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
     IniSettings.setValue(tr("%0/nick").arg(QDir(ServerFolder).dirName()), servername);
     IniSettings.setValue(tr("%0/os").arg(QDir(ServerFolder).dirName()), OS);
-}
-
-void MainWindow::AddServer(QString servername, QString serverFolder)
-{
-    QString name = servername;
-    int found_count = 0;
-    do
-    {
-        found_count++;
-        if (found_count > 1)
-            name = tr("%0 %1").arg(servername).arg(found_count, 1);
-    } while (ServerTabExists(name));
-
-    auto newServerWindow = new ServerWindow(this, name, serverFolder);
-    int index = ui->tabServers->addTab(newServerWindow, name);
-
-    connect(newServerWindow, SIGNAL(ServerApplied(QString)), this, SLOT(ServerApplied(QString)));
-    connect(newServerWindow, SIGNAL(ServerActivated()), this, SLOT(ServerActivated()));
-    connect(newServerWindow, SIGNAL(ServerDeactivated()), this, SLOT(ServerDeactivated()));
-
-    if (serverFolder.isEmpty())
-        ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::FolderNew));
-    else
-        ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
-}
-
-bool MainWindow::ServerTabExists(QString name)
-{
-    for (int i=0; i<ui->tabServers->count(); i++)
-    {
-        if (ui->tabServers->tabText(i) == name)
-            return true;
-    }
-    return false;
-}
-
-void MainWindow::ServerApplied(QString ServerFolder)
-{
-    QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
-    QString folder = QDir(ServerFolder).dirName();
-    int index = ui->tabServers->currentIndex();
-
-    ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
-
-    IniSettings.setValue(tr("%0/nick").arg(folder), ui->tabServers->tabText(index));
-    IniSettings.setValue(tr("%0/os").arg(folder), OS);
-}
-
-void MainWindow::ServerActivated()
-{
-    int index = ui->tabServers->currentIndex();
-    ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::MediaPlaybackStart));
-}
-
-void MainWindow::ServerDeactivated()
-{
-    int index = ui->tabServers->currentIndex();
-    ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
-}
-
-void MainWindow::RefreshServerTab()
-{
-    QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
-    QFileInfoList fileList = ServerDir.entryInfoList(QDir::Filter::Dirs);
-    for (QFileInfo file : fileList)
-    {
-        if (QFile(tr("%0/server.ini").arg(file.filePath())).exists())
-        {
-            if (ServerTabExists(IniSettings.value(tr("%0/nick").arg(file.fileName())).toString()) || IniSettings.value(tr("%0/os").arg(file.fileName())).toString() != OS)
-                continue;
-
-            AddServer(IniSettings.value(tr("%0/nick").arg(file.fileName())).toString(), file.filePath());
-            //ServerWindow *newServerWindow = new ServerWindow(this, "", file.filePath());
-            //ui->tabServers->addTab(newServerWindow, IniSettings.value(tr("%0/nick").arg(file.fileName())).toString());
-            ui->tabServers->setCurrentIndex(ui->tabServers->count()-1);
-
-            //connect(newServerWindow, &ServerWindow::ServerApplied, this, &MainWindow::ServerApplied);
-        }
-    }
 }
 

@@ -6,6 +6,7 @@ AdditionalParametersDialog::AdditionalParametersDialog(QWidget *parent, QSetting
     , ui(new Ui::AdditionalParametersDialog)
 {
     ui->setupUi(this);
+    this->setWindowTitle(IniSettings->value("server_name").toString() + " Additional Parameters");
     LoadParameters(IniSettings);
 }
 

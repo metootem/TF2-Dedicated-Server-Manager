@@ -13,6 +13,7 @@ SOURCES += \
     additionalparametersdialog.cpp \
     main.cpp \
     mainwindow.cpp \
+    selectmapdialog.cpp \
     serverconsoledialog.cpp \
     serverwindow.cpp \
     settingsdialog.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 HEADERS += \
     additionalparametersdialog.h \
     mainwindow.h \
+    selectmapdialog.h \
     serverconsoledialog.h \
     serverwindow.h \
     settingsdialog.h \
@@ -29,6 +31,7 @@ HEADERS += \
 FORMS += \
     additionalparametersdialog.ui \
     mainwindow.ui \
+    selectmapdialog.ui \
     serverconsoledialog.ui \
     serverwindow.ui \
     settingsdialog.ui \

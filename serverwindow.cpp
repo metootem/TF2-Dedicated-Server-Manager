@@ -176,7 +176,6 @@ void ServerWindow::InstallServer()
     ui->btnInstallServer->setEnabled(false);
     ui->btnInstallServer->setText("Installing...");
 
-
     QProcess::execute("mkdir", QStringList() << ServerFolder + "/Server");
 /*
     QMessageBox msgBox(QMessageBox::Icon::Question, "",
@@ -288,7 +287,7 @@ void ServerWindow::on_btnApply_clicked()
         IniSettings->setValue("players", ui->spinMaxPlayers->value());
         IniSettings->setValue("map", ui->lineMap->text());
         IniSettings->setValue("parameters", AdditionalParametersWindow->GetParameters());
-        IniSettings->setValue("os", OS);
+        //IniSettings->setValue("os", OS);
 
         if (QSystemTrayIcon::isSystemTrayAvailable())
         {
@@ -354,7 +353,7 @@ void ServerWindow::on_btnStartServer_clicked()
     //Process->setProcessEnvironment(env);
     //qInfo() << env.value("LD_LIBRARY_PATH");
 
-    if (ui->chkConsole->checkState())
+    if (ui->chkConsole->isChecked())
     {
         if (OS == "windows")
             Process->startDetached(Command, QStringList() << args << "-console");
@@ -394,7 +393,7 @@ void ServerWindow::on_btnStartServer_clicked()
         auto ServerConsoleDial = new ServerConsoleDialog(this, Process, ui->lineServerName->text());
         ServerConsole = ServerConsoleDial;
 
-        if (!ui->chkConsole->checkState())
+        if (!ui->chkConsole->isChecked())
             ServerConsole->show();
 
         SetServerVisualState(ServerStarted);
@@ -415,7 +414,7 @@ void ServerWindow::on_btnStopServer_clicked()
 {
     if (ServerProcess->state() == QProcess::ProcessState::Running)
     {
-        if (ui->chkConsole->checkState())
+        if (ui->chkConsole->isChecked())
             ServerProcess->kill();
         else
         {
@@ -510,6 +509,19 @@ void ServerWindow::on_btnCopyIp_clicked()
         icon.showMessage("Copied Public IP to clipboard", IP);
         icon.hide();
     }
+}
+
+
+void ServerWindow::on_btnSelectMap_clicked()
+{
+    auto dialog = new SelectMapDialog(this, ServerFolder);
+    if (dialog->exec() == QDialog::Accepted)
+    {
+        qInfo() << "accepted";
+        if (dialog)
+            ui->lineMap->setText(dialog->SelectMap());
+    }
+    delete dialog;
 }
 
 

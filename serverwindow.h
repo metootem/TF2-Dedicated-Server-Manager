@@ -22,6 +22,7 @@
 #include "serverconsoledialog.h"
 #include "steamcmddialog.h"
 #include "additionalparametersdialog.h"
+#include "selectmapdialog.h"
 
 enum VisualState
 {
@@ -85,6 +86,8 @@ private slots:
     void on_btnSteamCMDConsole_clicked();
 
     void on_btnParameters_clicked();
+
+    void on_btnSelectMap_clicked();
 
 private:
     Ui::ServerWindow *ui;

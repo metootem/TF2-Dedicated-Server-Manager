@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>TF2-DSM Settings</string>
+   <string>TF2 DSM Settings</string>
   </property>
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
