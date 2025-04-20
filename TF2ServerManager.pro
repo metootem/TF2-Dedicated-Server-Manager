@@ -11,6 +11,7 @@ CONFIG += c++17
 
 SOURCES += \
     additionalparametersdialog.cpp \
+    filedownloader.cpp \
     main.cpp \
     mainwindow.cpp \
     selectmapdialog.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 
 HEADERS += \
     additionalparametersdialog.h \
+    filedownloader.h \
     mainwindow.h \
     selectmapdialog.h \
     serverconsoledialog.h \

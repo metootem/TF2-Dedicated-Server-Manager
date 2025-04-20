@@ -28,6 +28,7 @@ ServerWindow::ServerWindow(QWidget *parent, QString name, QString directory)
     if (OS != "windows" && OS != "macos")
         OS = "linux";
 
+    SteamCMDProcess = nullptr;
     ServerProcess = nullptr;
     SteamCMDWindow = nullptr;
 
@@ -96,6 +97,22 @@ bool ServerWindow::SteamCMDExists()
     return false;
 }
 
+bool ServerWindow::SteamCMDZipExists()
+{
+    if (OS == "windows")
+    {
+        QFile SteamCMD(ServerFolder+"/SteamCMD/steamcmd.zip");
+        return SteamCMD.exists();
+    }
+    else if (OS == "linux")
+    {
+        QFile SteamCMD(ServerFolder+"/SteamCMD/steamcmd_linux.tar.gz");
+        return SteamCMD.exists();
+    }
+
+    return false;
+}
+
 bool ServerWindow::SRCDSExists()
 {
     if (OS == "windows")
@@ -112,125 +129,161 @@ bool ServerWindow::SRCDSExists()
     return false;
 }
 
+void ServerWindow::DownloadSteamCMD()
+{
+    SetServerVisualState(VisualState::ServerInstalling);
+
+    ui->btnInstallServer->setText("Downloading...");
+
+    if (!SteamCMDZipExists())
+    {
+        qInfo() << "Downloading SteamCMD";
+
+        QString SteamCMDPath = ServerFolder + "/SteamCMD";
+
+        QDir dir(SteamCMDPath);
+        if (!dir.exists())
+            dir.mkdir(SteamCMDPath);
+
+        QString SteamCMDUrl;
+        if (OS == "windows")
+            SteamCMDUrl = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip";
+        else if (OS == "linux")
+            SteamCMDUrl = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz";
+
+        auto download = new FileDownloader(QUrl(SteamCMDUrl), QDir(ServerFolder + "/SteamCMD"), this);
+        connect(download, SIGNAL(finished()), SLOT(InstallSteamCMD()));
+    }
+    else
+        InstallSteamCMD();
+
+}
+
+
 void ServerWindow::InstallSteamCMD()
 {
+    SetServerVisualState(VisualState::ServerInstalling);
     QString SteamCMDPath = ServerFolder + "/SteamCMD";
+
+    QString SteamCMDFile;
+    if (OS == "windows")
+        SteamCMDFile = "steamcmd.zip";
+    else if (OS == "linux")
+        SteamCMDFile = "steamcmd_linux.tar.gz";
+
+    if (!SteamCMDZipExists())
+    {
+        qInfo() << "SteamCMD zip couldn't be found. Aborting installation.";
+        SetServerVisualState();
+        return;
+    }
+
     if (OS == "linux")
     {
         QMessageBox msgBox(QMessageBox::Icon::Question, "",
                            tr("Make sure you have the requirements:\n"
                               "https://wiki.teamfortress.com/wiki/Linux_dedicated_server#Requirements"), {}, this);
-        auto *accept = msgBox.addButton("Download", QMessageBox::ButtonRole::AcceptRole);
+        auto *accept = msgBox.addButton("Continue", QMessageBox::ButtonRole::AcceptRole);
         msgBox.addButton("Cancel", QMessageBox::ButtonRole::RejectRole);
         msgBox.exec();
         if (msgBox.clickedButton() != accept)
             return;
-
-        ServerInstalling = true;
-
-        QProcess::execute("mkdir", QStringList() << SteamCMDPath);
-
-
-        QProcess::execute("wget", QStringList() << "-P" << SteamCMDPath << "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" );
-        QProcess unpack;
-        unpack.setWorkingDirectory(SteamCMDPath);
-        unpack.start("tar", QStringList() << "zxf" << "steamcmd_linux.tar.gz");
-        unpack.waitForFinished();
-
-        //QProcess::execute("tar", QStringList() << "zxf" << SteamCMDPath +  "/steamcmd_linux.tar.gz");
-
-        if (QSysInfo::productType() == "nobara" || QSysInfo::productType() == "fedora")
-        {
-            QProcess::execute("mkdir", QStringList() << "-p" << "~/.steam/sdk32");
-
-            QProcess::execute("ln", QStringList() << "-s" << SteamCMDPath + "/linux32/steamclient.so" << "~/.steam/sdk32");
-
-            QProcess::execute("ln", QStringList() << "-s" << "/usr/lib/libcurl.so.4" << "/usr/lib/libcurl-gnutls.so.4");
-        }
-
-        InstallServer();
-
     }
+
+    ServerInstalling = true;
+
+    ui->btnInstallServer->setText("Unpacking...");
+    qInfo() << "unpacking";
+    QProcess unpack;
+    unpack.setWorkingDirectory(SteamCMDPath);
+    unpack.start("tar", QStringList() << "zxf" << SteamCMDFile);
+
+    if (!unpack.waitForFinished())
+    {
+        qInfo() << "There's been an error unpacking steamcmd: " << unpack.error();
+        qInfo() << "Aborting installation.";
+        SetServerVisualState();
+        return;
+    }
+
+    if (QSysInfo::productType() == "nobara" || QSysInfo::productType() == "fedora")
+    {
+        QProcess::execute("mkdir", QStringList() << "-p" << "~/.steam/sdk32");
+
+        QProcess::execute("ln", QStringList() << "-s" << SteamCMDPath + "/linux32/steamclient.so" << "~/.steam/sdk32");
+
+        QProcess::execute("ln", QStringList() << "-s" << "/usr/lib/libcurl.so.4" << "/usr/lib/libcurl-gnutls.so.4");
+    }
+
+    InstallServer();
 }
 
 void ServerWindow::InstallServer()
 {
-    if (!QFile(ServerFolder+"/SteamCMD/steamcmd.sh").exists() && OS == "linux")
+    /*
+    if (!SteamCMDExists())
+    {
+        qInfo() << "Couldn't find SteamCMD. Aborting installation.";
+        SetServerVisualState();
         return;
-    if (!QFile(ServerFolder+"/SteamCMD/steamcmd.exe").exists() && OS == "windows")
-        return;
+    }
+*/
+    SetServerVisualState(VisualState::ServerInstalling);
 
-    auto process = new QProcess(this);
-    process->setWorkingDirectory(ServerFolder + "/SteamCMD");
-    process->setProcessChannelMode(QProcess::MergedChannels);
+    SteamCMDProcess = new QProcess(this);
+    SteamCMDProcess->setWorkingDirectory(ServerFolder + "/SteamCMD");
+    SteamCMDProcess->setProcessChannelMode(QProcess::MergedChannels);
 
     if (SteamCMDWindow == nullptr)
-        SteamCMDWindow = new SteamCMDDialog(this, process, QDir(ServerFolder).dirName());
+        SteamCMDWindow = new SteamCMDDialog(this, SteamCMDProcess, QDir(ServerFolder).dirName());
     else
-        SteamCMDWindow->NewProcess(process);
+        SteamCMDWindow->NewProcess(SteamCMDProcess);
 
     if (SteamCMDWindow->isHidden())
         SteamCMDWindow->show();
 
-    ui->btnSteamCMDConsole->setEnabled(true);
-    ui->btnInstallServer->setEnabled(false);
+    connect(SteamCMDWindow, SIGNAL(KillSteamCMDProcess()), SLOT(KillSteamCMDProcess()));
+
     ui->btnInstallServer->setText("Installing...");
 
-    QProcess::execute("mkdir", QStringList() << ServerFolder + "/Server");
-/*
+    QDir dir(ServerFolder + "/Server");
+    if (!dir.exists())
+        dir.mkdir(ServerFolder + "/Server");
+
+    QStringList betaList;
+
     QMessageBox msgBox(QMessageBox::Icon::Question, "",
                        tr("Opt into beta?"), {}, this);
     auto *accept = msgBox.addButton("Yes", QMessageBox::ButtonRole::AcceptRole);
     msgBox.addButton("No", QMessageBox::ButtonRole::RejectRole);
     msgBox.exec();
     if (msgBox.clickedButton() == accept)
-        return;
-*/
+    {
+        qInfo() << "Opting into beta.";
+        betaList << "-beta" << "prerelease";
+    }
+    betaList << "+quit";
+
     if (OS == "linux")
     {
-        process->start("./steamcmd.sh", QStringList() << "+force_install_dir" << ServerFolder + "/Server" << "+login" << "anonymous" << "+app_update" << "232250" << "+quit");
+        SteamCMDProcess->start("./steamcmd.sh", QStringList() << "+force_install_dir" << ServerFolder + "/Server" << "+login" << "anonymous" << "+app_update" << "232250" << betaList);
     }
     else if (OS == "windows")
-        process->start("./steamcmd.exe", QStringList() << "+force_install_dir" << ServerFolder + "/Server" << "+login" << "anonymous" << "+app_update" << "232250" << "+quit");
+        SteamCMDProcess->start("./steamcmd.exe", QStringList() << "+force_install_dir" << ServerFolder + "/Server" << "+login" << "anonymous" << "+app_update" << "232250" << betaList);
 
-    process->waitForStarted();
-    connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(InstallServerFinished()));
+    SteamCMDProcess->waitForStarted();
+    connect(SteamCMDProcess, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(InstallServerFinished()));
+}
+
+void ServerWindow::KillSteamCMDProcess()
+{
+    qInfo() << "Attempting to terminate SteamCMD. " << SteamCMDProcess->processId();
+    SteamCMDProcess->terminate();
 }
 
 void ServerWindow::InstallServerFinished()
 {
-    ui->btnInstallServer->setEnabled(true);
-    ui->btnInstallServer->setText((SteamCMDExists() ? "Update" : "Install"));
-    if (SRCDSExists())
-        ui->btnStartServer->setEnabled(true);
-    ServerInstalling = false;
-}
-
-void ServerWindow::on_btnSteamCMDConsole_clicked()
-{
-    if (SteamCMDWindow != nullptr)
-        SteamCMDWindow->show();
-}
-
-void ServerWindow::on_listProps_currentRowChanged(int currentRow)
-{
-    ui->PropsMain->hide();
-    ui->PropsConfigs->hide();
-    switch (currentRow)
-    {
-    case 0:
-    {
-        ui->PropsMain->show();
-
-        break;
-    }
-    case 1:
-    {
-        ui->PropsConfigs->show();
-
-        break;
-    }
-    }
+    SetServerVisualState(ServerFinishedInstalling);
 }
 
 
@@ -238,16 +291,28 @@ void ServerWindow::on_btnInstallServer_clicked()
 {
     if (!SteamCMDExists())
     {
-        QMessageBox msgBox(QMessageBox::Icon::Question, "",
-                           tr("SteamCMD not found.\nDo you want to download automatically?"), {}, this);
-        auto *accept = msgBox.addButton("Accept", QMessageBox::ButtonRole::AcceptRole);
-        msgBox.addButton("Cancel", QMessageBox::ButtonRole::RejectRole);
-        msgBox.exec();
-        if (msgBox.clickedButton() == accept)
+        if (!SteamCMDZipExists())
+        {
+            QMessageBox msgBox(QMessageBox::Icon::Question, "",
+                               tr("SteamCMD not found.\nDo you want to download automatically?"), {}, this);
+            auto *accept = msgBox.addButton("Accept", QMessageBox::ButtonRole::AcceptRole);
+            msgBox.addButton("Cancel", QMessageBox::ButtonRole::RejectRole);
+            msgBox.exec();
+            if (msgBox.clickedButton() == accept)
+                DownloadSteamCMD();
+        }
+        else
+        {
+            qInfo() << "SteamCMD zip found. Installing SteamCMD.";
             InstallSteamCMD();
+        }
     }
     else
+    {
+        qInfo() << "SteamCMD found. Installing server";
         InstallServer();
+    }
+
 }
 
 
@@ -301,12 +366,6 @@ void ServerWindow::on_btnApply_clicked()
     }
 }
 
-void ServerWindow::on_btnParameters_clicked()
-{
-    AdditionalParametersWindow->show();
-}
-
-
 void ServerWindow::on_btnStartServer_clicked()
 {
     QString Command;
@@ -315,7 +374,7 @@ void ServerWindow::on_btnStartServer_clicked()
     else
         Command = tr("%0/Server/srcds.exe").arg(ServerFolder);
 
-    QStringList args = {"-game tf"};
+    QStringList args = {"-game tf", "-console"};
 
     args << tr("+ip %0").arg(ui->lineIP->text());
     args << tr("-port %0").arg(ui->linePort->text());
@@ -333,9 +392,12 @@ void ServerWindow::on_btnStartServer_clicked()
     {
         if (additionalParams[i] != "True")
             continue;
-        args << additionalParams[i-2];
-        if (!additionalParams[i-1].isEmpty())
-            args << additionalParams[i-1];
+        if (additionalParams[i-2].first(1) == "-" || additionalParams[i-2].first(1) == "+")
+        {
+            args << additionalParams[i-2];
+            if (!additionalParams[i-1].isEmpty())
+                args << additionalParams[i-1];
+        }
     }
 
     qInfo() << Command;
@@ -356,7 +418,7 @@ void ServerWindow::on_btnStartServer_clicked()
     if (ui->chkConsole->isChecked())
     {
         if (OS == "windows")
-            Process->startDetached(Command, QStringList() << args << "-console");
+            Process->startDetached(Command, QStringList() << args);
         else
         {
             QStringList Terminals = {"gnome-terminal", "konsole", "xterm"};
@@ -404,7 +466,7 @@ void ServerWindow::on_btnStartServer_clicked()
     }
     else
     {
-        SetServerVisualState(VisualState::ServerFinished);
+        SetServerVisualState(VisualState::ServerStopped);
     }
 
 }
@@ -449,7 +511,7 @@ void ServerWindow::on_btnStopServer_clicked()
 
         emit ServerDeactivated();
     }
-    SetServerVisualState(VisualState::ServerFinished);
+    SetServerVisualState(VisualState::ServerStopped);
 }
 
 
@@ -524,11 +586,57 @@ void ServerWindow::on_btnSelectMap_clicked()
     delete dialog;
 }
 
+void ServerWindow::on_btnParameters_clicked()
+{
+    AdditionalParametersWindow->show();
+}
+
+void ServerWindow::on_btnSteamCMDConsole_clicked()
+{
+    if (SteamCMDWindow != nullptr)
+        SteamCMDWindow->show();
+}
+
+void ServerWindow::on_listProps_currentRowChanged(int currentRow)
+{
+    ui->PropsMain->hide();
+    ui->PropsConfigs->hide();
+    switch (currentRow)
+    {
+    case 0:
+    {
+        ui->PropsMain->show();
+
+        break;
+    }
+    case 1:
+    {
+        ui->PropsConfigs->show();
+
+        break;
+    }
+    }
+}
+
 
 void ServerWindow::SetServerVisualState(VisualState state)
 {
     switch (state)
     {
+    case ServerDefault:
+    {
+        ui->btnInstallServer->setText((SteamCMDExists() ? "Update" : "Install"));
+        if (SRCDSExists())
+            ui->btnStartServer->setEnabled(true);
+
+        ui->btnInstallServer->setEnabled(true);
+        ui->btnApply->setEnabled(true);
+
+        ui->btnShowConsole->setEnabled(false);
+        ui->chkConsole->setEnabled(false);
+        ui->btnStopServer->setEnabled(false);
+        break;
+    }
     case ServerStarted:
     {
         ui->btnStopServer->setEnabled(true);
@@ -540,7 +648,7 @@ void ServerWindow::SetServerVisualState(VisualState state)
         ui->btnApply->setEnabled(false);
         break;
     }
-    case VisualState::ServerFinished: // ok
+    case ServerStopped: // ok
     {
         ui->btnStartServer->setEnabled(true);
         ui->btnApply->setEnabled(true);
@@ -549,6 +657,29 @@ void ServerWindow::SetServerVisualState(VisualState state)
         //ui->btnConnectToServer->setEnabled(false);
         ui->btnShowConsole->setEnabled(false);
         ui->btnStopServer->setEnabled(false);
+        break;
+    }
+    case VisualState::ServerInstalling:
+    {
+        ui->btnSteamCMDConsole->setEnabled(true);
+
+        ui->btnInstallServer->setEnabled(false);
+        ui->btnStartServer->setEnabled(false);
+        ui->btnStopServer->setEnabled(false);
+        ui->btnApply->setEnabled(false);
+        ui->chkConsole->setEnabled(false);
+        break;
+    }
+    case ServerFinishedInstalling:
+    {
+        ui->btnInstallServer->setEnabled(true);
+        ui->btnInstallServer->setText((SteamCMDExists() ? "Update" : "Install"));
+        if (SRCDSExists())
+            ui->btnStartServer->setEnabled(true);
+        ServerInstalling = false;
+
+        ui->btnApply->setEnabled(true);
+
         break;
     }
     }

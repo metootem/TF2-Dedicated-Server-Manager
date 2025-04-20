@@ -52,6 +52,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </item>
      <item>
       <widget class="QPushButton" name="btnCancel">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Cancel Download</string>
        </property>

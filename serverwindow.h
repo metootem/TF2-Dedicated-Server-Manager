@@ -20,14 +20,18 @@
 
 #include "settingsdialog.h"
 #include "serverconsoledialog.h"
+#include "filedownloader.h"
 #include "steamcmddialog.h"
 #include "additionalparametersdialog.h"
 #include "selectmapdialog.h"
 
 enum VisualState
 {
-    ServerStarted = 0,
-    ServerFinished,
+    ServerDefault = 0,
+    ServerStarted,
+    ServerStopped,
+    ServerInstalling,
+    ServerFinishedInstalling,
 };
 
 namespace Ui {
@@ -60,10 +64,14 @@ private slots:
     void LoadServerConfig( QDir directory );
     void LoadServerFirstTimeSetup();
     QString GetPublicIP();
+
     bool SteamCMDExists();
+    bool SteamCMDZipExists();
     bool SRCDSExists();
+    void DownloadSteamCMD();
     void InstallSteamCMD();
     void InstallServer();
+    void KillSteamCMDProcess();
 
     void on_listProps_currentRowChanged(int currentRow);
 
@@ -75,7 +83,7 @@ private slots:
 
     void on_btnStopServer_clicked();
 
-    void SetServerVisualState(VisualState state);
+    void SetServerVisualState(VisualState state = ServerDefault);
 
     void on_btnShowConsole_clicked();
 
@@ -96,6 +104,7 @@ private:
     QString PublicIP;
 
     QSettings *IniSettings;
+    QProcess *SteamCMDProcess;
     QProcess *ServerProcess;
     ServerConsoleDialog *ServerConsole;
     SteamCMDDialog *SteamCMDWindow;

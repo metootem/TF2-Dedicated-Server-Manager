@@ -52,6 +52,7 @@ void SteamCMDDialog::InstallFinished()
 
 void SteamCMDDialog::on_btnCancel_clicked()
 {
-    Process->terminate();
+    //Process->kill();
+    emit KillSteamCMDProcess();
 }
 

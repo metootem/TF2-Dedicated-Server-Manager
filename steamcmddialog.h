@@ -19,6 +19,9 @@ public:
 
     ~SteamCMDDialog();
 
+signals:
+    void KillSteamCMDProcess();
+
 public slots:
     void ReadOutput();
     void InstallFinished();
