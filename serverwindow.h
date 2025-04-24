@@ -14,6 +14,7 @@
 #include <QClipboard>
 #include <QSystemTrayIcon>
 #include <QIcon>
+#include <QTreeWidgetItem>
 
 #include <QHostAddress>
 #include <QNetworkInterface>
@@ -24,12 +25,14 @@
 #include "steamcmddialog.h"
 #include "additionalparametersdialog.h"
 #include "selectmapdialog.h"
+#include "configconvardialog.h"
 
 enum VisualState
 {
     ServerDefault = 0,
     ServerStarted,
     ServerStopped,
+    ServerDownloading,
     ServerInstalling,
     ServerFinishedInstalling,
 };
@@ -77,25 +80,40 @@ private slots:
 
     void on_btnApply_clicked();
 
-    void on_btnInstallServer_clicked();
-
-    void on_btnStartServer_clicked();
-
-    void on_btnStopServer_clicked();
-
-    void SetServerVisualState(VisualState state = ServerDefault);
-
     void on_btnShowConsole_clicked();
+    void on_btnSteamCMDConsole_clicked();
 
+    void on_btnInstallServer_clicked();
+    void on_btnStartServer_clicked();
+    void on_btnStopServer_clicked();
     void on_btnConnectToServer_clicked();
 
     void on_btnCopyIp_clicked();
-
-    void on_btnSteamCMDConsole_clicked();
-
     void on_btnParameters_clicked();
-
     void on_btnSelectMap_clicked();
+
+    void SetServerVisualState(VisualState state = ServerDefault);
+
+    void CheckServerConfigFiles();
+    void LoadServerConfigFileData();
+    void AddConfigTreeItem(QString ConVar, QString Value, QString Comment, QTreeWidgetItem* parent = nullptr);
+    QString ServerCfgExample();
+
+    void on_cmbConfigFile_currentTextChanged(const QString &arg1);
+
+    void on_btnAddConVar_clicked();
+
+    void on_btnDelConVar_clicked();
+
+    void on_btnSaveConfig_clicked();
+
+    void on_btnReloadConfig_clicked();
+
+    void on_btnOpenConfig_clicked();
+
+    void on_btnConfigSpecial_clicked();
+
+    void on_btnFindConVar_clicked();
 
 private:
     Ui::ServerWindow *ui;
@@ -110,8 +128,6 @@ private:
     SteamCMDDialog *SteamCMDWindow;
     AdditionalParametersDialog *AdditionalParametersWindow;
 
-    QTimer *ConsoleRefreshRate;
-    int RefreshCount;
 };
 
 #endif // SERVERWINDOW_H

@@ -13,7 +13,8 @@ class FileDownloader : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileDownloader(QUrl fileUrl, QDir dest, QObject *parent = nullptr);
+    explicit FileDownloader(QObject *parent = nullptr);
+    FileDownloader(QUrl, QDir, QObject *parent = nullptr);
 
     void downloadFile(QUrl, QDir);
 
@@ -29,6 +30,7 @@ private slots:
 
 private:
     QNetworkAccessManager *NetAccess;
+    QEventLoop loop;
 
     QFile TargetFile;
 };

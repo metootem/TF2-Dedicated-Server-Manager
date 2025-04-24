@@ -1,5 +1,10 @@
 #include "filedownloader.h"
 
+FileDownloader::FileDownloader(QObject *parent)
+    : QObject{parent}
+{
+}
+
 FileDownloader::FileDownloader(QUrl fileUrl, QDir dest, QObject *parent)
     : QObject{parent}
 {
@@ -16,6 +21,7 @@ void FileDownloader::downloadFile(QUrl fileUrl, QDir dest)
     connect(NetAccess, SIGNAL(finished(QNetworkReply*)), SLOT(fileDownloaded(QNetworkReply*)));
 
     NetAccess->get(QNetworkRequest(fileUrl));
+    loop.exec();
 }
 
 void FileDownloader::errors(QNetworkReply::NetworkError error)
@@ -32,14 +38,17 @@ void FileDownloader::fileDownloaded(QNetworkReply* reply)
         TargetFile.write(reply->readAll());
         TargetFile.flush();
         TargetFile.close();
-        reply->deleteLater();
+        qInfo() << "downloaded file";
+        loop.exit();
         emit finished();
-        this->deleteLater();
     }
     else
     {
         QString error = reply->errorString();
         qInfo() << "Couldn't download file. " << reply->errorString();
+        loop.exit();
         emit ErrorFound(error);
     }
+    reply->deleteLater();
+    this->deleteLater();
 }
