@@ -565,6 +565,13 @@ void ServerWindow::on_btnConnectToServer_clicked()
 }
 
 
+void ServerWindow::on_btnGotoServerFolder_clicked()
+{
+    if (!ui->lineFolderName->text().isEmpty())
+        QDesktopServices::openUrl(QUrl("file://" + ServerFolder));
+}
+
+
 void ServerWindow::on_btnCopyIp_clicked()
 {
     QClipboard *clip = QApplication::clipboard();
@@ -1010,6 +1017,7 @@ void ServerWindow::on_cmbConfigFile_currentTextChanged(const QString &arg1)
 
             ui->treeConfigFileData->setColumnCount(2);
             ui->treeConfigFileData->setHeaderLabels(QStringList() << "ConVar" << "Value");
+            ui->treeConfigFileData->setColumnWidth(0, 200);
 
             ui->btnAddConVar->setEnabled(true);
             ui->btnDelConVar->setEnabled(true);
@@ -1028,6 +1036,8 @@ void ServerWindow::on_cmbConfigFile_currentTextChanged(const QString &arg1)
 
             ui->txtConfigFileData->appendPlainText(file.readAll());
             file.close();
+            ui->txtConfigFileData->verticalScrollBar()->setSliderPosition(ui->txtConfigFileData->verticalScrollBar()->minimum());
+            ui->txtConfigFileData->horizontalScrollBar()->setSliderPosition(ui->txtConfigFileData->horizontalScrollBar()->minimum());
             return;
         }
         else if (arg1.first(8) == "mapcycle")
@@ -1053,6 +1063,7 @@ void ServerWindow::on_cmbConfigFile_currentTextChanged(const QString &arg1)
 
             ui->treeConfigFileData->setColumnCount(2);
             ui->treeConfigFileData->setHeaderLabels(QStringList() << "ConVar" << "Value");
+            ui->treeConfigFileData->setColumnWidth(0, 200);
 
             ui->btnAddConVar->setEnabled(true);
             ui->btnDelConVar->setEnabled(true);

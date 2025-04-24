@@ -15,6 +15,7 @@
 #include <QSystemTrayIcon>
 #include <QIcon>
 #include <QTreeWidgetItem>
+#include <QScrollBar>
 
 #include <QHostAddress>
 #include <QNetworkInterface>
@@ -114,6 +115,8 @@ private slots:
     void on_btnConfigSpecial_clicked();
 
     void on_btnFindConVar_clicked();
+
+    void on_btnGotoServerFolder_clicked();
 
 private:
     Ui::ServerWindow *ui;

@@ -61,6 +61,11 @@ void MainWindow::AddServer(QString servername, QString serverFolder)
         ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::FolderNew));
     else
         ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
+
+    if (!ui->tabServers->count())
+        ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: none;\n	background-color: #2b2b2b;\n}");
+    else
+        ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: 3px solid #cf6a32;\n	background-color: #2b2b2b;\n}");
 }
 
 bool MainWindow::ServerTabExists(QString name)
@@ -185,6 +190,11 @@ void MainWindow::on_tabServers_tabCloseRequested(int index)
 
         ui->tabServers->removeTab(index);
     }
+
+    if (!ui->tabServers->count())
+        ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: none;\n	background-color: #2b2b2b;\n}");
+    else
+        ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: 3px solid #cf6a32;\n	background-color: #2b2b2b;\n}");
 }
 
 void MainWindow::on_tabServers_tabBarDoubleClicked(int index)
