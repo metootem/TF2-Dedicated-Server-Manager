@@ -4,7 +4,7 @@
 SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::SettingsDialog)
-    , Settings("tf2-dsm_config.ini", QSettings::Format::IniFormat)
+    , IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat)
 {
     ui->setupUi(this);
     ui->lblSrvDirError->hide();
@@ -23,26 +23,34 @@ SettingsDialog::~SettingsDialog()
 
 SettingsStruct SettingsDialog::ParseSettings()
 {
-    SettingsStruct settings;
-    settings.valid = true;
-    settings.OS = OS;
+    Settings.valid = true;
+    Settings.OS = OS;
 
-    if (!Settings.contains(tr("%0/server_directory").arg(OS)))
+    if (!IniSettings.contains(tr("%0/color_theme").arg(OS)))
+        IniSettings.setValue(tr("%0/color_theme").arg(OS), "#cf6a32");
+
+    if (!IniSettings.contains(tr("%0/server_directory").arg(OS)))
     {
-        settings.valid = false;
-        Settings.setValue(tr("%0/server_directory").arg(OS), "Input server directory.");
+        Settings.valid = false;
+        IniSettings.setValue(tr("%0/server_directory").arg(OS), "Input server directory.");
     }
-    else if (!QDir(Settings.value(tr("%0/server_directory").arg(OS)).toString()).exists())
+    else if (!QDir(IniSettings.value(tr("%0/server_directory").arg(OS)).toString()).exists())
     {
-        settings.valid = false;
+        Settings.valid = false;
         ui->lblSrvDirError->show();
     }
     else
-        settings.ServerDirectory = Settings.value(tr("%0/server_directory").arg(OS)).toString();
+    {
+        Settings.ColorTheme = IniSettings.value(tr("%0/color_theme").arg(OS)).toString();
+        Settings.ServerDirectory = IniSettings.value(tr("%0/server_directory").arg(OS)).toString();
+    }
 
-    ui->lineSrvDir->setText(Settings.value(tr("%0/server_directory").arg(OS)).toString());
+    colorTheme = IniSettings.value(OS + "/color_theme").toString();
 
-    return settings;
+    ui->btnColor->setStyleSheet(QString("border: 2px solid #232323;\nborder-radius: 0px;\nbackground-color: %0;").arg(colorTheme));
+    ui->lineSrvDir->setText(IniSettings.value(tr("%0/server_directory").arg(OS)).toString());
+
+    return Settings;
 }
 
 void SettingsDialog::on_btnApply_clicked()
@@ -53,17 +61,25 @@ void SettingsDialog::on_btnApply_clicked()
 
     if (!QDir(ui->lineSrvDir->text()).exists() || ui->lineSrvDir->text() == "")
     {
-        ui->lblSrvDirError->show();
-        apply = false;
+        if (Settings.ServerDirectory.absolutePath().isEmpty())
+        {
+            ui->lblSrvDirError->show();
+            apply = false;
+        }
+        else
+            ui->lineSrvDir->setText(Settings.ServerDirectory.absolutePath());
     }
 
     if (apply)
     {
-        Settings.setValue(tr("%0/server_directory").arg(OS), ui->lineSrvDir->text());
-        SettingsStruct settingsstruct;
-        settingsstruct.valid = true;
-        settingsstruct.ServerDirectory = Settings.value(tr("%0/server_directory").arg(OS)).toString();
-        emit SettingsChanged(settingsstruct);
+        Settings.valid = true;
+        Settings.ServerDirectory = ui->lineSrvDir->text();
+        Settings.ColorTheme = colorTheme;
+
+        IniSettings.setValue(tr("%0/server_directory").arg(OS), Settings.ServerDirectory.absolutePath());
+        IniSettings.setValue(tr("%0/color_theme").arg(OS), Settings.ColorTheme);
+
+        emit SettingsChanged(Settings);
         ui->lblApplySuccess->show();
     }
 }
@@ -72,6 +88,25 @@ void SettingsDialog::on_btnApply_clicked()
 void SettingsDialog::on_btnSrvDir_clicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", QDir::currentPath(), QFileDialog::ShowDirsOnly);
-    ui->lineSrvDir->setText(dir);
+    if (!dir.isEmpty())
+        ui->lineSrvDir->setText(dir);
+}
+
+
+void SettingsDialog::on_btnColor_clicked()
+{
+    QColor hex = QColorDialog::getColor(QColor(colorTheme), this, tr("Select Color"));
+
+    if (!hex.isValid())
+        return;
+    ui->btnColor->setStyleSheet(QString("border: 2px solid #232323;\nborder-radius: 0px;\nbackground-color: %0;").arg(hex.name()));
+    colorTheme = hex.name();
+}
+
+
+void SettingsDialog::on_btnColorDefault_clicked()
+{
+    ui->btnColor->setStyleSheet(QString("border: 2px solid #232323;\nborder-radius: 0px;\nbackground-color: #cf6a32;"));
+    colorTheme = "#cf6a32";
 }
 

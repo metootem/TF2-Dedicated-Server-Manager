@@ -6,12 +6,15 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QSettings>
+#include <QColorDialog>
 
 struct SettingsStruct{
     bool valid;
 
     QString OS;
     QDir ServerDirectory;
+
+    QString ColorTheme;
 };
 
 namespace Ui {
@@ -37,10 +40,18 @@ private slots:
 
     void on_btnSrvDir_clicked();
 
+    void on_btnColor_clicked();
+
+    void on_btnColorDefault_clicked();
+
 private:
     Ui::SettingsDialog *ui;
-    QSettings Settings;
+
+    SettingsStruct Settings;
+    QSettings IniSettings;
     QString OS;
+
+    QString colorTheme;
 };
 
 #endif // SETTINGSDIALOG_H

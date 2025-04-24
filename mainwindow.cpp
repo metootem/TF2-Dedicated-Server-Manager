@@ -27,6 +27,9 @@ bool MainWindow::LoadConfig()
         connect(settingsDialog, &SettingsDialog::SettingsChanged, this, &MainWindow::SettingsChanged);
         return false;
     }
+
+    LoadStyles(Settings.ColorTheme);
+
     ServerDir = QDir(Settings.ServerDirectory);
     RefreshServerTab();
     return true;
@@ -34,8 +37,41 @@ bool MainWindow::LoadConfig()
 
 void MainWindow::SettingsChanged( SettingsStruct settings )
 {
+    Settings = settings;
+
+    LoadStyles(settings.ColorTheme);
+
     ServerDir = settings.ServerDirectory;
     RefreshServerTab();
+
+    emit PassSettingsChanged(settings);
+}
+
+void MainWindow::LoadStyles(QString colorTheme)
+{
+
+    this->setStyleSheet(QString("QTabBar::tab {\n	"
+                                "border: 0px solid;\n	"
+                                "background-color: #2b2b2b;\n"
+                                "padding: 5px;\n"
+                                "border-top-left-radius: 3px;\n"
+                                "border-top-right-radius: 3px;\n}\n\n"
+                                "QTabBar::tab:selected {\n"
+                                "background-color: %0;\n}\n\n"
+                                "QPushButton {\n	"
+                                "border: none;\n"
+                                "border-bottom: 3px solid %0;\n"
+                                "background-color: #2b2b2b;\n"
+                                "font: 13pt \"Noto Sans\";\n}\n\n"
+                                "QPushButton::hover {\n"
+                                "background-color: %1;\n}\n"
+                                "QPushButton::pressed {\n"
+                                "background-color: %2;\n}").arg(colorTheme, QColor(colorTheme).lighter(130).name(), QColor(colorTheme).darker(130).name()));
+
+    if (!ui->tabServers->count())
+        ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: none;\n	background-color: #2b2b2b;\n}");
+    else
+        ui->tabServers->setStyleSheet(QString("QTabWidget::pane {\n	border: 3px solid %0;\n	background-color: #2b2b2b;\n}").arg(colorTheme));
 }
 
 
@@ -53,6 +89,8 @@ void MainWindow::AddServer(QString servername, QString serverFolder)
     auto newServerWindow = new ServerWindow(this, name, serverFolder);
     int index = ui->tabServers->addTab(newServerWindow, name);
 
+    connect(this, SIGNAL(PassSettingsChanged(SettingsStruct)), newServerWindow, SLOT(SettingsChanged(SettingsStruct)));
+
     connect(newServerWindow, SIGNAL(ServerApplied(QString)), this, SLOT(ServerApplied(QString)));
     connect(newServerWindow, SIGNAL(ServerActivated()), this, SLOT(ServerActivated()));
     connect(newServerWindow, SIGNAL(ServerDeactivated()), this, SLOT(ServerDeactivated()));
@@ -65,7 +103,7 @@ void MainWindow::AddServer(QString servername, QString serverFolder)
     if (!ui->tabServers->count())
         ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: none;\n	background-color: #2b2b2b;\n}");
     else
-        ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: 3px solid #cf6a32;\n	background-color: #2b2b2b;\n}");
+        ui->tabServers->setStyleSheet(QString("QTabWidget::pane {\n	border: 3px solid %0;\n	background-color: #2b2b2b;\n}").arg(Settings.ColorTheme));
 }
 
 bool MainWindow::ServerTabExists(QString name)
@@ -114,11 +152,7 @@ void MainWindow::RefreshServerTab()
                 continue;
 
             AddServer(IniSettings.value(tr("%0/nick").arg(file.fileName())).toString(), file.filePath());
-            //ServerWindow *newServerWindow = new ServerWindow(this, "", file.filePath());
-            //ui->tabServers->addTab(newServerWindow, IniSettings.value(tr("%0/nick").arg(file.fileName())).toString());
             ui->tabServers->setCurrentIndex(ui->tabServers->count()-1);
-
-            //connect(newServerWindow, &ServerWindow::ServerApplied, this, &MainWindow::ServerApplied);
         }
     }
 }

@@ -36,8 +36,11 @@ public slots:
     void ServerApplied( QString ServerFolder );
 
 signals:
+    void PassSettingsChanged( SettingsStruct Settings );
 
 private slots:
+    void LoadStyles(QString colorTheme);
+
     void on_btnAddServer_clicked();
 
     void AddServer(QString name, QString serverFolder);

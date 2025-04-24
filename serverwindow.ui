@@ -1399,6 +1399,10 @@
       <string notr="true">QListWidget {
 	border: none;
 border-left: 3px solid #cf6a32;
+}
+
+QListWidget::item:selected {
+	background-color: #cf6a32;
 }</string>
      </property>
      <property name="selectionBehavior">

@@ -28,6 +28,9 @@ ServerWindow::ServerWindow(QWidget *parent, QString name, QString directory)
     if (OS != "windows" && OS != "macos")
         OS = "linux";
 
+    QSettings mainIniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
+    LoadStyles(mainIniSettings.value(OS + "/color_theme").toString());
+
     SteamCMDProcess = nullptr;
     ServerProcess = nullptr;
     SteamCMDWindow = nullptr;
@@ -40,6 +43,16 @@ ServerWindow::ServerWindow(QWidget *parent, QString name, QString directory)
 ServerWindow::~ServerWindow()
 {
     delete ui;
+}
+
+void ServerWindow::SettingsChanged(SettingsStruct Settings)
+{
+    LoadStyles(Settings.ColorTheme);
+}
+
+void ServerWindow::LoadStyles(QString colorTheme)
+{
+    ui->listProps->setStyleSheet(QString("QListWidget {\n	border: none;\nborder-left: 3px solid %0;\n}\n\nQListWidget::item:selected {\n	background-color: %0;\n}").arg(colorTheme));
 }
 
 void ServerWindow::LoadServerConfig(QDir directory)

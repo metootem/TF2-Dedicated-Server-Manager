@@ -56,6 +56,7 @@ public:
     ~ServerWindow();
 
 public slots:
+    void SettingsChanged(SettingsStruct Settings);
     void InstallServerFinished();
 
 signals:
@@ -65,6 +66,7 @@ signals:
     void ServerDeactivated();
 
 private slots:
+    void LoadStyles( QString colorTheme );
     void LoadServerConfig( QDir directory );
     void LoadServerFirstTimeSetup();
     QString GetPublicIP();
