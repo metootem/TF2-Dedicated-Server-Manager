@@ -86,6 +86,7 @@ void MainWindow::AddServer(QString servername, QString serverFolder)
             name = tr("%0 %1").arg(servername).arg(found_count, 1);
     } while (ServerTabExists(name));
 
+    qInfo() << "Adding Server Tab: " + name;
     auto newServerWindow = new ServerWindow(this, name, serverFolder);
     int index = ui->tabServers->addTab(newServerWindow, name);
 

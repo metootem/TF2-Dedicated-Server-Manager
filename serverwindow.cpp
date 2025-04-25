@@ -18,10 +18,11 @@ ServerWindow::ServerWindow(QWidget *parent, QString name, QString directory)
     ui->PropsConfigs->hide();
     ui->lblFolderError->hide();
 
-    IniSettings = new QSettings(tr("%0/server.ini").arg(directory), QSettings::Format::IniFormat);
-
     if (!directory.isEmpty())
+    {
+        IniSettings = new QSettings(tr("%0/server.ini").arg(directory), QSettings::Format::IniFormat);
         LoadServerConfig(QDir(directory));
+    }
     else
         LoadServerFirstTimeSetup();
     OS = QSysInfo::productType();
@@ -80,6 +81,10 @@ void ServerWindow::LoadServerConfig(QDir directory)
 
 void ServerWindow::LoadServerFirstTimeSetup()
 {
+    qInfo() << "First time setup.";
+
+    AdditionalParametersWindow = new AdditionalParametersDialog(this);
+
     AdditionalParametersWindow->FirstTimeSetup();
 }
 
@@ -370,6 +375,9 @@ void ServerWindow::on_btnApply_clicked()
             return;
         }
         ServerFolder = tr("%0/%1").arg(settings.ServerDirectory.path()).arg(ui->lineFolderName->text(), 1);
+
+        if (IniSettings == nullptr)
+            IniSettings = new QSettings(ServerFolder + "/server.ini", QSettings::Format::IniFormat);
 
         IniSettings->setValue("server_name", ui->lineServerName->text());
         IniSettings->setValue("ip", ui->lineIP->text());
