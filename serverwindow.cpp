@@ -403,22 +403,23 @@ void ServerWindow::on_btnStartServer_clicked()
 {
     QString Command;
     if (OS == "linux")
-        Command = tr("%0/Server/srcds_run").arg(ServerFolder);
+        Command = QString("%0/Server/srcds_run").arg(ServerFolder);
     else
-        Command = tr("%0/Server/srcds.exe").arg(ServerFolder);
+        Command = QString("%0/Server/srcds.exe").arg(ServerFolder);
 
     QStringList args = {"-game tf", "-console"};
 
-    args << tr("+ip %0").arg(ui->lineIP->text());
-    args << tr("-port %0").arg(ui->linePort->text());
+    args << QString("+ip %0").arg(ui->lineIP->text());
+    args << QString("-port %0").arg(ui->linePort->text());
+    args << QString("+maxplayers %0").arg(ui->spinMaxPlayers->value());
 
     if (ui->lineMap->text().isEmpty())
         args << "+randommap";
     else
-        args << tr("+map %0").arg(ui->lineMap->text());
+        args << QString("+map %0").arg(ui->lineMap->text());
 
     if (!ui->lineServerName->text().isEmpty())
-        args << "+hostname \"" + ui->lineServerName->text() + "\"";
+        args << QString("+hostname \"%0\"").arg(ui->lineServerName->text());
 
     QStringList additionalParams = AdditionalParametersWindow->GetParameters();
     for (int i = 2; i < additionalParams.count(); i+=3)
@@ -433,15 +434,15 @@ void ServerWindow::on_btnStartServer_clicked()
         }
     }
 
-    qInfo() << Command;
-    qInfo() << args;
+    qInfo() << "Running srcds: " + Command;
+    qInfo() << "Arguments: " << args;
 
     auto Process = new QProcess(this);
 
     ServerProcess = Process;
 
     Process->setProcessChannelMode(QProcess::MergedChannels);
-    Process->setWorkingDirectory(tr("%0/Server").arg(ServerFolder));
+    Process->setWorkingDirectory(QString("%0/Server").arg(ServerFolder));
 
     //QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     //env.insert("LD_LIBRARY_PATH", ".:bin:" + env.value("LD_LIBRARY_PATH"));
@@ -460,7 +461,7 @@ void ServerWindow::on_btnStartServer_clicked()
             {
                 if (Process->startDetached(term, QStringList() << "-e" << Command << args))
                 {
-                    qInfo() << term;
+                    qInfo() << "Found terminal: " + term;
                     started = true;
                     break;
                 }
