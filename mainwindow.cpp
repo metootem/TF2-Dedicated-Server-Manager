@@ -147,12 +147,20 @@ void MainWindow::RefreshServerTab()
     QFileInfoList fileList = ServerDir.entryInfoList(QDir::Filter::Dirs);
     for (QFileInfo file : fileList)
     {
-        if (QFile(tr("%0/server.ini").arg(file.filePath())).exists())
+        if (QFile(QString("%0/server.ini").arg(file.absoluteFilePath())).exists())
         {
-            if (ServerTabExists(IniSettings.value(tr("%0/nick").arg(file.fileName())).toString()) || IniSettings.value(tr("%0/os").arg(file.fileName())).toString() != OS)
+            QSettings fileIniSettings(QString("%0/server.ini").arg(file.absoluteFilePath()), QSettings::IniFormat);
+            QString serverNick = IniSettings.value(QString("%0/nick").arg(file.fileName())).toString();
+            if (ServerTabExists(serverNick) || fileIniSettings.value("os").toString() != OS)
+            {
+                qInfo() << ServerTabExists(IniSettings.value(QString("%0/nick").arg(file.fileName())).toString());
+                qInfo() << (IniSettings.value(QString("%0/os").arg(file.fileName())).toString() != OS);
                 continue;
+            }
 
-            AddServer(IniSettings.value(tr("%0/nick").arg(file.fileName())).toString(), file.filePath());
+            if (serverNick.isEmpty())
+                serverNick = file.fileName();
+            AddServer(serverNick, file.filePath());
             ui->tabServers->setCurrentIndex(ui->tabServers->count()-1);
         }
     }

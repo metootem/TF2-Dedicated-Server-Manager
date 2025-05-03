@@ -332,24 +332,11 @@
            <number>0</number>
           </property>
           <item>
-           <spacer name="horizontalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Orientation::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
            <layout class="QGridLayout" name="gridLayout_2">
             <property name="spacing">
              <number>2</number>
             </property>
-            <item row="1" column="1">
+            <item row="1" column="2">
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <property name="spacing">
                <number>7</number>
@@ -403,7 +390,7 @@
               </item>
              </layout>
             </item>
-            <item row="1" column="0">
+            <item row="1" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <property name="spacing">
                <number>7</number>
@@ -451,7 +438,7 @@
               </item>
              </layout>
             </item>
-            <item row="1" column="2">
+            <item row="1" column="3">
              <widget class="QCheckBox" name="chkConsole">
               <property name="enabled">
                <bool>false</bool>
@@ -464,7 +451,7 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="2">
+            <item row="0" column="3">
              <widget class="QPushButton" name="btnStopServer">
               <property name="enabled">
                <bool>false</bool>
@@ -487,28 +474,6 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QPushButton" name="btnStartServer">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>50</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>150</width>
-                <height>50</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Start</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
              <widget class="QPushButton" name="btnInstallServer">
               <property name="minimumSize">
                <size>
@@ -527,7 +492,7 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="3">
+            <item row="0" column="4">
              <layout class="QVBoxLayout" name="verticalLayout_3">
               <property name="rightMargin">
                <number>0</number>
@@ -572,7 +537,49 @@
               </item>
              </layout>
             </item>
+            <item row="0" column="2">
+             <widget class="QPushButton" name="btnStartServer">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Start</string>
+              </property>
+             </widget>
+            </item>
            </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item>
            <widget class="QLabel" name="lblFolderError">
@@ -615,7 +622,7 @@
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_4">
+           <spacer name="horizontalSpacer_5">
             <property name="orientation">
              <enum>Qt::Orientation::Horizontal</enum>
             </property>

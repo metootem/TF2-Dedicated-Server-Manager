@@ -385,7 +385,7 @@ void ServerWindow::on_btnApply_clicked()
         IniSettings->setValue("players", ui->spinMaxPlayers->value());
         IniSettings->setValue("map", ui->lineMap->text());
         IniSettings->setValue("parameters", AdditionalParametersWindow->GetParameters());
-        //IniSettings->setValue("os", OS);
+        IniSettings->setValue("os", OS);
 
         if (QSystemTrayIcon::isSystemTrayAvailable())
         {
