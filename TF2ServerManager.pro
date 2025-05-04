@@ -10,39 +10,47 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    additionalparametersdialog.cpp \
-    configconvardialog.cpp \
-    filedownloader.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    selectmapdialog.cpp \
-    serverconsoledialog.cpp \
-    serverwindow.cpp \
-    settingsdialog.cpp \
-    steamcmddialog.cpp
+    source/additionalparametersdialog.cpp \
+    source/configconvardialog.cpp \
+    source/filedownloader.cpp \
+    source/main.cpp \
+    source/mainwindow.cpp \
+    source/selectmapdialog.cpp \
+    source/serverconsoledialog.cpp \
+    source/serverwindow.cpp \
+    source/settingsdialog.cpp \
+    source/steamcmddialog.cpp \
 
 HEADERS += \
-    additionalparametersdialog.h \
-    configconvardialog.h \
-    filedownloader.h \
-    mainwindow.h \
-    selectmapdialog.h \
-    serverconsoledialog.h \
-    serverwindow.h \
-    settingsdialog.h \
-    steamcmddialog.h
+    source/additionalparametersdialog.h \
+    source/configconvardialog.h \
+    source/filedownloader.h \
+    source/mainwindow.h \
+    source/selectmapdialog.h \
+    source/serverconsoledialog.h \
+    source/serverwindow.h \
+    source/settingsdialog.h \
+    source/steamcmddialog.h \
 
 FORMS += \
-    additionalparametersdialog.ui \
-    configconvardialog.ui \
-    mainwindow.ui \
-    selectmapdialog.ui \
-    serverconsoledialog.ui \
-    serverwindow.ui \
-    settingsdialog.ui \
-    steamcmddialog.ui
+    ui/additionalparametersdialog.ui \
+    ui/configconvardialog.ui \
+    ui/mainwindow.ui \
+    ui/selectmapdialog.ui \
+    ui/serverconsoledialog.ui \
+    ui/serverwindow.ui \
+    ui/settingsdialog.ui \
+    ui/steamcmddialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    Resources/Images/tf2dsm_logo.png \
+    Resources/Images/tf2dsm_logo.png.kra \
+    Resources/Palettes/MainPalette.xml
+
+RESOURCES += \
+    resources.qrc

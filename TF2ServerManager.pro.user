@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 16.0.1, 2025-05-03T16:11:21. -->
+<!-- Written by QtCreator 16.0.1, 2025-05-04T21:14:19. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -141,8 +141,8 @@
     <value type="int" key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration">2</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.1">
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/michal/Qt/Projects/TF2-Dedicated-Server-Manager/build/Release</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/home/michal/Qt/Projects/TF2-Dedicated-Server-Manager/build/Release</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/michal/Qt/Projects/TF2-Dedicated-Server-Manager/build/Release/usr/bin</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/home/michal/Qt/Projects/TF2-Dedicated-Server-Manager/build/Release/usr/bin</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -255,7 +255,7 @@
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/michal/Qt/Projects/TF2-Dedicated-Server-Manager/build/Release</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/michal/Qt/Projects/TF2-Dedicated-Server-Manager/build/Release/usr/bin</value>
    </valuemap>
    <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>
