@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     OS = QSysInfo::productType();
     if (OS != "windows" && OS != "macos")
         OS = "linux";
+    IniSettings = new QSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
 }
 
 MainWindow::~MainWindow()
@@ -111,22 +112,23 @@ bool MainWindow::ServerTabExists(QString name)
 {
     for (int i=0; i<ui->tabServers->count(); i++)
     {
+        qInfo() << ui->tabServers->tabText(i) << name;
         if (ui->tabServers->tabText(i) == name)
             return true;
+        qInfo() << "notfound";
     }
     return false;
 }
 
 void MainWindow::ServerApplied(QString ServerFolder)
 {
-    QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
     QString folder = QDir(ServerFolder).dirName();
     int index = ui->tabServers->currentIndex();
 
     ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
 
-    IniSettings.setValue(tr("%0/nick").arg(folder), ui->tabServers->tabText(index));
-    IniSettings.setValue(tr("%0/os").arg(folder), OS);
+    IniSettings->setValue(tr("%0/nick").arg(folder), ui->tabServers->tabText(index));
+    IniSettings->setValue(tr("%0/os").arg(folder), OS);
 }
 
 void MainWindow::ServerActivated()
@@ -143,25 +145,27 @@ void MainWindow::ServerDeactivated()
 
 void MainWindow::RefreshServerTab()
 {
-    QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
     QFileInfoList fileList = ServerDir.entryInfoList(QDir::Filter::Dirs);
     for (QFileInfo file : fileList)
     {
         if (QFile(QString("%0/server.ini").arg(file.absoluteFilePath())).exists())
         {
             QSettings fileIniSettings(QString("%0/server.ini").arg(file.absoluteFilePath()), QSettings::IniFormat);
-            QString serverNick = IniSettings.value(QString("%0/nick").arg(file.fileName())).toString();
+            QString serverNick = IniSettings->value(QString("%0/nick").arg(file.fileName())).toString();
             if (ServerTabExists(serverNick) || fileIniSettings.value("os").toString() != OS)
             {
-                qInfo() << ServerTabExists(IniSettings.value(QString("%0/nick").arg(file.fileName())).toString());
-                qInfo() << (IniSettings.value(QString("%0/os").arg(file.fileName())).toString() != OS);
+                qInfo() << ServerTabExists(IniSettings->value(QString("%0/nick").arg(file.fileName())).toString());
+                qInfo() << (IniSettings->value(QString("%0/os").arg(file.fileName())).toString() != OS);
                 continue;
             }
+            qInfo() << ServerTabExists(serverNick);
+            qInfo() << (fileIniSettings.value("os").toString() != OS);
 
             if (serverNick.isEmpty())
                 serverNick = file.fileName();
             AddServer(serverNick, file.filePath());
             ui->tabServers->setCurrentIndex(ui->tabServers->count()-1);
+            ServerApplied(file.absoluteFilePath());
         }
     }
 }
@@ -216,8 +220,7 @@ void MainWindow::on_tabServers_tabCloseRequested(int index)
             QDir dir(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder);
             dir.removeRecursively();
 
-            QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
-            IniSettings.remove(dir.dirName());
+            IniSettings->remove(dir.dirName());
 
             ui->tabServers->removeTab(index);
         }
@@ -228,8 +231,7 @@ void MainWindow::on_tabServers_tabCloseRequested(int index)
         serverFile.remove();
 
         QString folder = QDir(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder).dirName();
-        QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
-        IniSettings.remove(folder);
+        IniSettings->remove(folder);
 
         ui->tabServers->removeTab(index);
     }
@@ -252,8 +254,7 @@ void MainWindow::on_tabServers_tabBarDoubleClicked(int index)
     QString ServerFolder = ((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder;
     if (ServerFolder.isEmpty())
         return;
-    QSettings IniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
-    IniSettings.setValue(tr("%0/nick").arg(QDir(ServerFolder).dirName()), servername);
-    IniSettings.setValue(tr("%0/os").arg(QDir(ServerFolder).dirName()), OS);
+    IniSettings->setValue(tr("%0/nick").arg(QDir(ServerFolder).dirName()), servername);
+    IniSettings->setValue(tr("%0/os").arg(QDir(ServerFolder).dirName()), OS);
 }
 

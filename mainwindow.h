@@ -61,6 +61,7 @@ private:
     QString OS;
     SettingsStruct Settings;
     QDir ServerDir;
+    QSettings *IniSettings;
 
     //QSettings Settings;
 };
