@@ -9,6 +9,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     ui->setupUi(this);
     ui->lblSrvDirError->hide();
     ui->lblApplySuccess->hide();
+    ui->lblTip->hide();
     OS = QSysInfo::productType();
     if (OS != "windows" && OS != "macos")
         OS = "linux";
@@ -33,11 +34,13 @@ SettingsStruct SettingsDialog::ParseSettings()
     {
         Settings.valid = false;
         IniSettings.setValue(tr("%0/server_directory").arg(OS), "Input server directory.");
+        ui->lblTip->show();
     }
     else if (!QDir(IniSettings.value(tr("%0/server_directory").arg(OS)).toString()).exists())
     {
         Settings.valid = false;
         ui->lblSrvDirError->show();
+        ui->lblTip->show();
     }
     else
     {
@@ -58,12 +61,14 @@ void SettingsDialog::on_btnApply_clicked()
     bool apply = true;
     ui->lblSrvDirError->hide();
     ui->lblApplySuccess->hide();
+    ui->lblTip->hide();
 
     if (!QDir(ui->lineSrvDir->text()).exists() || ui->lineSrvDir->text() == "")
     {
         if (Settings.ServerDirectory.absolutePath().isEmpty())
         {
             ui->lblSrvDirError->show();
+            ui->lblTip->show();
             apply = false;
         }
         else

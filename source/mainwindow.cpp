@@ -112,10 +112,8 @@ bool MainWindow::ServerTabExists(QString name)
 {
     for (int i=0; i<ui->tabServers->count(); i++)
     {
-        qInfo() << ui->tabServers->tabText(i) << name;
         if (ui->tabServers->tabText(i) == name)
             return true;
-        qInfo() << "notfound";
     }
     return false;
 }
@@ -154,12 +152,8 @@ void MainWindow::RefreshServerTab()
             QString serverNick = IniSettings->value(QString("%0/nick").arg(file.fileName())).toString();
             if (ServerTabExists(serverNick) || fileIniSettings.value("os").toString() != OS)
             {
-                qInfo() << ServerTabExists(IniSettings->value(QString("%0/nick").arg(file.fileName())).toString());
-                qInfo() << (IniSettings->value(QString("%0/os").arg(file.fileName())).toString() != OS);
                 continue;
             }
-            qInfo() << ServerTabExists(serverNick);
-            qInfo() << (fileIniSettings.value("os").toString() != OS);
 
             if (serverNick.isEmpty())
                 serverNick = file.fileName();
