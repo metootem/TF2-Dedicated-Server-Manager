@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>resources/Images/tf2dsm_logo.png</file>
+    </qresource>
+    <qresource prefix="/palettes">
+        <file>resources/Palettes/MainPalette.xml</file>
+    </qresource>
+</RCC>
