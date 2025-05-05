@@ -5,4 +5,7 @@
     <qresource prefix="/palettes">
         <file>resources/Palettes/MainPalette.xml</file>
     </qresource>
+    <qresource prefix="/">
+        <file>tf2dsm.ico</file>
+    </qresource>
 </RCC>

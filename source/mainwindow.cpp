@@ -56,18 +56,23 @@ void MainWindow::LoadStyles(QString colorTheme)
                                 "background-color: #2b2b2b;\n"
                                 "padding: 5px;\n"
                                 "border-top-left-radius: 3px;\n"
-                                "border-top-right-radius: 3px;\n}\n\n"
+                                "border-top-right-radius: 3px;\n"
+                                "color: #ffffff;\n}\n\n"
                                 "QTabBar::tab:selected {\n"
                                 "background-color: %0;\n}\n\n"
                                 "QPushButton {\n	"
                                 "border: none;\n"
                                 "border-bottom: 3px solid %0;\n"
                                 "background-color: #2b2b2b;\n"
-                                "font: 13pt \"Noto Sans\";\n}\n\n"
+                                "font: 13pt \"Noto Sans\";\n"
+                                "color: #ffffff\n}\n\n"
                                 "QPushButton::hover {\n"
                                 "background-color: %1;\n}\n"
                                 "QPushButton::pressed {\n"
-                                "background-color: %2;\n}").arg(colorTheme, QColor(colorTheme).lighter(130).name(), QColor(colorTheme).darker(130).name()));
+                                "background-color: %2;\n}\n"
+                                "QPushButton:disabled {\n"
+                                "color: #3b3b3b;"
+                                "\n}\n").arg(colorTheme, QColor(colorTheme).lighter(130).name(), QColor(colorTheme).darker(130).name()));
 
     if (!ui->tabServers->count())
         ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: none;\n	background-color: #2b2b2b;\n}");

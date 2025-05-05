@@ -505,7 +505,7 @@ void ServerWindow::on_btnStartServer_clicked()
 
 }
 
-
+/*
 void ServerWindow::on_btnStopServer_clicked()
 {
     if (ServerProcess->state() == QProcess::ProcessState::Running)
@@ -546,7 +546,7 @@ void ServerWindow::on_btnStopServer_clicked()
         emit ServerDeactivated();
     }
     SetServerVisualState(VisualState::ServerStopped);
-}
+}*/
 
 
 void ServerWindow::on_btnShowConsole_clicked()

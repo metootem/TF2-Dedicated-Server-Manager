@@ -54,3 +54,5 @@ DISTFILES += \
 
 RESOURCES += \
     resources.qrc
+
+RC_ICONS = tf2dsm.ico

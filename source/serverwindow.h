@@ -88,7 +88,7 @@ private slots:
 
     void on_btnInstallServer_clicked();
     void on_btnStartServer_clicked();
-    void on_btnStopServer_clicked();
+    //void on_btnStopServer_clicked();
     void on_btnConnectToServer_clicked();
 
     void on_btnCopyIp_clicked();
