@@ -58,6 +58,7 @@ void AdditionalParametersDialog::AddParameter(QString param, QString val, Qt::Ch
     parameter->setCheckState(2, state);
     parameter->setFlags(parameter->flags() | Qt::ItemIsEditable);
     ui->treeParameters->addTopLevelItem(parameter);
+    qInfo() << "Adding parameter:" << param;
 }
 
 void AdditionalParametersDialog::on_btnAddParameter_clicked()

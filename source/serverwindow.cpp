@@ -25,11 +25,13 @@ ServerWindow::ServerWindow(QWidget *parent, QString name, QString directory)
     }
     else
         LoadServerFirstTimeSetup();
+
     OS = QSysInfo::productType();
     if (OS != "windows" && OS != "macos")
         OS = "linux";
 
     QSettings mainIniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
+    qInfo() << "Loading Main Ini Settings.";
     LoadStyles(mainIniSettings.value(OS + "/color_theme").toString());
 
     SteamCMDProcess = nullptr;
@@ -54,6 +56,7 @@ void ServerWindow::SettingsChanged(SettingsStruct Settings)
 void ServerWindow::LoadStyles(QString colorTheme)
 {
     ui->listProps->setStyleSheet(QString("QListWidget {\n	border: none;\nborder-left: 3px solid %0;\n}\n\nQListWidget::item:selected {\n	background-color: %0;\n}").arg(colorTheme));
+    qInfo() << "Updated Styles.";
 }
 
 void ServerWindow::LoadServerConfig(QDir directory)
@@ -96,6 +99,7 @@ QString ServerWindow::GetPublicIP()
     GetIP.waitForFinished();
     QString IP = GetIP.readAllStandardOutput();
     GetIP.terminate();
+    qInfo() << "Got Public IP:" << IP;
     return IP;
 }
 
@@ -191,13 +195,6 @@ void ServerWindow::InstallSteamCMD()
     else if (OS == "linux")
         SteamCMDFile = "steamcmd_linux.tar.gz";
 
-    if (!SteamCMDZipExists())
-    {
-        qInfo() << "SteamCMD zip couldn't be found. Aborting installation.";
-        SetServerVisualState();
-        return;
-    }
-
     if (OS == "linux")
     {
         QMessageBox msgBox(QMessageBox::Icon::Question, "",
@@ -220,8 +217,11 @@ void ServerWindow::InstallSteamCMD()
 
     if (!unpack.waitForFinished())
     {
-        qInfo() << "There's been an error unpacking steamcmd: " << unpack.error();
+        qInfo() << "There was an error unpacking steamcmd: " << unpack.errorString();
         qInfo() << "Aborting installation.";
+        QMessageBox msgBox(QMessageBox::Icon::Critical, "Error",
+                           tr("There was an error unpacking steamcmd: %0.").arg(unpack.errorString()), {}, this);
+        msgBox.show();
         SetServerVisualState();
         return;
     }
@@ -233,6 +233,18 @@ void ServerWindow::InstallSteamCMD()
         QProcess::execute("ln", QStringList() << "-s" << SteamCMDPath + "/linux32/steamclient.so" << "~/.steam/sdk32");
 
         QProcess::execute("ln", QStringList() << "-s" << "/usr/lib/libcurl.so.4" << "/usr/lib/libcurl-gnutls.so.4");
+    }
+    else if (OS == "windows")
+    {
+        unpack.start("steamcmd.exe");
+        if (unpack.waitForFinished())
+        {
+            qInfo() << "There was an error installing SteamCMD files:" << unpack.errorString();
+            QMessageBox msgBox(QMessageBox::Icon::Critical, "Error",
+                               tr("There was an error installing SteamCMD files: %0.").arg(unpack.errorString()), {}, this);
+            msgBox.show();
+            return;
+        }
     }
 
     InstallServer();
@@ -250,17 +262,18 @@ void ServerWindow::InstallServer()
 */
     SetServerVisualState(VisualState::ServerInstalling);
 
-    SteamCMDProcess = new QProcess(this);
-    SteamCMDProcess->setWorkingDirectory(ServerFolder + "/SteamCMD");
-    SteamCMDProcess->setProcessChannelMode(QProcess::MergedChannels);
+    qInfo() << SteamCMDProcess;
+    if (SteamCMDProcess == nullptr)
+    {
+        SteamCMDProcess = new QProcess(this);
+        SteamCMDProcess->setWorkingDirectory(ServerFolder + "/SteamCMD");
+        SteamCMDProcess->setProcessChannelMode(QProcess::MergedChannels);
+    }
 
     if (SteamCMDWindow == nullptr)
         SteamCMDWindow = new SteamCMDDialog(this, SteamCMDProcess, QDir(ServerFolder).dirName());
     else
         SteamCMDWindow->NewProcess(SteamCMDProcess);
-
-    if (SteamCMDWindow->isHidden())
-        SteamCMDWindow->show();
 
     connect(SteamCMDWindow, SIGNAL(KillSteamCMDProcess()), SLOT(KillSteamCMDProcess()));
 
@@ -285,14 +298,40 @@ void ServerWindow::InstallServer()
     betaList << "+quit";
 
     if (OS == "linux")
-    {
         SteamCMDProcess->start("./steamcmd.sh", QStringList() << "+force_install_dir" << ServerFolder + "/Server" << "+login" << "anonymous" << "+app_update" << "232250" << betaList);
-    }
     else if (OS == "windows")
-        SteamCMDProcess->start("./steamcmd.exe", QStringList() << "+force_install_dir" << ServerFolder + "/Server" << "+login" << "anonymous" << "+app_update" << "232250" << betaList);
+        SteamCMDProcess->start(QString("%0/SteamCMD/steamcmd.exe").arg(ServerFolder), QStringList() << "+force_install_dir" << ServerFolder + "/Server" << "+login" << "anonymous" << "+app_update" << "232250" << betaList);
 
-    SteamCMDProcess->waitForStarted();
-    connect(SteamCMDProcess, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(InstallServerFinished()));
+    qInfo() << QFile(QString("%0/steamcmd.exe").arg(ServerFolder + "/SteamCMD")).exists();
+    if (SteamCMDProcess->waitForStarted())
+    {
+        if (SteamCMDWindow->isHidden())
+            SteamCMDWindow->show();
+        connect(SteamCMDProcess, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(InstallServerFinished()));
+    }
+    else
+    {
+        if (OS == "windows")
+        {
+            SteamCMDProcess->start(QString("%0/SteamCMD/steamcmd.exe").arg(ServerFolder));
+            if (!SteamCMDProcess->waitForFinished())
+            {
+                qInfo() << "There was an error installing the server:" << SteamCMDProcess->errorString();
+                QMessageBox msgBox(QMessageBox::Icon::Critical, "Error",
+                                   tr("Couldn't run SteamCMD. Error: %0").arg(SteamCMDProcess->errorString()), {}, this);
+                msgBox.exec();
+                return;
+            }
+            else
+                InstallServer();
+        }
+        qInfo() << "Couldn't run steamcmd installation.";
+        delete SteamCMDWindow;
+        SetServerVisualState();
+        QMessageBox msgBox(QMessageBox::Icon::Critical, "Error",
+                           tr("Couldn't run SteamCMD. Error: %0").arg(SteamCMDProcess->errorString()), {}, this);
+        msgBox.exec();
+    }
 }
 
 void ServerWindow::KillSteamCMDProcess()
@@ -303,6 +342,7 @@ void ServerWindow::KillSteamCMDProcess()
 
 void ServerWindow::InstallServerFinished()
 {
+    SteamCMDProcess->deleteLater();
     SetServerVisualState();
 
     QFile serverCfg(ServerFolder + "/Server/tf/cfg/server.cfg");
@@ -407,19 +447,19 @@ void ServerWindow::on_btnStartServer_clicked()
     else
         Command = QString("%0/Server/srcds.exe").arg(ServerFolder);
 
-    QStringList args = {"-game tf", "-console"};
+    QStringList args = {"-console", "-game", "tf"};
 
-    args << QString("+ip %0").arg(ui->lineIP->text());
-    args << QString("-port %0").arg(ui->linePort->text());
-    args << QString("+maxplayers %0").arg(ui->spinMaxPlayers->value());
+    args << "+ip" << ui->lineIP->text();
+    args << "-port" << ui->linePort->text();
+    args << "+maxplayers" << ui->spinMaxPlayers->text();
 
     if (ui->lineMap->text().isEmpty())
         args << "+randommap";
     else
-        args << QString("+map %0").arg(ui->lineMap->text());
+        args << "+map" << ui->lineMap->text();
 
     if (!ui->lineServerName->text().isEmpty())
-        args << QString("+hostname \"%0\"").arg(ui->lineServerName->text());
+        args << "+hostname" << "\"" + ui->lineServerName->text() + "\"";
 
     QStringList additionalParams = AdditionalParametersWindow->GetParameters();
     for (int i = 2; i < additionalParams.count(); i+=3)
@@ -434,7 +474,7 @@ void ServerWindow::on_btnStartServer_clicked()
         }
     }
 
-    qInfo() << "Running srcds: " + Command;
+    qInfo() << "Running srcds: " << Command;
     qInfo() << "Arguments: " << args;
 
     auto Process = new QProcess(this);
@@ -451,8 +491,17 @@ void ServerWindow::on_btnStartServer_clicked()
 
     if (ui->chkConsole->isChecked())
     {
+        qInfo() << "Running server in system console.";
         if (OS == "windows")
-            Process->startDetached(Command, QStringList() << args);
+        {
+            Process->start("cmd.exe", QStringList() << "/k" << Command << args);
+            if (!Process->waitForStarted())
+                qInfo() << "Couldn't run server. Error:" << Process->errorString();
+            else
+            {
+                qInfo() << "server running" << Process->processId();
+            }
+        }
         else
         {
             QStringList Terminals = {"gnome-terminal", "konsole", "xterm"};
@@ -698,7 +747,7 @@ void ServerWindow::SetServerVisualState(VisualState state)
         ui->btnApply->setEnabled(false);
         break;
     }
-    case ServerStopped: // ok
+    case ServerStopped:
     {
         ui->btnStartServer->setEnabled(true);
         ui->btnApply->setEnabled(true);

@@ -35,8 +35,20 @@ void SteamCMDDialog::ReadOutput()
     qInfo() << output;
 
     if (output.size() > 49)
-        if (output.first(19).last(4) == "0x61")
-            ui->barProgress->setValue(output.first(49).last(5).toFloat());
+    {
+        qInfo() << output.first(19).last(4);
+        qInfo() << output.first(49).last(5);
+        if (QSysInfo::productType() == "windows")
+        {
+
+        }
+        else if (QSysInfo::productType() != "macos")
+        {
+            if (output.first(19).last(4) == "0x61")
+                ui->barProgress->setValue(output.first(49).last(5).toFloat());
+        }
+    }
+
 
     ui->txtOutput->append(output);
 }
