@@ -31,7 +31,7 @@ ServerConsoleDialog::~ServerConsoleDialog()
 void ServerConsoleDialog::ReadOutput()
 {
     QByteArray output = Process->readAllStandardOutput();
-    ui->txtMainConsole->append(output);
+    ui->txtMainConsole->insertPlainText(output);
     qInfo() << output;
 }
 

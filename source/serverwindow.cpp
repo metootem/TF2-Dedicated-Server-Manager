@@ -86,8 +86,9 @@ void ServerWindow::LoadServerFirstTimeSetup()
 {
     qInfo() << "First time setup.";
 
-    AdditionalParametersWindow = new AdditionalParametersDialog(this);
+    ui->btnGotoServerFolder->setEnabled(false);
 
+    AdditionalParametersWindow = new AdditionalParametersDialog(this);
     AdditionalParametersWindow->FirstTimeSetup();
 }
 
@@ -96,10 +97,13 @@ QString ServerWindow::GetPublicIP()
 {
     QProcess GetIP;
     GetIP.start("curl", QStringList() << "https://api.ipify.org");
-    GetIP.waitForFinished();
+    GetIP.waitForFinished(10000);
     QString IP = GetIP.readAllStandardOutput();
     GetIP.terminate();
-    qInfo() << "Got Public IP:" << IP;
+    if (IP.isEmpty())
+        qInfo() << "Couldn't get Public IP.";
+    else
+        qInfo() << "Got Public IP:" << IP;
     return IP;
 }
 
@@ -271,7 +275,7 @@ void ServerWindow::InstallServer()
     }
 
     if (SteamCMDWindow == nullptr)
-        SteamCMDWindow = new SteamCMDDialog(this, SteamCMDProcess, QDir(ServerFolder).dirName());
+        SteamCMDWindow = new SteamCMDDialog(this, SteamCMDProcess, ui->lineServerName->text());
     else
         SteamCMDWindow->NewProcess(SteamCMDProcess);
 
@@ -285,12 +289,7 @@ void ServerWindow::InstallServer()
 
     QStringList betaList;
 
-    QMessageBox msgBox(QMessageBox::Icon::Question, "",
-                       tr("Opt into beta?"), {}, this);
-    auto *accept = msgBox.addButton("Yes", QMessageBox::ButtonRole::AcceptRole);
-    msgBox.addButton("No", QMessageBox::ButtonRole::RejectRole);
-    msgBox.exec();
-    if (msgBox.clickedButton() == accept)
+    if (ui->chkBeta->isChecked())
     {
         qInfo() << "Opting into beta.";
         betaList << "-beta" << "prerelease";
@@ -343,6 +342,7 @@ void ServerWindow::KillSteamCMDProcess()
 void ServerWindow::InstallServerFinished()
 {
     SteamCMDProcess->deleteLater();
+    SteamCMDProcess = nullptr;
     SetServerVisualState();
 
     QFile serverCfg(ServerFolder + "/Server/tf/cfg/server.cfg");
@@ -388,45 +388,88 @@ void ServerWindow::on_btnInstallServer_clicked()
 
 void ServerWindow::on_btnApply_clicked()
 {
+    ui->btnGotoServerFolder->setEnabled(false);
+
     bool apply = true;
+
     if (ui->lineServerName->text().isEmpty())
         ui->lineServerName->setText("Team Fortress 2 Server");
+    qInfo() << "Server Name:" << ui->lineServerName->text();
     if (ui->lineFolderName->text().isEmpty())
     {
         ui->lblFolderError->show();
+        qInfo() << "Folder is invalid!";
         apply = false;
     }
+    else
+        qInfo() << "Folder:" << ui->lineFolderName->text();
+
+
     if (ui->lineIP->text().isEmpty())
         ui->lineIP->setText("0.0.0.0");
+    qInfo() << "IP:" << ui->lineIP->text();
+
     if (ui->linePort->text().isEmpty())
         ui->linePort->setText("27015");
+    qInfo() << "Port:" << ui->linePort->text();
 
     if (apply)
     {
         ui->lblFolderError->hide();
 
-        QDir(ServerFolder).dirName() = ui->lineFolderName->text();
+        //QDir(ServerFolder).dirName() = ui->lineFolderName->text();
 
         SettingsDialog* settingsDialog = new SettingsDialog(parentWidget());
+        qInfo() << "Parsing settings.";
         SettingsStruct settings = settingsDialog->ParseSettings();
         if (!settings.valid)
         {
+            qInfo() << "Settings invalid!";
             settingsDialog->show();
             return;
         }
-        ServerFolder = tr("%0/%1").arg(settings.ServerDirectory.path()).arg(ui->lineFolderName->text(), 1);
+
+        if (!ServerFolder.isEmpty())
+        {
+            delete IniSettings;
+            IniSettings = nullptr;
+
+            if (QFile::rename(ServerFolder, QString("%0/%1").arg(settings.ServerDirectory.path(), ui->lineFolderName->text())))
+                ServerFolder = QString("%0/%1").arg(settings.ServerDirectory.path(), ui->lineFolderName->text());
+            else
+            {
+                ui->lblFolderError->setText("Server Folder cannot be renamed currently!");
+                ui->lblFolderError->show();
+                ui->lineFolderName->setText(QDir(ServerFolder).dirName());
+            }
+        }
+        else
+            ServerFolder = QString("%0/%1").arg(settings.ServerDirectory.path(), ui->lineFolderName->text());
 
         if (IniSettings == nullptr)
             IniSettings = new QSettings(ServerFolder + "/server.ini", QSettings::Format::IniFormat);
 
+        qInfo() << ServerFolder;
+        qInfo() << IniSettings;
+        qInfo() << "Saving server config.";
         IniSettings->setValue("server_name", ui->lineServerName->text());
+        qInfo() << "server_name...";
         IniSettings->setValue("ip", ui->lineIP->text());
+        qInfo() << "ip...";
         IniSettings->setValue("port", ui->linePort->text());
+        qInfo() << "port...";
         IniSettings->setValue("players", ui->spinMaxPlayers->value());
+        qInfo() << "players...";
         IniSettings->setValue("map", ui->lineMap->text());
+        qInfo() << "map...";
         IniSettings->setValue("parameters", AdditionalParametersWindow->GetParameters());
+        qInfo() << "parameters...";
         IniSettings->setValue("os", OS);
+        qInfo() << "os...";
 
+        qInfo() << "Saved.";
+
+        SetServerVisualState();
         if (QSystemTrayIcon::isSystemTrayAvailable())
         {
             QSystemTrayIcon icon;
@@ -434,7 +477,7 @@ void ServerWindow::on_btnApply_clicked()
             icon.showMessage(ui->lineServerName->text(), "Settings applied");
             icon.hide();
         }
-
+        ui->btnGotoServerFolder->setEnabled(true);
         emit ServerApplied( ServerFolder );
     }
 }
@@ -479,8 +522,7 @@ void ServerWindow::on_btnStartServer_clicked()
 
     auto Process = new QProcess(this);
 
-    ServerProcess = Process;
-
+    //ServerProcess = Process;
     Process->setProcessChannelMode(QProcess::MergedChannels);
     Process->setWorkingDirectory(QString("%0/Server").arg(ServerFolder));
 
@@ -494,13 +536,8 @@ void ServerWindow::on_btnStartServer_clicked()
         qInfo() << "Running server in system console.";
         if (OS == "windows")
         {
-            Process->start("cmd.exe", QStringList() << "/k" << Command << args);
-            if (!Process->waitForStarted())
-                qInfo() << "Couldn't run server. Error:" << Process->errorString();
-            else
-            {
-                qInfo() << "server running" << Process->processId();
-            }
+            Process->startDetached("cmd.exe", QStringList() << "/k" << Command << args);
+            Process->deleteLater();
         }
         else
         {
@@ -530,7 +567,7 @@ void ServerWindow::on_btnStartServer_clicked()
         return;
     }
 
-    Process->start(Command, args, QProcess::ReadWrite | QProcess::Text);
+    Process->start(Command, args, QProcess::ReadWrite | QProcess::Text | QProcess::Unbuffered);
 
     if (Process->waitForStarted())
     {
@@ -551,7 +588,6 @@ void ServerWindow::on_btnStartServer_clicked()
     {
         SetServerVisualState(VisualState::ServerStopped);
     }
-
 }
 
 /*
@@ -626,8 +662,12 @@ void ServerWindow::on_btnConnectToServer_clicked()
 
     QMessageBox msgBox(QMessageBox::Icon::Question, "",
                        tr("Through which IP to join server?\nPublic: %0\nLocal: %1").arg(PublicServerAddress).arg(LocalServerAddress, 1), {}, this);
+
     auto *publicIp = msgBox.addButton("Public IP", QMessageBox::ButtonRole::DestructiveRole);
+    if (PublicServerAddress.isEmpty())
+        publicIp->setEnabled(false);
     auto *localIp = msgBox.addButton("Local IP", QMessageBox::ButtonRole::RejectRole);
+
     msgBox.exec();
     if (msgBox.clickedButton() == publicIp)
         QDesktopServices::openUrl(QUrl("steam://connect/" + PublicServerAddress));
@@ -732,7 +772,6 @@ void ServerWindow::SetServerVisualState(VisualState state)
         ui->btnApply->setEnabled(true);
 
         ui->btnShowConsole->setEnabled(false);
-        ui->chkConsole->setEnabled(false);
         ui->btnStopServer->setEnabled(false);
         break;
     }
@@ -742,7 +781,6 @@ void ServerWindow::SetServerVisualState(VisualState state)
         //ui->btnConnectToServer->setEnabled(true);
         ui->btnShowConsole->setEnabled(true);
 
-        ui->chkConsole->setEnabled(false);
         ui->btnStartServer->setEnabled(false);
         ui->btnApply->setEnabled(false);
         break;
@@ -751,7 +789,6 @@ void ServerWindow::SetServerVisualState(VisualState state)
     {
         ui->btnStartServer->setEnabled(true);
         ui->btnApply->setEnabled(true);
-        ui->chkConsole->setEnabled(true);
 
         //ui->btnConnectToServer->setEnabled(false);
         ui->btnShowConsole->setEnabled(false);
@@ -765,7 +802,6 @@ void ServerWindow::SetServerVisualState(VisualState state)
         ui->btnStartServer->setEnabled(false);
         ui->btnStopServer->setEnabled(false);
         ui->btnApply->setEnabled(false);
-        ui->chkConsole->setEnabled(false);
         break;
     }
     case VisualState::ServerInstalling:
@@ -776,7 +812,6 @@ void ServerWindow::SetServerVisualState(VisualState state)
         ui->btnStartServer->setEnabled(false);
         ui->btnStopServer->setEnabled(false);
         ui->btnApply->setEnabled(false);
-        ui->chkConsole->setEnabled(false);
         break;
     }
     case ServerFinishedInstalling:

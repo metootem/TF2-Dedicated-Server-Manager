@@ -130,8 +130,8 @@ void MainWindow::ServerApplied(QString ServerFolder)
 
     ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
 
-    IniSettings->setValue(tr("%0/nick").arg(folder), ui->tabServers->tabText(index));
-    IniSettings->setValue(tr("%0/os").arg(folder), OS);
+    IniSettings->setValue(QString("%0/nick").arg(folder), ui->tabServers->tabText(index));
+    IniSettings->setValue(QString("%0/os").arg(folder), OS);
 }
 
 void MainWindow::ServerActivated()
@@ -156,9 +156,7 @@ void MainWindow::RefreshServerTab()
             QSettings fileIniSettings(QString("%0/server.ini").arg(file.absoluteFilePath()), QSettings::IniFormat);
             QString serverNick = IniSettings->value(QString("%0/nick").arg(file.fileName())).toString();
             if (ServerTabExists(serverNick) || fileIniSettings.value("os").toString() != OS)
-            {
                 continue;
-            }
 
             if (serverNick.isEmpty())
                 serverNick = file.fileName();
@@ -166,6 +164,13 @@ void MainWindow::RefreshServerTab()
             ui->tabServers->setCurrentIndex(ui->tabServers->count()-1);
             ServerApplied(file.absoluteFilePath());
         }
+    }
+    for (QString server : IniSettings->childGroups())
+    {
+        if (server == OS)
+            continue;
+        if (!QDir(QString("%0/%1").arg(ServerDir.absolutePath(), server)).exists())
+            IniSettings->remove(server);
     }
 }
 
@@ -226,7 +231,7 @@ void MainWindow::on_tabServers_tabCloseRequested(int index)
     }
     else if (msgBox.clickedButton() == keepFiles)
     {
-        QFile serverFile(tr("%0/server.ini").arg(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder));
+        QFile serverFile(QString("%0/server.ini").arg(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder));
         serverFile.remove();
 
         QString folder = QDir(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder).dirName();
@@ -253,7 +258,7 @@ void MainWindow::on_tabServers_tabBarDoubleClicked(int index)
     QString ServerFolder = ((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder;
     if (ServerFolder.isEmpty())
         return;
-    IniSettings->setValue(tr("%0/nick").arg(QDir(ServerFolder).dirName()), servername);
-    IniSettings->setValue(tr("%0/os").arg(QDir(ServerFolder).dirName()), OS);
+    IniSettings->setValue(QString("%0/nick").arg(QDir(ServerFolder).dirName()), servername);
+    IniSettings->setValue(QString("%0/os").arg(QDir(ServerFolder).dirName()), OS);
 }
 

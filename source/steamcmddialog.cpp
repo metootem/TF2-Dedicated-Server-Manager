@@ -8,11 +8,11 @@ SteamCMDDialog::SteamCMDDialog(QWidget *parent, QProcess *process, QString name)
     ui->setupUi(this);
     Process = process;
 
-    connect(process, SIGNAL(readyReadStandardOutput()), SLOT(ReadOutput()));
-    connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(InstallFinished()));
+    connect(process, SIGNAL(readyRead()), SLOT(ReadOutput()));
+    connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(InstallFinished(int,QProcess::ExitStatus)));
 
     this->setWindowTitle("Installing Server For " + name);
-
+    ui->txtOutput->setText("Running SteamCMD...\n");
 }
 
 SteamCMDDialog::~SteamCMDDialog()
@@ -22,16 +22,17 @@ SteamCMDDialog::~SteamCMDDialog()
 
 void SteamCMDDialog::NewProcess(QProcess *process)
 {
-    ui->txtOutput->append("Running SteamCMD...");
+    ui->txtOutput->append("Running SteamCMD...\n");
     ui->barProgress->setValue(0);
-    connect(process, SIGNAL(readyReadStandardOutput()), SLOT(ReadOutput()));
-    connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(InstallFinished()));
+    connect(process, SIGNAL(readyRead()), SLOT(ReadOutput()));
+    connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(InstallFinished(int, QProcess::ExitStatus)));
     Process = process;
 }
 
 void SteamCMDDialog::ReadOutput()
 {
     QByteArray output = Process->readAllStandardOutput();
+    //QString output = QString::number(bytes);
     qInfo() << output;
 
     if (output.size() > 49)
@@ -49,17 +50,24 @@ void SteamCMDDialog::ReadOutput()
         }
     }
 
-
-    ui->txtOutput->append(output);
+    ui->txtOutput->moveCursor(QTextCursor::End);
+    ui->txtOutput->insertPlainText(output);
+    ui->txtOutput->verticalScrollBar()->setSliderPosition(ui->txtOutput->verticalScrollBar()->maximum());
 }
 
-void SteamCMDDialog::InstallFinished()
+void SteamCMDDialog::InstallFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
     if (this->isHidden())
         this->show();
 
     qInfo() << "Finished installing server.";
-    ui->barProgress->setValue(100);
+    if (exitStatus == QProcess::NormalExit)
+    {
+        ui->barProgress->setValue(100);
+        ui->txtOutput->append("Finished installing server.");
+    }
+    else
+        ui->txtOutput->append(QString("There was an error instaling the server. Error: %0").arg(Process->errorString()));
 }
 
 void SteamCMDDialog::on_btnCancel_clicked()

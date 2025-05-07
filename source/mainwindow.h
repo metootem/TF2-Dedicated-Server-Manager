@@ -10,6 +10,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QString>
 
 #include "settingsdialog.h"
 #include "serverwindow.h"

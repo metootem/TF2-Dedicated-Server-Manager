@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QProcess>
+#include <QScrollBar>
 
 namespace Ui {
 class SteamCMDDialog;
@@ -24,7 +25,7 @@ signals:
 
 public slots:
     void ReadOutput();
-    void InstallFinished();
+    void InstallFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private slots:
     void on_btnCancel_clicked();
