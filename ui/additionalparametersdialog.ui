@@ -338,9 +338,9 @@
           <colorrole role="Button">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>207</red>
-             <green>106</green>
-             <blue>50</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
@@ -383,18 +383,18 @@
           <colorrole role="Base">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>30</red>
-             <green>30</green>
-             <blue>30</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
           <colorrole role="Window">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>18</red>
-             <green>18</green>
-             <blue>18</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
@@ -448,9 +448,9 @@
           <colorrole role="Button">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>207</red>
-             <green>106</green>
-             <blue>50</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
@@ -493,18 +493,18 @@
           <colorrole role="Base">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>30</red>
-             <green>30</green>
-             <blue>30</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
           <colorrole role="Window">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>18</red>
-             <green>18</green>
-             <blue>18</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
@@ -558,9 +558,9 @@
           <colorrole role="Button">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>207</red>
-             <green>106</green>
-             <blue>50</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
@@ -603,18 +603,18 @@
           <colorrole role="Base">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>18</red>
-             <green>18</green>
-             <blue>18</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
           <colorrole role="Window">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>18</red>
-             <green>18</green>
-             <blue>18</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
@@ -666,7 +666,8 @@ QPushButton::pressed {
         <string/>
        </property>
        <property name="icon">
-        <iconset theme="QIcon::ThemeIcon::ListAdd"/>
+        <iconset resource="../resources.qrc">
+         <normaloff>:/icons/resources/Icons/Add.svg</normaloff>:/icons/resources/Icons/Add.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -705,9 +706,9 @@ QPushButton::pressed {
           <colorrole role="Button">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>207</red>
-             <green>106</green>
-             <blue>50</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
@@ -750,18 +751,18 @@ QPushButton::pressed {
           <colorrole role="Base">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>30</red>
-             <green>30</green>
-             <blue>30</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
           <colorrole role="Window">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>18</red>
-             <green>18</green>
-             <blue>18</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
@@ -815,9 +816,9 @@ QPushButton::pressed {
           <colorrole role="Button">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>207</red>
-             <green>106</green>
-             <blue>50</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
@@ -860,18 +861,18 @@ QPushButton::pressed {
           <colorrole role="Base">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>30</red>
-             <green>30</green>
-             <blue>30</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
           <colorrole role="Window">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>18</red>
-             <green>18</green>
-             <blue>18</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
@@ -925,9 +926,9 @@ QPushButton::pressed {
           <colorrole role="Button">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>207</red>
-             <green>106</green>
-             <blue>50</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
@@ -970,18 +971,18 @@ QPushButton::pressed {
           <colorrole role="Base">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>18</red>
-             <green>18</green>
-             <blue>18</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
           <colorrole role="Window">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>18</red>
-             <green>18</green>
-             <blue>18</blue>
+             <red>48</red>
+             <green>48</green>
+             <blue>48</blue>
             </color>
            </brush>
           </colorrole>
@@ -1033,7 +1034,8 @@ QPushButton::pressed {
         <string/>
        </property>
        <property name="icon">
-        <iconset theme="QIcon::ThemeIcon::ListRemove"/>
+        <iconset resource="../resources.qrc">
+         <normaloff>:/icons/resources/Icons/Remove.svg</normaloff>:/icons/resources/Icons/Remove.svg</iconset>
        </property>
        <property name="iconSize">
         <size>

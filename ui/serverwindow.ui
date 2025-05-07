@@ -421,6 +421,9 @@
                   <height>25</height>
                  </size>
                 </property>
+                <property name="toolTip">
+                 <string>Connect to the server through Public or Local IPv4 address.</string>
+                </property>
                 <property name="text">
                  <string>Connect</string>
                 </property>
@@ -443,11 +446,16 @@
                   <height>25</height>
                  </size>
                 </property>
+                <property name="toolTip">
+                 <string>Open this server's console.
+Currently not working and OS Console is automatically used.</string>
+                </property>
                 <property name="text">
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset theme="QIcon::ThemeIcon::WindowNew"/>
+                 <iconset resource="../resources.qrc">
+                  <normaloff>:/icons/resources/Icons/Console.svg</normaloff>:/icons/resources/Icons/Console.svg</iconset>
                 </property>
                </widget>
               </item>
@@ -797,6 +805,9 @@
                   </disabled>
                  </palette>
                 </property>
+                <property name="toolTip">
+                 <string>Opt into TF2's prerelease branch.</string>
+                </property>
                 <property name="text">
                  <string>Beta</string>
                 </property>
@@ -819,11 +830,15 @@
                   <height>25</height>
                  </size>
                 </property>
+                <property name="toolTip">
+                 <string>Open SteamCMD console.</string>
+                </property>
                 <property name="text">
                  <string>CMD</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="QIcon::ThemeIcon::WindowNew"/>
+                 <iconset resource="../resources.qrc">
+                  <normaloff>:/icons/resources/Icons/Console.svg</normaloff>:/icons/resources/Icons/Console.svg</iconset>
                 </property>
                </widget>
               </item>
@@ -1184,6 +1199,9 @@
                 <height>50</height>
                </size>
               </property>
+              <property name="toolTip">
+               <string>Stop the server.</string>
+              </property>
               <property name="text">
                <string>Stop</string>
               </property>
@@ -1202,6 +1220,9 @@
                 <width>150</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="toolTip">
+               <string>Install server files.</string>
               </property>
               <property name="text">
                <string>Install/Update</string>
@@ -1246,6 +1267,9 @@
                   <height>29</height>
                  </size>
                 </property>
+                <property name="toolTip">
+                 <string>Apply server configurations.</string>
+                </property>
                 <property name="text">
                  <string>Apply</string>
                 </property>
@@ -1269,6 +1293,9 @@
                 <width>150</width>
                 <height>50</height>
                </size>
+              </property>
+              <property name="toolTip">
+               <string>Start the server.</string>
               </property>
               <property name="text">
                <string>Start</string>
@@ -1681,6 +1708,10 @@
               </disabled>
              </palette>
             </property>
+            <property name="toolTip">
+             <string>Name that is displayed in TF2's server browser.
+ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
+            </property>
             <property name="text">
              <string>Server Name:</string>
             </property>
@@ -1688,6 +1719,10 @@
           </item>
           <item row="2" column="2">
            <widget class="QPushButton" name="btnCopyIp">
+            <property name="toolTip">
+             <string>Copy set IP.
+0.0.0.0 will copy Public IP.</string>
+            </property>
             <property name="text">
              <string>CopyIP</string>
             </property>
@@ -2019,6 +2054,10 @@
                </colorrole>
               </disabled>
              </palette>
+            </property>
+            <property name="toolTip">
+             <string>First map that will be loaded upon server startup.
+Empty picks a random map.</string>
             </property>
             <property name="text">
              <string>Map:</string>
@@ -2352,6 +2391,10 @@
               </disabled>
              </palette>
             </property>
+            <property name="toolTip">
+             <string>Maximum amount of players that can join the server.
+Can't go over 32 without proper ConVars.</string>
+            </property>
             <property name="text">
              <string>Players:</string>
             </property>
@@ -2365,7 +2408,12 @@
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QLineEdit" name="lineMap"/>
+           <widget class="QLineEdit" name="lineMap">
+            <property name="toolTip">
+             <string>First map that will be loaded upon server startup.
+Empty picks a random map.</string>
+            </property>
+           </widget>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="lblIP">
@@ -2700,13 +2748,21 @@
               </disabled>
              </palette>
             </property>
+            <property name="toolTip">
+             <string>Public IPv4 address that players will connect with to this server.
+0.0.0.0 automates to Public IP.</string>
+            </property>
             <property name="text">
              <string>IP:</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="lineFolderName"/>
+           <widget class="QLineEdit" name="lineFolderName">
+            <property name="toolTip">
+             <string>Folder in the Servers Directory where this server's files will be located.</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="lblFolder">
@@ -3035,6 +3091,9 @@
               </disabled>
              </palette>
             </property>
+            <property name="toolTip">
+             <string>Folder in the Servers Directory where this server's files will be located.</string>
+            </property>
             <property name="text">
              <string>Folder:</string>
             </property>
@@ -3042,6 +3101,10 @@
           </item>
           <item row="3" column="1">
            <widget class="QSpinBox" name="spinMaxPlayers">
+            <property name="toolTip">
+             <string>Maximum amount of players that can join the server.
+Can't go over 32 without proper ConVars.</string>
+            </property>
             <property name="minimum">
              <number>1</number>
             </property>
@@ -3071,6 +3134,10 @@
                 <width>16777215</width>
                 <height>25</height>
                </size>
+              </property>
+              <property name="toolTip">
+               <string>Public IPv4 address that players will connect with to this server.
+0.0.0.0 automates to Public IP.</string>
               </property>
               <property name="text">
                <string>0.0.0.0</string>
@@ -3443,7 +3510,12 @@
            </layout>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="lineServerName"/>
+           <widget class="QLineEdit" name="lineServerName">
+            <property name="toolTip">
+             <string>Name that is displayed in TF2's server browser.
+ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
+            </property>
+           </widget>
           </item>
           <item row="5" column="1">
            <widget class="QPushButton" name="btnParameters">
@@ -3454,11 +3526,15 @@
           </item>
           <item row="1" column="2">
            <widget class="QPushButton" name="btnGotoServerFolder">
+            <property name="toolTip">
+             <string>Open this server's folder.</string>
+            </property>
             <property name="text">
              <string>Go to</string>
             </property>
             <property name="icon">
-             <iconset theme="QIcon::ThemeIcon::GoUp"/>
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/resources/Icons/OpenFile.svg</normaloff>:/icons/resources/Icons/OpenFile.svg</iconset>
             </property>
            </widget>
           </item>
@@ -4194,6 +4270,11 @@
               <height>29</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
             <property name="toolTip">
              <string>Add</string>
             </property>
@@ -4201,7 +4282,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset theme="QIcon::ThemeIcon::ListAdd"/>
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/resources/Icons/Add.svg</normaloff>:/icons/resources/Icons/Add.svg</iconset>
             </property>
            </widget>
           </item>
@@ -4222,6 +4304,11 @@
               <height>29</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>24</pointsize>
+             </font>
+            </property>
             <property name="toolTip">
              <string>Remove</string>
             </property>
@@ -4229,7 +4316,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset theme="QIcon::ThemeIcon::ListRemove"/>
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/resources/Icons/Remove.svg</normaloff>:/icons/resources/Icons/Remove.svg</iconset>
             </property>
            </widget>
           </item>
@@ -4257,7 +4345,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset theme="QIcon::ThemeIcon::DocumentSave"/>
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/resources/Icons/Save.svg</normaloff>:/icons/resources/Icons/Save.svg</iconset>
             </property>
            </widget>
           </item>
@@ -4308,11 +4397,15 @@
               <height>29</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>Find ConVar</string>
+            </property>
             <property name="text">
              <string/>
             </property>
             <property name="icon">
-             <iconset theme="QIcon::ThemeIcon::EditFind"/>
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/resources/Icons/Find.svg</normaloff>:/icons/resources/Icons/Find.svg</iconset>
             </property>
            </widget>
           </item>
@@ -4337,7 +4430,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset theme="QIcon::ThemeIcon::DocumentRevert"/>
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/resources/Icons/Reload.svg</normaloff>:/icons/resources/Icons/Reload.svg</iconset>
             </property>
            </widget>
           </item>
@@ -4362,7 +4456,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset theme="QIcon::ThemeIcon::GoUp"/>
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/resources/Icons/OpenFile.svg</normaloff>:/icons/resources/Icons/OpenFile.svg</iconset>
             </property>
            </widget>
           </item>
@@ -5324,9 +5419,9 @@
         <colorrole role="WindowText">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
-           <red>92</red>
-           <green>92</green>
-           <blue>92</blue>
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
           </color>
          </brush>
         </colorrole>
@@ -5360,18 +5455,18 @@
         <colorrole role="Text">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
-           <red>92</red>
-           <green>92</green>
-           <blue>92</blue>
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
           </color>
          </brush>
         </colorrole>
         <colorrole role="ButtonText">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
-           <red>92</red>
-           <green>92</green>
-           <blue>92</blue>
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
           </color>
          </brush>
         </colorrole>
@@ -5484,6 +5579,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

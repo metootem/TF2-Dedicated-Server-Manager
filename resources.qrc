@@ -1,6 +1,14 @@
 <RCC>
     <qresource prefix="/icons">
         <file>resources/Images/tf2dsm_logo.png</file>
+        <file>resources/Icons/Settings.svg</file>
+        <file>resources/Icons/Add.svg</file>
+        <file>resources/Icons/Remove.svg</file>
+        <file>resources/Icons/Find.svg</file>
+        <file>resources/Icons/OpenFile.svg</file>
+        <file>resources/Icons/Reload.svg</file>
+        <file>resources/Icons/Save.svg</file>
+        <file>resources/Icons/Console.svg</file>
     </qresource>
     <qresource prefix="/palettes">
         <file>resources/Palettes/MainPalette.xml</file>

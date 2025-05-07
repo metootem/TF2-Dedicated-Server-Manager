@@ -107,8 +107,12 @@ void MainWindow::AddServer(QString servername, QString serverFolder)
     else
         ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
 
+    ui->lblAddServer->hide();
     if (!ui->tabServers->count())
+    {
+        ui->lblAddServer->show();
         ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: none;\n	background-color: #2b2b2b;\n}");
+    }
     else
         ui->tabServers->setStyleSheet(QString("QTabWidget::pane {\n	border: 3px solid %0;\n	background-color: #2b2b2b;\n}").arg(Settings.ColorTheme));
 }
