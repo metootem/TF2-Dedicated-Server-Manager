@@ -32,6 +32,8 @@ void SelectMapDialog::LoadAvailableMaps(QString path)
 
 QString SelectMapDialog::SelectMap()
 {
-    return (NoMaps ? "" : ui->listMaps->item(ui->listMaps->currentRow())->text());
+    if (ui->listMaps->item(ui->listMaps->currentRow())->text().length() < 3)
+        return "";
+    return (ui->listMaps->item(ui->listMaps->currentRow())->text().first(3) == "No " ? "" : ui->listMaps->item(ui->listMaps->currentRow())->text());
 }
 

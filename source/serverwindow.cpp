@@ -703,7 +703,6 @@ void ServerWindow::on_btnSelectMap_clicked()
     auto dialog = new SelectMapDialog(this, ServerFolder);
     if (dialog->exec() == QDialog::Accepted)
     {
-        qInfo() << "accepted";
         if (dialog)
             ui->lineMap->setText(dialog->SelectMap());
     }
