@@ -70,8 +70,17 @@ void MainWindow::LoadStyles(QString colorTheme)
                                 "QPushButton::pressed {\n"
                                 "background-color: %2;\n}\n"
                                 "QPushButton:disabled {\n"
-                                "color: #3b3b3b;"
-                                "\n}\n").arg(colorTheme, QColor(colorTheme).lighter(130).name(), QColor(colorTheme).darker(130).name()));
+                                "color: #3b3b3b;\n"
+                                "}\n"
+                                "QListWidget {\n"
+                                "border: none;\n"
+                                "}\n"
+                                "QListWidget::item:selected {\n"
+                                "background-color: %0;\n"
+                                "}\n"
+                                "QTreeWidget::item:selected {\n"
+                                "background-color: %0;\n"
+                                "}\n").arg(colorTheme, QColor(colorTheme).lighter(130).name(), QColor(colorTheme).darker(130).name()));
 
     ui->lblAddServer->hide();
     if (!ui->tabServers->count())

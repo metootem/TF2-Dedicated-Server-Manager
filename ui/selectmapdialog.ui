@@ -670,6 +670,9 @@
        </disabled>
       </palette>
      </property>
+     <property name="currentRow">
+      <number>-1</number>
+     </property>
     </widget>
    </item>
    <item>
