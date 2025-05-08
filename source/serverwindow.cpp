@@ -673,7 +673,7 @@ void ServerWindow::on_btnConnectToServer_clicked()
 void ServerWindow::on_btnGotoServerFolder_clicked()
 {
     if (!ui->lineFolderName->text().isEmpty())
-        QDesktopServices::openUrl(QUrl("file://" + ServerFolder));
+        QDesktopServices::openUrl(QDir(ServerFolder).absolutePath());
 }
 
 
@@ -892,8 +892,7 @@ void ServerWindow::on_btnReloadConfig_clicked()
 
 void ServerWindow::on_btnOpenConfig_clicked()
 {
-    QString path = "file://" + ServerFolder + "/Server/tf/cfg/" + ui->cmbConfigFile->currentText();
-    QDesktopServices::openUrl(QUrl(path));
+    QDesktopServices::openUrl(ServerFolder + "/Server/tf/cfg/" + ui->cmbConfigFile->currentText());
 }
 
 void ServerWindow::on_btnConfigSpecial_clicked()

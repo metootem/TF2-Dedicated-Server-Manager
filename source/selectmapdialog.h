@@ -24,6 +24,8 @@ private slots:
 
 private:
     Ui::SelectMapDialog *ui;
+
+    bool NoMaps;
 };
 
 #endif // SELECTMAPDIALOG_H

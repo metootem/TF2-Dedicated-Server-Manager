@@ -7,6 +7,7 @@ SelectMapDialog::SelectMapDialog(QWidget *parent, QString path)
 {
     ui->setupUi(this);
     LoadAvailableMaps(path + "/Server/tf/maps");
+    NoMaps = true;
 
     connect(ui->btnSelect, SIGNAL(clicked()), this, SLOT(accept()));
 }
@@ -22,6 +23,7 @@ void SelectMapDialog::LoadAvailableMaps(QString path)
     for (QFileInfo fileInfo : QDir(path).entryInfoList(QStringList() << "*.bsp", QDir::Files))
     {
         ui->listMaps->addItem(fileInfo.baseName());
+        NoMaps = false;
     }
     if (!ui->listMaps->count())
         ui->listMaps->addItem("No maps available.");
@@ -30,6 +32,6 @@ void SelectMapDialog::LoadAvailableMaps(QString path)
 
 QString SelectMapDialog::SelectMap()
 {
-    return ui->listMaps->item(ui->listMaps->currentRow())->text();
+    return (NoMaps ? "" : ui->listMaps->item(ui->listMaps->currentRow())->text());
 }
 
