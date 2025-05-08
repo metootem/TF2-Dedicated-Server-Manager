@@ -29,21 +29,20 @@ bool MainWindow::LoadConfig()
         return false;
     }
 
-    LoadStyles(Settings.ColorTheme);
-
     ServerDir = QDir(Settings.ServerDirectory);
     RefreshServerTab();
+
+    LoadStyles(Settings.ColorTheme);
+
     return true;
 }
 
 void MainWindow::SettingsChanged( SettingsStruct settings )
 {
     Settings = settings;
-
-    LoadStyles(settings.ColorTheme);
-
     ServerDir = settings.ServerDirectory;
     RefreshServerTab();
+    LoadStyles(settings.ColorTheme);
 
     emit PassSettingsChanged(settings);
 }
@@ -74,8 +73,12 @@ void MainWindow::LoadStyles(QString colorTheme)
                                 "color: #3b3b3b;"
                                 "\n}\n").arg(colorTheme, QColor(colorTheme).lighter(130).name(), QColor(colorTheme).darker(130).name()));
 
+    ui->lblAddServer->hide();
     if (!ui->tabServers->count())
+    {
+        ui->lblAddServer->show();
         ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: none;\n	background-color: #2b2b2b;\n}");
+    }
     else
         ui->tabServers->setStyleSheet(QString("QTabWidget::pane {\n	border: 3px solid %0;\n	background-color: #2b2b2b;\n}").arg(colorTheme));
 }
@@ -107,14 +110,7 @@ void MainWindow::AddServer(QString servername, QString serverFolder)
     else
         ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
 
-    ui->lblAddServer->hide();
-    if (!ui->tabServers->count())
-    {
-        ui->lblAddServer->show();
-        ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: none;\n	background-color: #2b2b2b;\n}");
-    }
-    else
-        ui->tabServers->setStyleSheet(QString("QTabWidget::pane {\n	border: 3px solid %0;\n	background-color: #2b2b2b;\n}").arg(Settings.ColorTheme));
+    LoadStyles(Settings.ColorTheme);
 }
 
 bool MainWindow::ServerTabExists(QString name)
@@ -152,6 +148,7 @@ void MainWindow::ServerDeactivated()
 
 void MainWindow::RefreshServerTab()
 {
+    ui->tabServers->clear();
     QFileInfoList fileList = ServerDir.entryInfoList(QDir::Filter::Dirs);
     for (QFileInfo file : fileList)
     {

@@ -56,6 +56,11 @@ void ServerWindow::SettingsChanged(SettingsStruct Settings)
 void ServerWindow::LoadStyles(QString colorTheme)
 {
     ui->listProps->setStyleSheet(QString("QListWidget {\n	border: none;\nborder-left: 3px solid %0;\n}\n\nQListWidget::item:selected {\n	background-color: %0;\n}").arg(colorTheme));
+    if (OS == "windows")
+        ui->cmbConfigFile->setStyleSheet("QComboBox {\n	color: #000000;\n}");
+    else if (OS == "linux")
+        ui->cmbConfigFile->setStyleSheet("QComboBox {\n	color: #ffffff;\n}");
+
     qInfo() << "Updated Styles.";
 }
 
@@ -74,8 +79,6 @@ void ServerWindow::LoadServerConfig(QDir directory)
 
     ui->lineMap->setText(IniSettings->value("map").toString());
 
-    //ui->lineParameters->setText(IniSettings.value("parameters").toString());
-    //AdditionalParametersWindow->LoadParameters(IniSettings);
     AdditionalParametersWindow = new AdditionalParametersDialog(this, IniSettings);
 
     CheckServerConfigFiles();
@@ -256,17 +259,8 @@ void ServerWindow::InstallSteamCMD()
 
 void ServerWindow::InstallServer()
 {
-    /*
-    if (!SteamCMDExists())
-    {
-        qInfo() << "Couldn't find SteamCMD. Aborting installation.";
-        SetServerVisualState();
-        return;
-    }
-*/
     SetServerVisualState(VisualState::ServerInstalling);
 
-    qInfo() << SteamCMDProcess;
     if (SteamCMDProcess == nullptr)
     {
         SteamCMDProcess = new QProcess(this);
@@ -301,7 +295,6 @@ void ServerWindow::InstallServer()
     else if (OS == "windows")
         SteamCMDProcess->start(QString("%0/SteamCMD/steamcmd.exe").arg(ServerFolder), QStringList() << "+force_install_dir" << ServerFolder + "/Server" << "+login" << "anonymous" << "+app_update" << "232250" << betaList);
 
-    qInfo() << QFile(QString("%0/steamcmd.exe").arg(ServerFolder + "/SteamCMD")).exists();
     if (SteamCMDProcess->waitForStarted())
     {
         if (SteamCMDWindow->isHidden())
@@ -323,6 +316,7 @@ void ServerWindow::InstallServer()
             }
             else
                 InstallServer();
+            return;
         }
         qInfo() << "Couldn't run steamcmd installation.";
         delete SteamCMDWindow;
@@ -474,7 +468,7 @@ void ServerWindow::on_btnApply_clicked()
         {
             QSystemTrayIcon icon;
             icon.show();
-            icon.showMessage(ui->lineServerName->text(), "Settings applied");
+            icon.showMessage(ui->lineServerName->text(), "Settings applied", QIcon(":/icons/resources/Images/tf2dsm_logo.png"));
             icon.hide();
         }
         ui->btnGotoServerFolder->setEnabled(true);
@@ -698,7 +692,7 @@ void ServerWindow::on_btnCopyIp_clicked()
     {
         QSystemTrayIcon icon;
         icon.show();
-        icon.showMessage("Copied Public IP to clipboard", IP);
+        icon.showMessage("Copied Public IP to clipboard", IP, QIcon(":/icons/resources/Images/tf2dsm_logo.png"));
         icon.hide();
     }
 }
@@ -980,7 +974,7 @@ void ServerWindow::on_btnSaveConfig_clicked()
             {
                 QSystemTrayIcon icon;
                 icon.show();
-                icon.showMessage("No data saved", fileName);
+                icon.showMessage("No data saved", fileName, QIcon(":/icons/resources/Images/tf2dsm_logo.png"));
                 icon.hide();
             }
 
@@ -1036,7 +1030,7 @@ void ServerWindow::on_btnSaveConfig_clicked()
                 {
                     QSystemTrayIcon icon;
                     icon.show();
-                    icon.showMessage("No data saved", fileName);
+                    icon.showMessage("No data saved", fileName, QIcon(":/icons/resources/Images/tf2dsm_logo.png"));
                     icon.hide();
                 }
 
@@ -1102,7 +1096,7 @@ void ServerWindow::on_btnSaveConfig_clicked()
         {
             QSystemTrayIcon icon;
             icon.show();
-            icon.showMessage("Saved config", fileName);
+            icon.showMessage("Saved config", fileName, QIcon(":/icons/resources/Images/tf2dsm_logo.png"));
             icon.hide();
         }
     }
@@ -1281,7 +1275,7 @@ QString ServerWindow::ServerCfgExample()
            "hostname %0\n"
            "\n"
            "// Overrides the max players reported to prospective clients\n"
-           "sv_visiblemaxplayers %1\n"
+           "sv_visiblemaxplayers 32\n"
            "\n"
            "// Maximum number of rounds to play before server changes maps\n"
            "mp_maxrounds 5\n"
@@ -1469,6 +1463,6 @@ QString ServerWindow::ServerCfgExample()
            "mp_chattime 10\n"
            "\n"
            "// Enable party mode\n"
-                   "tf_birthday 0\n").arg(ui->lineServerName->text(), ui->spinMaxPlayers->value());
+           "tf_birthday 0\n").arg(ui->lineServerName->text());
 }
 

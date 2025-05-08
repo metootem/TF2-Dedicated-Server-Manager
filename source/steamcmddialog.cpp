@@ -32,13 +32,9 @@ void SteamCMDDialog::NewProcess(QProcess *process)
 void SteamCMDDialog::ReadOutput()
 {
     QByteArray output = Process->readAllStandardOutput();
-    //QString output = QString::number(bytes);
-    qInfo() << output;
 
     if (output.size() > 49)
     {
-        qInfo() << output.first(19).last(4);
-        qInfo() << output.first(49).last(5);
         if (QSysInfo::productType() == "windows")
         {
 
