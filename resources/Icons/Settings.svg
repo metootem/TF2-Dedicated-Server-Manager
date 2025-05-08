@@ -7,9 +7,11 @@
    viewBox="0 0 32 32"
    version="1.1"
    id="svg1"
-   inkscape:export-filename="Remove.svg"
+   inkscape:export-filename="Save.svg"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="IconsDrawing.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,9 +26,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="16"
-     inkscape:cx="4.96875"
-     inkscape:cy="14.875"
+     inkscape:zoom="22.627417"
+     inkscape:cx="13.390835"
+     inkscape:cy="14.451495"
      inkscape:window-width="1920"
      inkscape:window-height="1012"
      inkscape:window-x="0"
@@ -44,19 +46,6 @@
   </sodipodi:namedview>
   <defs
      id="defs1" />
-  <g
-     inkscape:groupmode="layer"
-     id="layer2"
-     inkscape:label="Layer 2"
-     style="display:none;fill:#000000">
-    <rect
-       style="display:inline;fill:#000000;stroke-width:3.23167"
-       id="rect2"
-       width="32"
-       height="32"
-       x="0"
-       y="0" />
-  </g>
   <path
      id="path86"
      style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.47511;stroke-dasharray:none;stroke-opacity:1"

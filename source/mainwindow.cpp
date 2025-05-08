@@ -106,9 +106,9 @@ void MainWindow::AddServer(QString servername, QString serverFolder)
     connect(newServerWindow, SIGNAL(ServerDeactivated()), this, SLOT(ServerDeactivated()));
 
     if (serverFolder.isEmpty())
-        ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::FolderNew));
+        ui->tabServers->setTabIcon(index, QIcon(":/icons/resources/Icons/Add.svg"));
     else
-        ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
+        ui->tabServers->setTabIcon(index, QIcon(":/icons/resources/Icons/ServerInactive.svg"));
 
     LoadStyles(Settings.ColorTheme);
 }
@@ -128,7 +128,7 @@ void MainWindow::ServerApplied(QString ServerFolder)
     QString folder = QDir(ServerFolder).dirName();
     int index = ui->tabServers->currentIndex();
 
-    ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
+    ui->tabServers->setTabIcon(index, QIcon(":/icons/resources/Icons/ServerInactive.svg"));
 
     IniSettings->setValue(QString("%0/nick").arg(folder), ui->tabServers->tabText(index));
     IniSettings->setValue(QString("%0/os").arg(folder), OS);
@@ -137,13 +137,13 @@ void MainWindow::ServerApplied(QString ServerFolder)
 void MainWindow::ServerActivated()
 {
     int index = ui->tabServers->currentIndex();
-    ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::MediaPlaybackStart));
+    ui->tabServers->setTabIcon(index, QIcon(":/icons/resources/Icons/ServerActive.svg"));
 }
 
 void MainWindow::ServerDeactivated()
 {
     int index = ui->tabServers->currentIndex();
-    ui->tabServers->setTabIcon(index, QIcon::fromTheme(QIcon::ThemeIcon::ProcessStop));
+    ui->tabServers->setTabIcon(index, QIcon(":/icons/resources/Icons/ServerInactive.svg"));
 }
 
 void MainWindow::RefreshServerTab()

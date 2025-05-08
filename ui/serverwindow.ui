@@ -4247,9 +4247,6 @@ ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
               </disabled>
              </palette>
             </property>
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
            </widget>
           </item>
          </layout>

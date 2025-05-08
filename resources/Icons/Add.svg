@@ -7,9 +7,11 @@
    viewBox="0 0 32 32"
    version="1.1"
    id="svg1"
-   inkscape:export-filename="bitmap.svg"
+   inkscape:export-filename="Settings.svg"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="IconsDrawing.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +25,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:document-units="px">
+     inkscape:document-units="px"
+     inkscape:zoom="22.627417"
+     inkscape:cx="13.390835"
+     inkscape:cy="14.451495"
+     inkscape:window-width="1920"
+     inkscape:window-height="1012"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1">
     <inkscape:page
        x="0"
        y="0"
@@ -35,35 +46,17 @@
   </sodipodi:namedview>
   <defs
      id="defs1" />
-  <g
-     inkscape:groupmode="layer"
-     id="layer2"
-     inkscape:label="Layer 2"
-     style="display:none;fill:#000000">
-    <rect
-       style="fill:#000000;stroke-width:5"
-       id="rect2"
-       width="46.845825"
-       height="52.325901"
-       x="-9.7227182"
-       y="-6.5407376" />
-  </g>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     style="display:inline">
-    <text
-       xml:space="preserve"
-       style="font-size:67.0781px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;display:inline;fill:#000000;stroke-width:27.9492"
-       x="-3.3495622"
-       y="39.918118"
-       id="text1"
-       transform="scale(1.0148199,0.98539655)"><tspan
-         sodipodi:role="line"
-         id="tspan1"
-         x="-3.3495622"
-         y="39.918118"
-         style="fill:#ffffff;stroke-width:27.9492">+</tspan></text>
-  </g>
+  <text
+     xml:space="preserve"
+     style="font-size:67.0781px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;display:inline;fill:#000000;stroke-width:27.9492"
+     x="-3.3539052"
+     y="39.911472"
+     id="text1"
+     transform="scale(1.0148199,0.98539653)"
+     inkscape:label="Add"><tspan
+       sodipodi:role="line"
+       id="tspan1"
+       x="-3.3539052"
+       y="39.911472"
+       style="fill:#ffffff;stroke-width:27.9492">+</tspan></text>
 </svg>
