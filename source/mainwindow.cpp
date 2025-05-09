@@ -250,10 +250,7 @@ void MainWindow::on_tabServers_tabCloseRequested(int index)
         ui->tabServers->removeTab(index);
     }
 
-    if (!ui->tabServers->count())
-        ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: none;\n	background-color: #2b2b2b;\n}");
-    else
-        ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: 3px solid #cf6a32;\n	background-color: #2b2b2b;\n}");
+    LoadStyles(Settings.ColorTheme);
 }
 
 void MainWindow::on_tabServers_tabBarDoubleClicked(int index)
