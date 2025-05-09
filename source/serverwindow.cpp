@@ -17,6 +17,7 @@ ServerWindow::ServerWindow(QWidget *parent, QString name, QString directory)
     ui->PropsConfigs->setGeometry(0, 0, 631, 411);
     ui->PropsConfigs->hide();
     ui->lblFolderError->hide();
+    ui->lblTip->hide();
 
     if (!directory.isEmpty())
     {
@@ -90,6 +91,8 @@ void ServerWindow::LoadServerFirstTimeSetup()
     qInfo() << "First time setup.";
 
     ui->btnGotoServerFolder->setEnabled(false);
+    ui->btnInstallServer->setEnabled(false);
+    ui->lblTip->show();
 
     AdditionalParametersWindow = new AdditionalParametersDialog(this);
     AdditionalParametersWindow->FirstTimeSetup();
@@ -383,6 +386,7 @@ void ServerWindow::on_btnInstallServer_clicked()
 void ServerWindow::on_btnApply_clicked()
 {
     ui->btnGotoServerFolder->setEnabled(false);
+    ui->lblTip->hide();
 
     bool apply = true;
 
@@ -760,8 +764,10 @@ void ServerWindow::SetServerVisualState(VisualState state)
             ui->listProps->setEnabled(false);
         }
 
-
-        ui->btnInstallServer->setEnabled(true);
+        if (!ui->lineFolderName->text().isEmpty())
+            ui->btnInstallServer->setEnabled(true);
+        else
+            ui->btnInstallServer->setEnabled(false);
         ui->btnApply->setEnabled(true);
 
         ui->btnShowConsole->setEnabled(false);
