@@ -387,6 +387,7 @@ void ServerWindow::on_btnApply_clicked()
 {
     ui->btnGotoServerFolder->setEnabled(false);
     ui->lblTip->hide();
+    ui->lblFolderError->hide();
 
     bool apply = true;
 
@@ -441,7 +442,7 @@ void ServerWindow::on_btnApply_clicked()
             return;
         }
 
-        if (!ServerFolder.isEmpty())
+        if (!ServerFolder.isEmpty() && QDir(ServerFolder).dirName() != ui->lineFolderName->text())
         {
             delete IniSettings;
             IniSettings = nullptr;
@@ -926,6 +927,8 @@ void ServerWindow::on_btnConfigSpecial_clicked()
     {
         if (fileName.first(8) == "mapcycle")
         {
+            ui->treeConfigFileData->clear();
+
             QStringList parentItems;
             for (int i=0; i<ui->treeConfigFileData->topLevelItemCount(); i++)
                 parentItems << ui->treeConfigFileData->topLevelItem(i)->text(0) + ".bsp";
