@@ -935,9 +935,9 @@ void ServerWindow::on_btnConfigSpecial_clicked()
             qInfo() << parentItems;
             for (QFileInfo fileInfo : QDir(ServerFolder + "/Server/tf/maps").entryInfoList(QStringList() << "*.bsp", QDir::Files))
             {
-                qInfo() << fileInfo.fileName();
+                qInfo() << fileInfo.fileName().first(fileInfo.fileName().length()-4);
                 if (!parentItems.contains(fileInfo.fileName()))
-                    AddConfigTreeItem(fileInfo.fileName(), "", "");
+                    AddConfigTreeItem(fileInfo.fileName().first(fileInfo.fileName().length()-4), "", "");
             }
         }
     }
