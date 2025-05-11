@@ -6,11 +6,12 @@
         <file>resources/Icons/Remove.svg</file>
         <file>resources/Icons/Find.svg</file>
         <file>resources/Icons/OpenFile.svg</file>
-        <file>resources/Icons/Reload.svg</file>
         <file>resources/Icons/Save.svg</file>
         <file>resources/Icons/Console.svg</file>
         <file>resources/Icons/ServerActive.svg</file>
         <file>resources/Icons/ServerInactive.svg</file>
+        <file>resources/Icons/ReloadFile.svg</file>
+        <file>resources/Icons/Refresh.svg</file>
     </qresource>
     <qresource prefix="/palettes">
         <file>resources/Palettes/MainPalette.xml</file>

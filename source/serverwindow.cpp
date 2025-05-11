@@ -851,6 +851,11 @@ void ServerWindow::SetServerVisualState(VisualState state)
     }
 }
 
+void ServerWindow::on_btnRefreshConfigList_clicked()
+{
+    CheckServerConfigFiles();
+}
+
 void ServerWindow::CheckServerConfigFiles()
 {
     ui->cmbConfigFile->clear();
@@ -1483,4 +1488,3 @@ QString ServerWindow::ServerCfgExample()
            "// Enable party mode\n"
            "tf_birthday 0\n").arg(ui->lineServerName->text());
 }
-

@@ -120,6 +120,8 @@ private slots:
 
     void on_btnGotoServerFolder_clicked();
 
+    void on_btnRefreshConfigList_clicked();
+
 private:
     Ui::ServerWindow *ui;
 

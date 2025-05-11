@@ -4614,6 +4614,29 @@ ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QPushButton" name="btnRefreshConfigList">
+            <property name="minimumSize">
+             <size>
+              <width>29</width>
+              <height>29</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>29</width>
+              <height>29</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/resources/Icons/Refresh.svg</normaloff>:/icons/resources/Icons/Refresh.svg</iconset>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
@@ -4802,7 +4825,7 @@ ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
             </property>
             <property name="icon">
              <iconset resource="../resources.qrc">
-              <normaloff>:/icons/resources/Icons/Reload.svg</normaloff>:/icons/resources/Icons/Reload.svg</iconset>
+              <normaloff>:/icons/resources/Icons/ReloadFile.svg</normaloff>:/icons/resources/Icons/ReloadFile.svg</iconset>
             </property>
            </widget>
           </item>
