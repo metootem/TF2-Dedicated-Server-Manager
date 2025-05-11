@@ -10,8 +10,8 @@
         <file>resources/Icons/Console.svg</file>
         <file>resources/Icons/ServerActive.svg</file>
         <file>resources/Icons/ServerInactive.svg</file>
-        <file>resources/Icons/ReloadFile.svg</file>
         <file>resources/Icons/Refresh.svg</file>
+        <file>resources/Icons/ReloadFile.svg</file>
     </qresource>
     <qresource prefix="/palettes">
         <file>resources/Palettes/MainPalette.xml</file>
