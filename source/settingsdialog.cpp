@@ -63,16 +63,31 @@ void SettingsDialog::on_btnApply_clicked()
     ui->lblApplySuccess->hide();
     ui->lblTip->hide();
 
-    if (!QDir(ui->lineSrvDir->text()).exists() || ui->lineSrvDir->text() == "")
+    if (!QDir(ui->lineSrvDir->text()).exists())
+    {
+            ui->lblSrvDirError->setText("Directory doesn't exist!");
+            ui->lblSrvDirError->show();
+            ui->lblTip->show();
+            apply = false;
+    }
+    else if (ui->lineSrvDir->text() == "")
     {
         if (Settings.ServerDirectory.absolutePath().isEmpty())
         {
+            ui->lblSrvDirError->setText("Directory is empty!");
             ui->lblSrvDirError->show();
             ui->lblTip->show();
             apply = false;
         }
         else
             ui->lineSrvDir->setText(Settings.ServerDirectory.absolutePath());
+    }
+    else if (ui->lineSrvDir->text().contains(" "))
+    {
+        ui->lblSrvDirError->setText("Directory can't have spaces!");
+        ui->lblSrvDirError->show();
+        ui->lblTip->show();
+        apply = false;
     }
 
     if (apply)

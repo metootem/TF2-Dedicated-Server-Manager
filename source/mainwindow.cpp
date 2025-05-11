@@ -232,7 +232,8 @@ void MainWindow::on_tabServers_tabCloseRequested(int index)
         if (msgBox2.clickedButton() == remove)
         {
             QDir dir(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder);
-            dir.removeRecursively();
+            if (dir.dirName() != ".")
+                dir.removeRecursively();
 
             IniSettings->remove(dir.dirName());
 

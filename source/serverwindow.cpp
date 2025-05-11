@@ -229,9 +229,9 @@ void ServerWindow::InstallSteamCMD()
     {
         qInfo() << "There was an error unpacking steamcmd: " << unpack.errorString();
         qInfo() << "Aborting installation.";
-        QMessageBox msgBox(QMessageBox::Icon::Critical, "Error",
+        QMessageBox msgBox(QMessageBox::Icon::Critical, "Error unpacking",
                            tr("There was an error unpacking steamcmd: %0.").arg(unpack.errorString()), {}, this);
-        msgBox.show();
+        msgBox.exec();
         SetServerVisualState();
         return;
     }
@@ -252,7 +252,7 @@ void ServerWindow::InstallSteamCMD()
             qInfo() << "There was an error installing SteamCMD files:" << unpack.errorString();
             QMessageBox msgBox(QMessageBox::Icon::Critical, "Error",
                                tr("There was an error installing SteamCMD files: %0.").arg(unpack.errorString()), {}, this);
-            msgBox.show();
+            msgBox.exec();
             return;
         }
     }
@@ -397,6 +397,20 @@ void ServerWindow::on_btnApply_clicked()
     {
         ui->lblFolderError->show();
         qInfo() << "Folder is invalid!";
+        apply = false;
+    }
+    else if (ui->lineFolderName->text().contains(" "))
+    {
+        ui->lblFolderError->setText("Folder name can't have spaces!");
+        ui->lblFolderError->show();
+        qInfo() << "Folder name can't have spaces!";
+        apply = false;
+    }
+    else if (ui->lineFolderName->text().contains(":"))
+    {
+        ui->lblFolderError->setText("Folder name can't be a directory!");
+        ui->lblFolderError->show();
+        qInfo() << "Folder name can't have spaces!";
         apply = false;
     }
     else
