@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QColorDialog>
+#include <QMessageBox>
 
 struct SettingsStruct{
     bool valid;

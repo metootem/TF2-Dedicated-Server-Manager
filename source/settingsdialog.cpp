@@ -63,14 +63,7 @@ void SettingsDialog::on_btnApply_clicked()
     ui->lblApplySuccess->hide();
     ui->lblTip->hide();
 
-    if (!QDir(ui->lineSrvDir->text()).exists())
-    {
-            ui->lblSrvDirError->setText("Directory doesn't exist!");
-            ui->lblSrvDirError->show();
-            ui->lblTip->show();
-            apply = false;
-    }
-    else if (ui->lineSrvDir->text() == "")
+    if (ui->lineSrvDir->text() == "")
     {
         if (Settings.ServerDirectory.absolutePath().isEmpty())
         {
@@ -92,6 +85,20 @@ void SettingsDialog::on_btnApply_clicked()
 
     if (apply)
     {
+        if (!QDir(ui->lineSrvDir->text()).exists())
+        {
+            QDir dir;
+            if (!dir.mkdir(ui->lineSrvDir->text()))
+            {
+                qInfo() << "There was an error creating server directory!";
+                QMessageBox msgBox(QMessageBox::Icon::Critical, "Couldn't create server directory",
+                                   tr("Couldn't create server directory.\nSelect a different one."), {}, this);
+                msgBox.addButton("Ok", QMessageBox::ButtonRole::RejectRole);
+                msgBox.exec();
+                return;
+            }
+        }
+
         Settings.valid = true;
         Settings.ServerDirectory = ui->lineSrvDir->text();
         Settings.ColorTheme = colorTheme;

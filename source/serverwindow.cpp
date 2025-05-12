@@ -415,7 +415,7 @@ void ServerWindow::on_btnApply_clicked()
     {
         ui->lblFolderError->setText("Folder name can't be a directory!");
         ui->lblFolderError->show();
-        qInfo() << "Folder name can't have spaces!";
+        qInfo() << "Folder name can't be a directory!";
         apply = false;
     }
     else
