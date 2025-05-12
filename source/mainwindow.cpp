@@ -50,7 +50,10 @@ void MainWindow::SettingsChanged( SettingsStruct settings )
 void MainWindow::LoadStyles(QString colorTheme)
 {
 
-    this->setStyleSheet(QString("QTabBar::tab {\n	"
+    this->setStyleSheet(QString("QInputDialog { background-color: #2b2b2b; }\n"
+                                "QMessageBox { background-color: #2b2b2b; }\n"
+                                "QLabel { color: #ffffff; }\n"
+                                "QTabBar::tab {\n	"
                                 "border: 0px solid;\n	"
                                 "background-color: #2b2b2b;\n"
                                 "padding: 5px;\n"
@@ -86,10 +89,10 @@ void MainWindow::LoadStyles(QString colorTheme)
     if (!ui->tabServers->count())
     {
         ui->lblAddServer->show();
-        ui->tabServers->setStyleSheet("QTabWidget::pane {\n	border: none;\n	background-color: #2b2b2b;\n}");
+        ui->tabServers->setStyleSheet("QTabWidget::pane { border: none; background-color: #2b2b2b; }");
     }
     else
-        ui->tabServers->setStyleSheet(QString("QTabWidget::pane {\n	border: 3px solid %0;\n	background-color: #2b2b2b;\n}").arg(colorTheme));
+        ui->tabServers->setStyleSheet(QString("QTabWidget::pane { border: 3px solid %0; background-color: #2b2b2b; }").arg(colorTheme));
 }
 
 
