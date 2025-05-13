@@ -103,8 +103,9 @@ void SettingsDialog::on_btnApply_clicked()
         Settings.ServerDirectory = ui->lineSrvDir->text();
         Settings.ColorTheme = colorTheme;
 
-        IniSettings.setValue(tr("%0/server_directory").arg(OS), Settings.ServerDirectory.absolutePath());
-        IniSettings.setValue(tr("%0/color_theme").arg(OS), Settings.ColorTheme);
+        IniSettings.setValue(QString("%0/server_directory").arg(OS), Settings.ServerDirectory.absolutePath());
+        IniSettings.setValue(QString("%0/color_theme").arg(OS), Settings.ColorTheme);
+        IniSettings.setValue(QString("%0/portForwardTip").arg(OS), IniSettings.value(QString("%0/portForwardTip"), false).toBool());
 
         emit SettingsChanged(Settings);
         ui->lblApplySuccess->show();

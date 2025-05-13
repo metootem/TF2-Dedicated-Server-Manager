@@ -346,6 +346,18 @@ void ServerWindow::InstallServerFinished()
     SteamCMDProcess = nullptr;
     SetServerVisualState();
 
+    QSettings mainIniSettings("tf2-dsm_config.ini", QSettings::IniFormat);
+    if (!mainIniSettings.value(QString("%0/portForwardTip").arg(OS), false).toBool())
+    {
+        QMessageBox msgBox(QMessageBox::Icon::Warning, "PortForwarding",
+                           tr("If you want people outside your network to join the server,\n"
+                              "make sure you have port forwarding set up.\n"
+                              "You may also not be able to join through Public IP without it."), {}, this);
+        msgBox.addButton("Ok", QMessageBox::ButtonRole::AcceptRole);
+        msgBox.exec();
+        mainIniSettings.setValue(QString("%0/portForwardTip").arg(OS), true);
+    }
+
     QFile serverCfg(ServerFolder + "/Server/tf/cfg/server.cfg");
     if (!serverCfg.exists())
     {

@@ -48,7 +48,6 @@ void SteamCMDDialog::ReadOutput()
 
     ui->txtOutput->moveCursor(QTextCursor::End);
     ui->txtOutput->insertPlainText(output);
-    ui->txtOutput->verticalScrollBar()->setSliderPosition(ui->txtOutput->verticalScrollBar()->maximum());
 }
 
 void SteamCMDDialog::InstallFinished(int exitCode, QProcess::ExitStatus exitStatus)
@@ -60,10 +59,10 @@ void SteamCMDDialog::InstallFinished(int exitCode, QProcess::ExitStatus exitStat
     if (exitStatus == QProcess::NormalExit)
     {
         ui->barProgress->setValue(100);
-        ui->txtOutput->append("Finished installing server.");
+        ui->txtOutput->append("Finished installing server.\n");
     }
     else
-        ui->txtOutput->append(QString("There was an error instaling the server. Error: %0").arg(Process->errorString()));
+        ui->txtOutput->append(QString("There was an error instaling the server. Error: %0\n").arg(Process->errorString()));
 }
 
 void SteamCMDDialog::on_btnCancel_clicked()
