@@ -67,7 +67,7 @@ void ServerWindow::LoadStyles(QString colorTheme)
     else if (OS == "linux")
         ui->cmbConfigFile->setStyleSheet(QString("QComboBox {\n	background-color: %0;\ncolor: #ffffff;\n}").arg(colorTheme));
 
-    qInfo() << "Updated Styles.";
+    //qInfo() << "Updated Styles.";
 }
 
 void ServerWindow::LoadServerConfig(QDir directory)
@@ -344,6 +344,8 @@ void ServerWindow::InstallServerFinished()
         mainIniSettings.setValue(QString("%0/portForwardTip").arg(OS), true);
     }
 
+    emit SystemNotification("Finished installing server", ui->lineServerName->text(), 3000);
+
     QFile serverCfg(ServerFolder + "/Server/tf/cfg/server.cfg");
     if (!serverCfg.exists())
     {
@@ -485,13 +487,8 @@ void ServerWindow::on_btnApply_clicked()
         qInfo() << "Saved.";
 
         SetServerVisualState();
-        if (QSystemTrayIcon::isSystemTrayAvailable())
-        {
-            QSystemTrayIcon icon;
-            icon.show();
-            icon.showMessage(ui->lineServerName->text(), "Settings applied", QIcon(":/icons/resources/Images/tf2dsm_logo.png"));
-            icon.hide();
-        }
+
+        emit SystemNotification(ui->lineServerName->text(), "Settings applied", 3000);
         ui->btnGotoServerFolder->setEnabled(true);
         emit ServerApplied( ServerFolder );
     }
@@ -709,13 +706,16 @@ void ServerWindow::on_btnCopyIp_clicked()
 
     clip->setText(IP);
 
+    emit SystemNotification("Copied Public IP to clipboard", IP, 3000);
+/*
     if (QSystemTrayIcon::isSystemTrayAvailable())
     {
         QSystemTrayIcon icon;
+        icon.setIcon(QIcon(":/tf2dsm.ico"));
         icon.show();
-        icon.showMessage("Copied Public IP to clipboard", IP, QIcon(":/icons/resources/Images/tf2dsm_logo.png"));
+        icon.showMessage("Copied Public IP to clipboard", IP);
         icon.hide();
-    }
+    }*/
 }
 
 
@@ -1019,13 +1019,7 @@ void ServerWindow::on_btnSaveConfig_clicked()
             file.flush();
             file.close();
 
-            if (QSystemTrayIcon::isSystemTrayAvailable())
-            {
-                QSystemTrayIcon icon;
-                icon.show();
-                icon.showMessage("No data saved", fileName, QIcon(":/icons/resources/Images/tf2dsm_logo.png"));
-                icon.hide();
-            }
+            emit SystemNotification("No data saved", fileName, 3000);
 
             return;
         }
@@ -1075,13 +1069,7 @@ void ServerWindow::on_btnSaveConfig_clicked()
                 file.flush();
                 file.close();
 
-                if (QSystemTrayIcon::isSystemTrayAvailable())
-                {
-                    QSystemTrayIcon icon;
-                    icon.show();
-                    icon.showMessage("No data saved", fileName, QIcon(":/icons/resources/Images/tf2dsm_logo.png"));
-                    icon.hide();
-                }
+                emit SystemNotification("No data saved", fileName, 3000);
 
                 return;
             }
@@ -1141,13 +1129,7 @@ void ServerWindow::on_btnSaveConfig_clicked()
         file.flush();
         file.close();
 
-        if (QSystemTrayIcon::isSystemTrayAvailable())
-        {
-            QSystemTrayIcon icon;
-            icon.show();
-            icon.showMessage("Saved config", fileName, QIcon(":/icons/resources/Images/tf2dsm_logo.png"));
-            icon.hide();
-        }
+        emit SystemNotification("Saved config", fileName, 3000);
     }
 }
 

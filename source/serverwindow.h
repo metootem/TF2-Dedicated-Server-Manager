@@ -65,6 +65,8 @@ signals:
     void ServerActivated();
     void ServerDeactivated();
 
+    void SystemNotification(QString, QString, int);
+
 private slots:
     void LoadStyles( QString colorTheme );
     void LoadServerConfig( QDir directory );

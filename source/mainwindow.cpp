@@ -10,11 +10,25 @@ MainWindow::MainWindow(QWidget *parent)
     if (OS != "windows" && OS != "macos")
         OS = "linux";
     IniSettings = new QSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
+
+    if (QSystemTrayIcon::isSystemTrayAvailable())
+    {
+        SystemTrayIcon = new QSystemTrayIcon(this);
+        SystemTrayIcon->setIcon(QIcon(":/tf2dsm.ico"));
+        SystemTrayIcon->setVisible(true);
+    }
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::ShowSystemNotification(QString title, QString message, int length)
+{
+    if (QSystemTrayIcon::isSystemTrayAvailable())
+        SystemTrayIcon->showMessage(title, message, QIcon(":/tf2dms.ico"), length);
 }
 
 bool MainWindow::LoadConfig()
@@ -44,6 +58,8 @@ void MainWindow::SettingsChanged( SettingsStruct settings )
     ServerDir = settings.ServerDirectory;
     RefreshServerTab();
     LoadStyles(settings.ColorTheme);
+
+    ShowSystemNotification("Settings changed", "", 3000);
 
     emit PassSettingsChanged(settings);
 }
@@ -116,6 +132,7 @@ void MainWindow::AddServer(QString servername, QString serverFolder)
     connect(newServerWindow, SIGNAL(ServerApplied(QString)), this, SLOT(ServerApplied(QString)));
     connect(newServerWindow, SIGNAL(ServerActivated()), this, SLOT(ServerActivated()));
     connect(newServerWindow, SIGNAL(ServerDeactivated()), this, SLOT(ServerDeactivated()));
+    connect(newServerWindow, SIGNAL(SystemNotification(QString, QString, int)), SLOT(ShowSystemNotification(QString, QString, int)));
 
     if (serverFolder.isEmpty())
         ui->tabServers->setTabIcon(index, QIcon(":/icons/resources/Icons/Add.svg"));

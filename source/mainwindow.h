@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QString>
+#include <QSystemTrayIcon>
 
 #include "settingsdialog.h"
 #include "serverwindow.h"
@@ -35,6 +36,7 @@ public:
 
 public slots:
     void ServerApplied( QString ServerFolder );
+    void ShowSystemNotification( QString, QString, int );
 
 signals:
     void PassSettingsChanged( SettingsStruct Settings );
@@ -63,6 +65,8 @@ private:
     SettingsStruct Settings;
     QDir ServerDir;
     QSettings *IniSettings;
+
+    QSystemTrayIcon *SystemTrayIcon;
 
     //QSettings Settings;
 };
