@@ -8,6 +8,7 @@
 #include <QSettings>
 #include <QColorDialog>
 #include <QMessageBox>
+#include <QProcess>
 
 struct SettingsStruct{
     bool valid;
@@ -15,6 +16,7 @@ struct SettingsStruct{
     QString OS;
     QDir ServerDirectory;
 
+    QString PublicIP;
     QString ColorTheme;
 };
 
@@ -30,6 +32,7 @@ public:
     explicit SettingsDialog(QWidget *parent = nullptr);
 
     SettingsStruct ParseSettings();
+    QString GetPublicIP();
 
     ~SettingsDialog();
 

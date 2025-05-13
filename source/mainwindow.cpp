@@ -19,6 +19,7 @@ MainWindow::~MainWindow()
 
 bool MainWindow::LoadConfig()
 {
+    qInfo() << "Loading app settings.";
     SettingsDialog* settingsDialog = new SettingsDialog(this);
     Settings = settingsDialog->ParseSettings();
     if (!Settings.valid)
@@ -107,7 +108,7 @@ void MainWindow::AddServer(QString servername, QString serverFolder)
     } while (ServerTabExists(name));
 
     qInfo() << "Adding Server Tab: " + name;
-    auto newServerWindow = new ServerWindow(this, name, serverFolder);
+    auto newServerWindow = new ServerWindow(Settings, this, name, serverFolder);
     int index = ui->tabServers->addTab(newServerWindow, name);
 
     connect(this, SIGNAL(PassSettingsChanged(SettingsStruct)), newServerWindow, SLOT(SettingsChanged(SettingsStruct)));

@@ -48,7 +48,7 @@ class ServerWindow : public QWidget
 
 public:
     explicit ServerWindow(QWidget *parent = nullptr);
-    ServerWindow(QWidget *parent = nullptr, QString name = "New Server", QString directory = "");
+    ServerWindow(SettingsStruct settings, QWidget *parent = nullptr, QString name = "New Server", QString directory = "");
 
     QString ServerFolder;
     bool ServerInstalling = false;
@@ -69,7 +69,6 @@ private slots:
     void LoadStyles( QString colorTheme );
     void LoadServerConfig( QDir directory );
     void LoadServerFirstTimeSetup();
-    QString GetPublicIP();
 
     bool SteamCMDExists();
     bool SteamCMDZipExists();

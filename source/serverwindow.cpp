@@ -8,7 +8,7 @@ ServerWindow::ServerWindow(QWidget *parent)
     ui->setupUi(this);
 }
 
-ServerWindow::ServerWindow(QWidget *parent, QString name, QString directory)
+ServerWindow::ServerWindow(SettingsStruct Settings, QWidget *parent, QString name, QString directory)
     : QWidget(parent)
     , ui(new Ui::ServerWindow)
 {
@@ -31,15 +31,14 @@ ServerWindow::ServerWindow(QWidget *parent, QString name, QString directory)
     if (OS != "windows" && OS != "macos")
         OS = "linux";
 
-    QSettings mainIniSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
-    qInfo() << "Loading Main Ini Settings.";
-    LoadStyles(mainIniSettings.value(OS + "/color_theme").toString());
+    qInfo() << "Loading Settings.";
+    LoadStyles(Settings.ColorTheme);
 
     SteamCMDProcess = nullptr;
     ServerProcess = nullptr;
     SteamCMDWindow = nullptr;
 
-    PublicIP = GetPublicIP();
+    PublicIP = Settings.PublicIP;
 
     SetServerVisualState();
 }
@@ -51,6 +50,8 @@ ServerWindow::~ServerWindow()
 
 void ServerWindow::SettingsChanged(SettingsStruct Settings)
 {
+    PublicIP = Settings.PublicIP;
+
     LoadStyles(Settings.ColorTheme);
 }
 
@@ -100,21 +101,6 @@ void ServerWindow::LoadServerFirstTimeSetup()
 
     AdditionalParametersWindow = new AdditionalParametersDialog(this);
     AdditionalParametersWindow->FirstTimeSetup();
-}
-
-
-QString ServerWindow::GetPublicIP()
-{
-    QProcess GetIP;
-    GetIP.start("curl", QStringList() << "https://api.ipify.org");
-    GetIP.waitForFinished(10000);
-    QString IP = GetIP.readAllStandardOutput();
-    GetIP.terminate();
-    if (IP.isEmpty())
-        qInfo() << "Couldn't get Public IP.";
-    else
-        qInfo() << "Got Public IP:" << IP;
-    return IP;
 }
 
 
@@ -1006,16 +992,18 @@ void ServerWindow::on_btnNewConfigFile_clicked()
                                                "Server Nickname:", QLineEdit::Normal,
                                                "", &ok);
 
-    if (!ok || name.isEmpty())
+    if (!ok || name.isEmpty() || name.contains(":") || name.contains(" "))
         return;
 
     QFile file(ServerFolder + "/Server/tf/cfg/" + name + ".cfg");
     if (file.open(QIODevice::WriteOnly))
+    {
         file.close();
 
-    CheckServerConfigFiles();
+        CheckServerConfigFiles();
 
-    ui->cmbConfigFile->setCurrentText(name + ".cfg");
+        ui->cmbConfigFile->setCurrentText(name + ".cfg");
+    }
 }
 
 void ServerWindow::on_btnSaveConfig_clicked()
