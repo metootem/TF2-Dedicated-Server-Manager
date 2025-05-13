@@ -12,7 +12,7 @@ SteamCMDDialog::SteamCMDDialog(QWidget *parent, QProcess *process, QString name)
     connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(InstallFinished(int,QProcess::ExitStatus)));
 
     this->setWindowTitle("Installing Server For " + name);
-    ui->txtOutput->setText("Running SteamCMD...\nOutput may take a while, please be patient.\n");
+    ui->txtOutput->setText("Running SteamCMD...\nOutput may take a while, please be patient.\n\n");
 }
 
 SteamCMDDialog::~SteamCMDDialog()
@@ -22,7 +22,7 @@ SteamCMDDialog::~SteamCMDDialog()
 
 void SteamCMDDialog::NewProcess(QProcess *process)
 {
-    ui->txtOutput->append("Running SteamCMD...\nOutput may take a while, please be patient.\n");
+    ui->txtOutput->append("Running SteamCMD...\nOutput may take a while, please be patient.\n\n");
     ui->barProgress->setValue(0);
     connect(process, SIGNAL(readyRead()), SLOT(ReadOutput()));
     connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(InstallFinished(int, QProcess::ExitStatus)));

@@ -50,7 +50,7 @@ SettingsStruct SettingsDialog::ParseSettings()
 
     colorTheme = IniSettings.value(OS + "/color_theme").toString();
 
-    ui->btnColor->setStyleSheet(QString("border: 2px solid #232323;\nborder-radius: 0px;\nbackground-color: %0;").arg(colorTheme));
+    ui->btnColor->setStyleSheet(QString("border: 2px solid #232323; border-radius: 0px; background-color: %0; color: #ffffff;").arg(colorTheme));
     ui->lineSrvDir->setText(IniSettings.value(tr("%0/server_directory").arg(OS)).toString());
 
     return Settings;

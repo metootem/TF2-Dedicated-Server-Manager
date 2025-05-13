@@ -50,40 +50,37 @@ void MainWindow::SettingsChanged( SettingsStruct settings )
 void MainWindow::LoadStyles(QString colorTheme)
 {
 
-    this->setStyleSheet(QString("QInputDialog { background-color: #2b2b2b; }\n"
-                                "QMessageBox { background-color: #2b2b2b; }\n"
-                                "QLabel { color: #ffffff; }\n"
-                                "QTabBar::tab {\n	"
-                                "border: 0px solid;\n	"
-                                "background-color: #2b2b2b;\n"
-                                "padding: 5px;\n"
-                                "border-top-left-radius: 3px;\n"
-                                "border-top-right-radius: 3px;\n"
-                                "color: #ffffff;\n}\n\n"
-                                "QTabBar::tab:selected {\n"
-                                "background-color: %0;\n}\n\n"
-                                "QPushButton {\n	"
-                                "border: none;\n"
-                                "border-bottom: 3px solid %0;\n"
-                                "background-color: #2b2b2b;\n"
-                                "font: 13pt \"Noto Sans\";\n"
-                                "color: #ffffff\n}\n\n"
-                                "QPushButton::hover {\n"
-                                "background-color: %1;\n}\n"
-                                "QPushButton::pressed {\n"
-                                "background-color: %2;\n}\n"
-                                "QPushButton:disabled {\n"
-                                "color: #3b3b3b;\n"
-                                "}\n"
-                                "QListWidget {\n"
-                                "border: none;\n"
-                                "}\n"
-                                "QListWidget::item:selected {\n"
-                                "background-color: %0;\n"
-                                "}\n"
-                                "QTreeWidget::item:selected {\n"
-                                "background-color: %0;\n"
-                                "}\n").arg(colorTheme, QColor(colorTheme).lighter(130).name(), QColor(colorTheme).darker(130).name()));
+    this->setStyleSheet(QString("QInputDialog { background-color: #2b2b2b; }"
+                                "QMessageBox { background-color: #2b2b2b; }"
+                                "QLabel { color: #ffffff; }"
+                                ""
+                                "QTabBar::tab {"
+                                "border: 0px solid;"
+                                "background-color: #2b2b2b;"
+                                "padding: 5px;"
+                                "border-top-left-radius: 3px;"
+                                "border-top-right-radius: 3px;"
+                                "color: #ffffff; }"
+                                ""
+                                "QTabBar::tab:selected { background-color: %0; }"
+                                ""
+                                "QPushButton {"
+                                "border: none;"
+                                "border-bottom: 2px solid %0;"
+                                "background-color: rgba(0, 0, 0, 0);"
+                                "font: 13pt \"Noto Sans\";"
+                                "color: #ffffff; }"
+                                ""
+                                "QPushButton::hover { background-color: %1; }"
+                                "QPushButton::pressed { background-color: %2; }"
+                                "QPushButton:disabled { color: #3b3b3b; }"
+                                "QListWidget { border: none; selection-background-color: %0; }"
+                                "QListWidget::item:selected { background-color: %0; }"
+                                "QTreeWidget { selection-background-color: %0; }"
+                                "QTreeWidget::item:selected { background-color: %0; }"
+                                "QProgressBar { text-align: center; }"
+                                "QProgressBar::chunk { background-color: %0; }"
+                                ).arg(colorTheme, QColor(colorTheme).lighter(130).name(), QColor(colorTheme).darker(130).name()));
 
     ui->lblAddServer->hide();
     if (!ui->tabServers->count())
@@ -92,7 +89,9 @@ void MainWindow::LoadStyles(QString colorTheme)
         ui->tabServers->setStyleSheet("QTabWidget::pane { border: none; background-color: #2b2b2b; }");
     }
     else
-        ui->tabServers->setStyleSheet(QString("QTabWidget::pane { border: 3px solid %0; background-color: #2b2b2b; }").arg(colorTheme));
+        ui->tabServers->setStyleSheet(QString("QTabWidget::pane { border-bottom: 0px solid #5a5a5a;"
+                                              "border-top: 2px solid %0;"
+                                              "background-color: #2b2b2b; }").arg(colorTheme));
 }
 
 

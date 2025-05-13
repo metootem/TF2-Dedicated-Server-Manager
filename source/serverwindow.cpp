@@ -60,7 +60,7 @@ void ServerWindow::LoadStyles(QString colorTheme)
                    "QMessageBox { background-color: #2b2b2b; }"
                    "QLabel { color: #ffffff; }");
 
-    ui->listProps->setStyleSheet(QString("QListWidget {\n	border: none;\nborder-left: 3px solid %0;\n}\n\nQListWidget::item:selected {\n	background-color: %0;\n}").arg(colorTheme));
+    ui->listProps->setStyleSheet(QString("QListWidget { border: none; border-left: 3px solid %0; selection-background-color: %0; } QListWidget::item:selected { background-color: %0; }").arg(colorTheme));
     if (OS == "windows")
         ui->cmbConfigFile->setStyleSheet("QComboBox {\n	\ncolor: #000000;\n}");
     else if (OS == "linux")

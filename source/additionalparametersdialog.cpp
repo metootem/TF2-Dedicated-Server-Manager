@@ -13,6 +13,8 @@ AdditionalParametersDialog::AdditionalParametersDialog(QWidget *parent, QSetting
     }
     else
         this->setWindowTitle("New Additional Parameters Window");
+    ui->treeParameters->setColumnWidth(0, 200);
+    ui->treeParameters->setColumnWidth(1, 200);
 }
 
 AdditionalParametersDialog::~AdditionalParametersDialog()
