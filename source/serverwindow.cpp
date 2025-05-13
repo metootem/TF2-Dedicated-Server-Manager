@@ -999,6 +999,25 @@ void ServerWindow::on_btnFindConVar_clicked()
     msgBox.exec();
 }
 
+void ServerWindow::on_btnNewConfigFile_clicked()
+{
+    bool ok;
+    QString name = QInputDialog::getText(this, "Change Server Nickname",
+                                               "Server Nickname:", QLineEdit::Normal,
+                                               "", &ok);
+
+    if (!ok || name.isEmpty())
+        return;
+
+    QFile file(ServerFolder + "/Server/tf/cfg/" + name + ".cfg");
+    if (file.open(QIODevice::WriteOnly))
+        file.close();
+
+    CheckServerConfigFiles();
+
+    ui->cmbConfigFile->setCurrentText(name + ".cfg");
+}
+
 void ServerWindow::on_btnSaveConfig_clicked()
 {
     QString fileName = ui->cmbConfigFile->currentText();
@@ -1507,3 +1526,4 @@ QString ServerWindow::ServerCfgExample()
            "// Enable party mode\n"
            "tf_birthday 0\n").arg(ui->lineServerName->text());
 }
+

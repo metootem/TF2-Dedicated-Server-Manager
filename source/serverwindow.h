@@ -122,6 +122,8 @@ private slots:
 
     void on_btnRefreshConfigList_clicked();
 
+    void on_btnNewConfigFile_clicked();
+
 private:
     Ui::ServerWindow *ui;
 
