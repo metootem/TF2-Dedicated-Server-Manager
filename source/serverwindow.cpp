@@ -235,18 +235,6 @@ void ServerWindow::InstallSteamCMD()
 
         QProcess::execute("ln", QStringList() << "-s" << "/usr/lib/libcurl.so.4" << "/usr/lib/libcurl-gnutls.so.4");
     }
-    else if (OS == "windows")
-    {
-        unpack.start("steamcmd.exe");
-        if (unpack.waitForFinished())
-        {
-            qInfo() << "There was an error installing SteamCMD files:" << unpack.errorString();
-            QMessageBox msgBox(QMessageBox::Icon::Critical, "Error",
-                               tr("There was an error installing SteamCMD files: %0.").arg(unpack.errorString()), {}, this);
-            msgBox.exec();
-            return;
-        }
-    }
 
     InstallServer();
 }
@@ -345,7 +333,7 @@ void ServerWindow::InstallServerFinished()
         mainIniSettings.setValue(QString("%0/portForwardTip").arg(OS), true);
     }
 
-    emit SystemNotification("Finished installing server", ui->lineServerName->text(), 3000);
+    emit SystemNotification("Finished Running SteamCMD", ui->lineServerName->text(), 3000);
 
     QFile serverCfg(ServerFolder + "/Server/tf/cfg/server.cfg");
     if (!serverCfg.exists())
@@ -783,11 +771,13 @@ void ServerWindow::SetServerVisualState(VisualState state)
         {
             ui->btnStartServer->setEnabled(true);
             ui->listProps->setEnabled(true);
+            ui->btnConnectToServer->setEnabled(true);
         }
         else
         {
             ui->btnStartServer->setEnabled(false);
             ui->listProps->setEnabled(false);
+            ui->btnConnectToServer->setEnabled(false);
         }
 
         if (!ui->lineFolderName->text().isEmpty())

@@ -48,6 +48,9 @@ void SteamCMDDialog::ReadOutput()
 
     ui->txtOutput->moveCursor(QTextCursor::End);
     ui->txtOutput->insertPlainText(output);
+
+    if (output.contains("0x202"))
+        errorCode += 1;
 }
 
 void SteamCMDDialog::InstallFinished(int exitCode, QProcess::ExitStatus exitStatus)
@@ -55,14 +58,22 @@ void SteamCMDDialog::InstallFinished(int exitCode, QProcess::ExitStatus exitStat
     if (this->isHidden())
         this->show();
 
-    qInfo() << "Finished installing server.";
+    qInfo() << "Finished Running SteamCMD.";
     if (exitStatus == QProcess::NormalExit)
     {
         ui->barProgress->setValue(100);
-        ui->txtOutput->append("Finished installing server.\n");
+        ui->txtOutput->append("Finished Running SteamCMD.");
+        if (!errorCode)
+            ui->txtOutput->append("Check console output for any errors.");
+        else
+        {
+            if (errorCode & Error_NoDiskSpace)
+                ui->txtOutput->append("No disk space available to install server.");
+
+        }
     }
     else
-        ui->txtOutput->append(QString("There was an error instaling the server. Error: %0\n").arg(Process->errorString()));
+        ui->txtOutput->append(QString("There was an error installing the server. Error: %0\n").arg(Process->errorString()));
 }
 
 void SteamCMDDialog::on_btnCancel_clicked()

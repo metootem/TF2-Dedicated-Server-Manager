@@ -5,6 +5,8 @@
 #include <QProcess>
 #include <QScrollBar>
 
+#define Error_NoDiskSpace (1 << 0)
+
 namespace Ui {
 class SteamCMDDialog;
 }
@@ -34,6 +36,7 @@ private:
     Ui::SteamCMDDialog *ui;
 
     QProcess *Process;
+    int errorCode;
 };
 
 #endif // STEAMCMDDIALOG_H
