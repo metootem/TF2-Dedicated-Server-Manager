@@ -20,10 +20,8 @@ ServerWindow::ServerWindow(SettingsStruct Settings, QWidget *parent, QString nam
     ui->lblTip->hide();
 
     if (!directory.isEmpty())
-    {
-        IniSettings = new QSettings(tr("%0/server.ini").arg(directory), QSettings::Format::IniFormat);
         LoadServerConfig(QDir(directory));
-    }
+
     else
         LoadServerFirstTimeSetup();
 
@@ -57,9 +55,10 @@ void ServerWindow::SettingsChanged(SettingsStruct Settings)
 
 void ServerWindow::LoadStyles(QString colorTheme)
 {
-    this->setStyleSheet("QInputDialog { background-color: #2b2b2b; }"
-                   "QMessageBox { background-color: #2b2b2b; }"
-                   "QLabel { color: #ffffff; }");
+
+    this->setStyleSheet(QString("QInputDialog { background-color: #2b2b2b; }"
+                   "QMessageBox { background-color: #2b2b2b; }"));
+                        //"QLabel { color: %0; }").arg(textColor));
 
     ui->listProps->setStyleSheet(QString("QListWidget { border: none; border-left: 3px solid %0; selection-background-color: %0; } QListWidget::item:selected { background-color: %0; }").arg(colorTheme));
     if (OS == "windows")
@@ -72,20 +71,22 @@ void ServerWindow::LoadStyles(QString colorTheme)
 
 void ServerWindow::LoadServerConfig(QDir directory)
 {
-    ui->lineServerName->setText(IniSettings->value("server_name").toString());
-
     ServerFolder = directory.path();
+    QSettings IniSettings(ServerFolder + "/server.ini", QSettings::Format::IniFormat);
+
+    ui->lineServerName->setText(IniSettings.value("server_name").toString());
+
     ui->lineFolderName->setText(QDir(ServerFolder).dirName());
 
-    ui->lineIP->setText(IniSettings->value("ip").toString());
+    ui->lineIP->setText(IniSettings.value("ip").toString());
 
-    ui->linePort->setText(IniSettings->value("port").toString());
+    ui->linePort->setText(IniSettings.value("port").toString());
 
-    ui->spinMaxPlayers->setValue(IniSettings->value("players").toInt());
+    ui->spinMaxPlayers->setValue(IniSettings.value("players").toInt());
 
-    ui->lineMap->setText(IniSettings->value("map").toString());
+    ui->lineMap->setText(IniSettings.value("map").toString());
 
-    AdditionalParametersWindow = new AdditionalParametersDialog(this, IniSettings);
+    AdditionalParametersWindow = new AdditionalParametersDialog(this, &IniSettings);
 
     CheckServerConfigFiles();
 }
@@ -448,8 +449,8 @@ void ServerWindow::on_btnApply_clicked()
 
         if (!ServerFolder.isEmpty() && QDir(ServerFolder).dirName() != ui->lineFolderName->text())
         {
-            delete IniSettings;
-            IniSettings = nullptr;
+            //delete IniSettings;
+            //IniSettings = nullptr;
 
             if (QFile::rename(ServerFolder, QString("%0/%1").arg(settings.ServerDirectory.path(), ui->lineFolderName->text())))
                 ServerFolder = QString("%0/%1").arg(settings.ServerDirectory.path(), ui->lineFolderName->text());
@@ -463,25 +464,33 @@ void ServerWindow::on_btnApply_clicked()
         else
             ServerFolder = QString("%0/%1").arg(settings.ServerDirectory.path(), ui->lineFolderName->text());
 
-        if (IniSettings == nullptr)
-            IniSettings = new QSettings(ServerFolder + "/server.ini", QSettings::Format::IniFormat);
+        if (!QDir(ServerFolder).exists())
+        {
+            QDir dir;
+            dir.mkdir(ServerFolder);
+            qInfo() << "Making server directory:" << ServerFolder;
+        }
+
+        //if (IniSettings == nullptr)
+        //    IniSettings = new QSettings(ServerFolder + "/server.ini", QSettings::Format::IniFormat);
+
+        QSettings IniSettings(ServerFolder + "/server.ini", QSettings::Format::IniFormat);
 
         qInfo() << ServerFolder;
-        qInfo() << IniSettings;
         qInfo() << "Saving server config.";
-        IniSettings->setValue("server_name", ui->lineServerName->text());
+        IniSettings.setValue("server_name", ui->lineServerName->text());
         qInfo() << "server_name...";
-        IniSettings->setValue("ip", ui->lineIP->text());
+        IniSettings.setValue("ip", ui->lineIP->text());
         qInfo() << "ip...";
-        IniSettings->setValue("port", ui->linePort->text());
+        IniSettings.setValue("port", ui->linePort->text());
         qInfo() << "port...";
-        IniSettings->setValue("players", ui->spinMaxPlayers->value());
+        IniSettings.setValue("players", ui->spinMaxPlayers->value());
         qInfo() << "players...";
-        IniSettings->setValue("map", ui->lineMap->text());
+        IniSettings.setValue("map", ui->lineMap->text());
         qInfo() << "map...";
-        IniSettings->setValue("parameters", AdditionalParametersWindow->GetParameters());
+        IniSettings.setValue("parameters", AdditionalParametersWindow->GetParameters());
         qInfo() << "parameters...";
-        IniSettings->setValue("os", OS);
+        IniSettings.setValue("os", OS);
         qInfo() << "os...";
 
         qInfo() << "Saved.";

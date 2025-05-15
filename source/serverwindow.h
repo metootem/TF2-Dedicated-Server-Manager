@@ -131,7 +131,7 @@ private:
     QString OS;
     QString PublicIP;
 
-    QSettings *IniSettings;
+    //QSettings *IniSettings;
     QProcess *SteamCMDProcess;
     QProcess *ServerProcess;
     ServerConsoleDialog *ServerConsole;
