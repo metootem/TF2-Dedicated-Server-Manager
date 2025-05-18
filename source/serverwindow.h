@@ -50,6 +50,7 @@ public:
     explicit ServerWindow(QWidget *parent = nullptr);
     ServerWindow(SettingsStruct settings, QWidget *parent = nullptr, QString name = "New Server", QString directory = "");
 
+    QString parentFolder;
     QString ServerFolder;
     bool ServerInstalling = false;
 
@@ -78,7 +79,6 @@ private slots:
     void DownloadSteamCMD();
     void InstallSteamCMD();
     void InstallServer();
-    void KillSteamCMDProcess();
 
     void on_listProps_currentRowChanged(int currentRow);
 

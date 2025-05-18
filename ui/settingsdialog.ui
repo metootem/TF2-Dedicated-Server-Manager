@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>250</height>
+    <width>1200</width>
+    <height>450</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>800</width>
-    <height>250</height>
+    <width>1200</width>
+    <height>450</height>
    </size>
   </property>
   <property name="palette">
@@ -368,6 +368,33 @@
             </color>
            </brush>
           </colorrole>
+          <colorrole role="Text">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>223</red>
+             <green>94</green>
+             <blue>96</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="ButtonText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>223</red>
+             <green>94</green>
+             <blue>96</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="PlaceholderText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="128">
+             <red>223</red>
+             <green>94</green>
+             <blue>96</blue>
+            </color>
+           </brush>
+          </colorrole>
          </active>
          <inactive>
           <colorrole role="WindowText">
@@ -379,8 +406,72 @@
             </color>
            </brush>
           </colorrole>
+          <colorrole role="Text">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>223</red>
+             <green>94</green>
+             <blue>96</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="ButtonText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>223</red>
+             <green>94</green>
+             <blue>96</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="PlaceholderText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="128">
+             <red>223</red>
+             <green>94</green>
+             <blue>96</blue>
+            </color>
+           </brush>
+          </colorrole>
          </inactive>
-         <disabled/>
+         <disabled>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>223</red>
+             <green>94</green>
+             <blue>96</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Text">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>223</red>
+             <green>94</green>
+             <blue>96</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="ButtonText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>223</red>
+             <green>94</green>
+             <blue>96</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="PlaceholderText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="128">
+             <red>223</red>
+             <green>94</green>
+             <blue>96</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </disabled>
         </palette>
        </property>
        <property name="font">
@@ -388,6 +479,9 @@
          <italic>true</italic>
          <bold>false</bold>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: #df5e60;</string>
        </property>
        <property name="text">
         <string>Invalid directory!</string>
@@ -954,19 +1048,6 @@ color: #ffffff;</string>
        </property>
       </spacer>
      </item>
-     <item row="2" column="2">
-      <widget class="QPushButton" name="btnSrvDir">
-       <property name="minimumSize">
-        <size>
-         <width>114</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Browse</string>
-       </property>
-      </widget>
-     </item>
      <item row="2" column="0">
       <widget class="QLabel" name="lblSrvDir">
        <property name="palette">
@@ -1295,14 +1376,7 @@ color: #ffffff;</string>
         </palette>
        </property>
        <property name="text">
-        <string>Servers Directory:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="lineSrvDir">
-       <property name="text">
-        <string/>
+        <string>Server Directories:</string>
        </property>
       </widget>
      </item>
@@ -1667,6 +1741,33 @@ color: #ffffff;</string>
               </color>
              </brush>
             </colorrole>
+            <colorrole role="Text">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>84</red>
+               <green>223</green>
+               <blue>89</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="ButtonText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>84</red>
+               <green>223</green>
+               <blue>89</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="PlaceholderText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="128">
+               <red>84</red>
+               <green>223</green>
+               <blue>89</blue>
+              </color>
+             </brush>
+            </colorrole>
            </active>
            <inactive>
             <colorrole role="WindowText">
@@ -1678,8 +1779,72 @@ color: #ffffff;</string>
               </color>
              </brush>
             </colorrole>
+            <colorrole role="Text">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>84</red>
+               <green>223</green>
+               <blue>89</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="ButtonText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>84</red>
+               <green>223</green>
+               <blue>89</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="PlaceholderText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="128">
+               <red>84</red>
+               <green>223</green>
+               <blue>89</blue>
+              </color>
+             </brush>
+            </colorrole>
            </inactive>
-           <disabled/>
+           <disabled>
+            <colorrole role="WindowText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>84</red>
+               <green>223</green>
+               <blue>89</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Text">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>84</red>
+               <green>223</green>
+               <blue>89</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="ButtonText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>84</red>
+               <green>223</green>
+               <blue>89</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="PlaceholderText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="128">
+               <red>84</red>
+               <green>223</green>
+               <blue>89</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </disabled>
           </palette>
          </property>
          <property name="font">
@@ -1687,6 +1852,9 @@ color: #ffffff;</string>
            <italic>true</italic>
            <bold>false</bold>
           </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #54df59;</string>
          </property>
          <property name="text">
           <string>Settings applied!</string>
@@ -1742,6 +1910,99 @@ color: #ffffff;</string>
         </size>
        </property>
       </spacer>
+     </item>
+     <item row="2" column="2">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="btnAddSrvDir">
+         <property name="minimumSize">
+          <size>
+           <width>53</width>
+           <height>29</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>53</width>
+           <height>29</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources.qrc">
+           <normaloff>:/icons/resources/Icons/Add.svg</normaloff>:/icons/resources/Icons/Add.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="btnRmvSrvDir">
+         <property name="minimumSize">
+          <size>
+           <width>53</width>
+           <height>29</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>53</width>
+           <height>29</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources.qrc">
+           <normaloff>:/icons/resources/Icons/Remove.svg</normaloff>:/icons/resources/Icons/Remove.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="2" column="1">
+      <widget class="QTreeWidget" name="treeSrvDirs">
+       <property name="toolTip">
+        <string>List of directories the app will search for servers in.</string>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+       </property>
+       <property name="indentation">
+        <number>0</number>
+       </property>
+       <property name="rootIsDecorated">
+        <bool>false</bool>
+       </property>
+       <property name="itemsExpandable">
+        <bool>false</bool>
+       </property>
+       <attribute name="headerVisible">
+        <bool>true</bool>
+       </attribute>
+       <attribute name="headerStretchLastSection">
+        <bool>true</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>Directory</string>
+        </property>
+       </column>
+      </widget>
      </item>
     </layout>
    </item>

@@ -43,8 +43,9 @@ bool MainWindow::LoadConfig()
         connect(settingsDialog, &SettingsDialog::SettingsChanged, this, &MainWindow::SettingsChanged);
         return false;
     }
+    delete settingsDialog;
 
-    ServerDir = QDir(Settings.ServerDirectory);
+    ServerDirs = Settings.ServerDirectories;
     RefreshServerTab();
 
     LoadStyles(Settings.ColorTheme);
@@ -55,7 +56,7 @@ bool MainWindow::LoadConfig()
 void MainWindow::SettingsChanged( SettingsStruct settings )
 {
     Settings = settings;
-    ServerDir = settings.ServerDirectory;
+    ServerDirs = settings.ServerDirectories;
     RefreshServerTab();
     LoadStyles(settings.ColorTheme);
 
@@ -123,6 +124,7 @@ void MainWindow::AddServer(QString servername, QString serverFolder)
             name = tr("%0 %1").arg(servername).arg(found_count, 1);
     } while (ServerTabExists(name));
 
+    qInfo() << " ";
     qInfo() << "Adding Server Tab: " + name;
     auto newServerWindow = new ServerWindow(Settings, this, name, serverFolder);
     int index = ui->tabServers->addTab(newServerWindow, name);
@@ -177,29 +179,56 @@ void MainWindow::ServerDeactivated()
 
 void MainWindow::RefreshServerTab()
 {
-    ui->tabServers->clear();
-    QFileInfoList fileList = ServerDir.entryInfoList(QDir::Filter::Dirs);
-    for (QFileInfo file : fileList)
+    for (int i=0; i<ui->tabServers->count(); i++) // Remove server tabs
     {
-        if (QFile(QString("%0/server.ini").arg(file.absoluteFilePath())).exists())
-        {
-            QSettings fileIniSettings(QString("%0/server.ini").arg(file.absoluteFilePath()), QSettings::IniFormat);
-            QString serverNick = IniSettings->value(QString("%0/nick").arg(file.fileName())).toString();
-            if (ServerTabExists(serverNick) || fileIniSettings.value("os").toString() != OS)
-                continue;
+        auto srvWindow = ((ServerWindow*)ui->tabServers->widget(i));
+        if (ServerDirs.contains(srvWindow->ServerFolder))
+            continue;
+        QDir dir(srvWindow->ServerFolder);
+        dir.cdUp();
+        if (ServerDirs.contains(dir.path()))
+            continue;
+        qInfo() << "Removed server tab" << ui->tabServers->tabText(i);
+        ui->tabServers->removeTab(i--);
+    }
 
-            if (serverNick.isEmpty())
-                serverNick = file.fileName();
-            AddServer(serverNick, file.filePath());
-            ui->tabServers->setCurrentIndex(ui->tabServers->count()-1);
-            ServerApplied(file.absoluteFilePath());
+    for (QString srvDir : ServerDirs) // Find new servers
+    {
+        qInfo() << "Searching in" << srvDir;
+        QDir ServerDir(srvDir);
+        QFileInfoList fileList = ServerDir.entryInfoList(QDir::Filter::Dirs);
+        for (QFileInfo file : fileList)
+        {
+            if (QFile(QString("%0/server.ini").arg(file.absoluteFilePath())).exists())
+            {
+                QSettings fileIniSettings(QString("%0/server.ini").arg(file.absoluteFilePath()), QSettings::IniFormat);
+                if (!IniSettings->contains(file.fileName()) && fileIniSettings.value("os").toString() == OS)
+                {
+                    IniSettings->setValue(QString("%0/nick").arg(file.fileName()), file.fileName());
+                    IniSettings->setValue(QString("%0/os").arg(file.fileName()), OS);
+                }
+                QString serverNick = IniSettings->value(QString("%0/nick").arg(file.fileName())).toString();
+                if (ServerTabExists(serverNick) || fileIniSettings.value("os").toString() != OS)
+                    continue;
+                if (serverNick.isEmpty())
+                    serverNick = file.fileName();
+                AddServer(serverNick, file.filePath());
+                ui->tabServers->setCurrentIndex(ui->tabServers->count()-1);
+            }
         }
     }
-    for (QString server : IniSettings->childGroups())
+
+    for (QString server : IniSettings->childGroups()) // Remove unused servers from config
     {
         if (server == OS)
             continue;
-        if (!QDir(QString("%0/%1").arg(ServerDir.absolutePath(), server)).exists())
+        bool remove = true;
+        for (QString parentDir : ServerDirs)
+        {
+            if (QDir(QString("%0/%1").arg(parentDir, server)).exists() && server != ".")
+                remove = false;
+        }
+        if (remove)
             IniSettings->remove(server);
     }
 }
@@ -216,13 +245,36 @@ void MainWindow::on_btnSettings_clicked()
 
 void MainWindow::on_btnAddServer_clicked()
 {
-    if (!ServerDir.exists() || ServerDir.path() == ".")
+    bool ok;
+    QString strDir = QInputDialog::getItem(this, "Select servers directory", "Servers directory:", ServerDirs, 0, false, &ok);
+
+    if (!QDir(strDir).exists() && !strDir.isEmpty())
     {
-        if (!LoadConfig())
+        QMessageBox msgBox(QMessageBox::Icon::Question, "Directory doesn't exist",
+                           tr("Directory '%0' doesn't exist.\n"
+                              "Do you want to create it?").arg(strDir), {}, this);
+        auto *accept = msgBox.addButton("Accept", QMessageBox::ButtonRole::AcceptRole);
+        msgBox.addButton("Cancel", QMessageBox::ButtonRole::RejectRole);
+        msgBox.exec();
+        if (msgBox.clickedButton() != accept)
+        {
+            QDir dir;
+            if (!dir.mkdir(strDir))
+            {
+                qInfo() << "There was an error creating server directory!";
+                QMessageBox msgBox(QMessageBox::Icon::Critical, "Couldn't create server directory",
+                                   tr("Couldn't create server directory.\nSelect a different one."), {}, this);
+                msgBox.addButton("Ok", QMessageBox::ButtonRole::RejectRole);
+                msgBox.exec();
+                return;
+            }
+        }
+        else
             return;
     }
+    else if (!ok)
+        return;
 
-    bool ok;
     QString servername = QInputDialog::getText(this, "Give Server Nickname",
                                                "Server Nickname:", QLineEdit::Normal,
                                                "New Server", &ok);
@@ -231,7 +283,7 @@ void MainWindow::on_btnAddServer_clicked()
     else if (servername.isEmpty())
         servername = "New Server";
 
-    AddServer(servername, "");
+    AddServer(servername, strDir);
 }
 
 void MainWindow::on_tabServers_tabCloseRequested(int index)

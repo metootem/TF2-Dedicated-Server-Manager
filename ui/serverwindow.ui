@@ -1794,7 +1794,7 @@ Currently not working and OS Console is automatically used.</string>
                </palette>
               </property>
               <property name="text">
-               <string>Choose a folder to install files to and press Apply</string>
+               <string>Name a subfolder to install files to and press Apply</string>
               </property>
              </widget>
             </item>

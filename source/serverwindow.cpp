@@ -19,15 +19,18 @@ ServerWindow::ServerWindow(SettingsStruct Settings, QWidget *parent, QString nam
     ui->lblFolderError->hide();
     ui->lblTip->hide();
 
-    if (!directory.isEmpty())
-        LoadServerConfig(QDir(directory));
-
-    else
-        LoadServerFirstTimeSetup();
-
     OS = QSysInfo::productType();
     if (OS != "windows" && OS != "macos")
         OS = "linux";
+
+    QSettings mainIniSettings("tf2-dsm_config.ini", QSettings::IniFormat);
+    QStringList dirList = mainIniSettings.value(QString("%0/server_directories").arg(OS)).toStringList();
+
+    if (!dirList.contains(directory))
+        LoadServerConfig(QDir(directory));
+    else
+        LoadServerFirstTimeSetup();
+    ServerFolder = directory;
 
     qInfo() << "Loading Settings.";
     LoadStyles(Settings.ColorTheme);
@@ -255,8 +258,6 @@ void ServerWindow::InstallServer()
     else
         SteamCMDWindow->NewProcess(SteamCMDProcess);
 
-    connect(SteamCMDWindow, SIGNAL(KillSteamCMDProcess()), SLOT(KillSteamCMDProcess()));
-
     ui->btnInstallServer->setText("Installing...");
 
     QDir dir(ServerFolder + "/Server");
@@ -307,12 +308,6 @@ void ServerWindow::InstallServer()
                            tr("Couldn't run SteamCMD. Error: %0").arg(SteamCMDProcess->errorString()), {}, this);
         msgBox.exec();
     }
-}
-
-void ServerWindow::KillSteamCMDProcess()
-{
-    qInfo() << "Attempting to terminate SteamCMD. " << SteamCMDProcess->processId();
-    SteamCMDProcess->terminate();
 }
 
 void ServerWindow::InstallServerFinished()
@@ -435,13 +430,14 @@ void ServerWindow::on_btnApply_clicked()
             return;
         }
 
-        if (!ServerFolder.isEmpty() && QDir(ServerFolder).dirName() != ui->lineFolderName->text())
+        QDir parentDir(ServerFolder);
+        if (settings.ServerDirectories.contains(ServerFolder))
+            ServerFolder = QString("%0/%1").arg(parentDir.path(), ui->lineFolderName->text());
+        else if (QDir(ServerFolder).dirName() != ui->lineFolderName->text())
         {
-            //delete IniSettings;
-            //IniSettings = nullptr;
-
-            if (QFile::rename(ServerFolder, QString("%0/%1").arg(settings.ServerDirectory.path(), ui->lineFolderName->text())))
-                ServerFolder = QString("%0/%1").arg(settings.ServerDirectory.path(), ui->lineFolderName->text());
+            parentDir.cdUp();
+            if (QFile::rename(ServerFolder, QString("%0/%1").arg(parentDir.path(), ui->lineFolderName->text())))
+                ServerFolder = QString("%0/%1").arg(parentDir.path(), ui->lineFolderName->text());
             else
             {
                 ui->lblFolderError->setText("Server Folder cannot be renamed currently!");
@@ -449,8 +445,6 @@ void ServerWindow::on_btnApply_clicked()
                 ui->lineFolderName->setText(QDir(ServerFolder).dirName());
             }
         }
-        else
-            ServerFolder = QString("%0/%1").arg(settings.ServerDirectory.path(), ui->lineFolderName->text());
 
         if (!QDir(ServerFolder).exists())
         {
@@ -458,9 +452,6 @@ void ServerWindow::on_btnApply_clicked()
             dir.mkdir(ServerFolder);
             qInfo() << "Making server directory:" << ServerFolder;
         }
-
-        //if (IniSettings == nullptr)
-        //    IniSettings = new QSettings(ServerFolder + "/server.ini", QSettings::Format::IniFormat);
 
         QSettings IniSettings(ServerFolder + "/server.ini", QSettings::Format::IniFormat);
 
@@ -483,11 +474,11 @@ void ServerWindow::on_btnApply_clicked()
 
         qInfo() << "Saved.";
 
+        ui->btnGotoServerFolder->setEnabled(true);
         SetServerVisualState();
 
-        emit SystemNotification(ui->lineServerName->text(), "Settings applied", 3000);
-        ui->btnGotoServerFolder->setEnabled(true);
         emit ServerApplied( ServerFolder );
+        emit SystemNotification(ui->lineServerName->text(), "Settings applied", 3000);
     }
 }
 

@@ -63,7 +63,7 @@ private:
 
     QString OS;
     SettingsStruct Settings;
-    QDir ServerDir;
+    QStringList ServerDirs;
     QSettings *IniSettings;
 
     QSystemTrayIcon *SystemTrayIcon;

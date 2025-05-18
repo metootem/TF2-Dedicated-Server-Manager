@@ -14,7 +14,7 @@ struct SettingsStruct{
     bool valid;
 
     QString OS;
-    QDir ServerDirectory;
+    QStringList ServerDirectories;
 
     QString PublicIP;
     QString ColorTheme;
@@ -42,11 +42,13 @@ signals:
 private slots:
     void on_btnApply_clicked();
 
-    void on_btnSrvDir_clicked();
+    void on_btnAddSrvDir_clicked();
 
     void on_btnColor_clicked();
 
     void on_btnColorDefault_clicked();
+
+    void on_btnRmvSrvDir_clicked();
 
 private:
     Ui::SettingsDialog *ui;

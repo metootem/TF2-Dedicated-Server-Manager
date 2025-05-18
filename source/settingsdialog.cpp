@@ -13,8 +13,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     OS = QSysInfo::productType();
     if (OS != "windows" && OS != "macos")
         OS = "linux";
-
-    //connect(this, )
 }
 
 SettingsDialog::~SettingsDialog()
@@ -41,33 +39,51 @@ SettingsStruct SettingsDialog::ParseSettings()
     Settings.valid = true;
     Settings.OS = OS;
 
-    if (!IniSettings.contains(tr("%0/color_theme").arg(OS)))
-        IniSettings.setValue(tr("%0/color_theme").arg(OS), "#cf6a32");
+    if (!IniSettings.contains(QString("%0/color_theme").arg(OS)))
+        IniSettings.setValue(QString("%0/color_theme").arg(OS), "#cf6a32");
 
-    if (!IniSettings.contains(tr("%0/server_directory").arg(OS)))
+    if (!IniSettings.contains(tr("%0/server_directories").arg(OS)))
     {
         Settings.valid = false;
-        IniSettings.setValue(tr("%0/server_directory").arg(OS), "Input server directory.");
-        ui->lblTip->show();
-    }
-    else if (!QDir(IniSettings.value(tr("%0/server_directory").arg(OS)).toString()).exists())
-    {
-        Settings.valid = false;
-        ui->lblSrvDirError->show();
         ui->lblTip->show();
     }
     else
     {
-        Settings.ColorTheme = IniSettings.value(tr("%0/color_theme").arg(OS)).toString();
-        Settings.ServerDirectory = IniSettings.value(tr("%0/server_directory").arg(OS)).toString();
+        QStringList dirList = IniSettings.value(QString("%0/server_directories").arg(OS)).toStringList();
+        if (dirList.isEmpty())
+        {
+            Settings.valid = false;
+            ui->lblSrvDirError->setText("At least one directory is required!");
+            ui->lblSrvDirError->show();
+        }
+        else
+        {
+            for (QString strDir : dirList)
+            {
+                if (strDir.contains(" "))
+                {
+                    Settings.valid = false;
+                    ui->lblSrvDirError->setText("Directory can't have spaces!");
+                    ui->lblSrvDirError->show();
+                }
+                else
+                {
+                    auto item = new QTreeWidgetItem(ui->treeSrvDirs);
+                    item->setText(0, strDir);
+                    item->setFlags(item->flags() | Qt::ItemIsEditable);
+                    ui->treeSrvDirs->addTopLevelItem(item);
+                }
+            }
+        }
     }
 
+    Settings.ColorTheme = IniSettings.value(QString("%0/color_theme").arg(OS)).toString();
+    Settings.ServerDirectories = IniSettings.value(QString("%0/server_directories").arg(OS)).toStringList();
     Settings.PublicIP = GetPublicIP();
 
-    colorTheme = IniSettings.value(OS + "/color_theme").toString();
+    colorTheme = Settings.ColorTheme;
 
     ui->btnColor->setStyleSheet(QString("border: 2px solid #232323; border-radius: 0px; background-color: %0; color: #ffffff;").arg(colorTheme));
-    ui->lineSrvDir->setText(IniSettings.value(tr("%0/server_directory").arg(OS)).toString());
 
     return Settings;
 }
@@ -79,21 +95,26 @@ void SettingsDialog::on_btnApply_clicked()
     ui->lblApplySuccess->hide();
     ui->lblTip->hide();
 
-    if (ui->lineSrvDir->text() == "")
+    QStringList dirList;
+    for (int i=0; i<ui->treeSrvDirs->topLevelItemCount(); i++)
     {
-        if (Settings.ServerDirectory.absolutePath().isEmpty())
+        auto item = ui->treeSrvDirs->topLevelItem(i);
+        QString dir = item->text(0);
+        if (!dir.isEmpty() && !dir.contains(" ") && !dir.contains(":"))
+            dirList << dir;
+        else
         {
-            ui->lblSrvDirError->setText("Directory is empty!");
+            qInfo() << dir;
+            ui->lblSrvDirError->setText("Directory is invalid!");
             ui->lblSrvDirError->show();
             ui->lblTip->show();
             apply = false;
         }
-        else
-            ui->lineSrvDir->setText(Settings.ServerDirectory.absolutePath());
     }
-    else if (ui->lineSrvDir->text().contains(" "))
+
+    if (dirList.isEmpty())
     {
-        ui->lblSrvDirError->setText("Directory can't have spaces!");
+        ui->lblSrvDirError->setText("No directory specified!");
         ui->lblSrvDirError->show();
         ui->lblTip->show();
         apply = false;
@@ -101,25 +122,37 @@ void SettingsDialog::on_btnApply_clicked()
 
     if (apply)
     {
-        if (!QDir(ui->lineSrvDir->text()).exists())
+        for (QString strDir : dirList)
         {
-            QDir dir;
-            if (!dir.mkdir(ui->lineSrvDir->text()))
+            if (!QDir(strDir).exists())
             {
-                qInfo() << "There was an error creating server directory!";
-                QMessageBox msgBox(QMessageBox::Icon::Critical, "Couldn't create server directory",
-                                   tr("Couldn't create server directory.\nSelect a different one."), {}, this);
-                msgBox.addButton("Ok", QMessageBox::ButtonRole::RejectRole);
+                QMessageBox msgBox(QMessageBox::Icon::Question, "Directory doesn't exist",
+                                   tr("Directory '%0' doesn't exist.\n"
+                                      "Do you want to create it?").arg(strDir), {}, this);
+                auto *accept = msgBox.addButton("Accept", QMessageBox::ButtonRole::AcceptRole);
+                msgBox.addButton("Ignore", QMessageBox::ButtonRole::RejectRole);
                 msgBox.exec();
-                return;
+                if (msgBox.clickedButton() == accept)
+                {
+                    QDir dir;
+                    if (!dir.mkdir(strDir))
+                    {
+                        qInfo() << "There was an error creating server directory!";
+                        QMessageBox msgBox(QMessageBox::Icon::Critical, "Couldn't create server directory",
+                                           tr("Couldn't create server directory.\nSelect a different one."), {}, this);
+                        msgBox.addButton("Ok", QMessageBox::ButtonRole::RejectRole);
+                        msgBox.exec();
+                        return;
+                    }
+                }
             }
         }
 
         Settings.valid = true;
-        Settings.ServerDirectory = ui->lineSrvDir->text();
         Settings.ColorTheme = colorTheme;
+        Settings.ServerDirectories = dirList;
 
-        IniSettings.setValue(QString("%0/server_directory").arg(OS), Settings.ServerDirectory.absolutePath());
+        IniSettings.setValue(QString("%0/server_directories").arg(OS), Settings.ServerDirectories);
         IniSettings.setValue(QString("%0/color_theme").arg(OS), Settings.ColorTheme);
         IniSettings.setValue(QString("%0/portForwardTip").arg(OS), IniSettings.value(QString("%0/portForwardTip"), false).toBool());
 
@@ -129,11 +162,22 @@ void SettingsDialog::on_btnApply_clicked()
 }
 
 
-void SettingsDialog::on_btnSrvDir_clicked()
+void SettingsDialog::on_btnAddSrvDir_clicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, "Open Directory", QDir::currentPath(), QFileDialog::ShowDirsOnly);
     if (!dir.isEmpty())
-        ui->lineSrvDir->setText(dir);
+    {
+        auto item = new QTreeWidgetItem(ui->treeSrvDirs);
+        item->setText(0, dir);
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+        ui->treeSrvDirs->addTopLevelItem(item);
+    }
+}
+
+
+void SettingsDialog::on_btnRmvSrvDir_clicked()
+{
+    delete ui->treeSrvDirs->currentItem();
 }
 
 

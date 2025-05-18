@@ -23,14 +23,12 @@ public:
     ~SteamCMDDialog();
 
 signals:
-    void KillSteamCMDProcess();
 
 public slots:
     void ReadOutput();
     void InstallFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private slots:
-    void on_btnCancel_clicked();
 
 private:
     Ui::SteamCMDDialog *ui;
