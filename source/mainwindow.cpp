@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
         SystemTrayIcon->setVisible(true);
     }
 
+    PublicIP = GetPublicIP();
 }
 
 MainWindow::~MainWindow()
@@ -29,6 +30,20 @@ void MainWindow::ShowSystemNotification(QString title, QString message, int leng
 {
     if (QSystemTrayIcon::isSystemTrayAvailable())
         SystemTrayIcon->showMessage(title, message, QIcon(":/tf2dms.ico"), length);
+}
+
+QString MainWindow::GetPublicIP()
+{
+    QProcess GetIP;
+    GetIP.start("curl", QStringList() << "https://api.ipify.org");
+    GetIP.waitForFinished(5000);
+    QString IP = GetIP.readAllStandardOutput();
+    GetIP.terminate();
+    if (IP.isEmpty())
+        qInfo() << "Couldn't get Public IP.";
+    else
+        qInfo() << "Got Public IP:" << IP;
+    return IP;
 }
 
 bool MainWindow::LoadConfig()
@@ -45,6 +60,7 @@ bool MainWindow::LoadConfig()
     }
     delete settingsDialog;
 
+    Settings.PublicIP = PublicIP;
     ServerDirs = Settings.ServerDirectories;
     RefreshServerTab();
 
@@ -56,13 +72,14 @@ bool MainWindow::LoadConfig()
 void MainWindow::SettingsChanged( SettingsStruct settings )
 {
     Settings = settings;
+    Settings.PublicIP = PublicIP;
     ServerDirs = settings.ServerDirectories;
     RefreshServerTab();
     LoadStyles(settings.ColorTheme);
 
     ShowSystemNotification("Settings changed", "", 3000);
 
-    emit PassSettingsChanged(settings);
+    emit PassSettingsChanged(Settings);
 }
 
 void MainWindow::LoadStyles(QString colorTheme)

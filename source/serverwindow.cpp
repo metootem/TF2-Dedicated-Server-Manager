@@ -657,24 +657,22 @@ void ServerWindow::on_btnConnectToServer_clicked()
 
     QString PublicServerAddress = PublicIP + ":" + ui->linePort->text();
 
-    qInfo() << LocalServerAddress;
-    qInfo() << PublicServerAddress;
-
     QMessageBox msgBox(QMessageBox::Icon::Question, "",
                        tr("Through which IP to join server?\nPublic: %0\nLocal: %1").arg(PublicServerAddress).arg(LocalServerAddress, 1), {}, this);
 
-    auto *publicIp = msgBox.addButton("Public IP", QMessageBox::ButtonRole::DestructiveRole);
+    auto *publicIp = msgBox.addButton("Public IP", QMessageBox::ButtonRole::AcceptRole);
     if (PublicServerAddress.isEmpty())
         publicIp->setEnabled(false);
-    auto *localIp = msgBox.addButton("Local IP", QMessageBox::ButtonRole::RejectRole);
+    auto *localIp = msgBox.addButton("Local IP", QMessageBox::ButtonRole::AcceptRole);
+    msgBox.addButton("Cancel", QMessageBox::RejectRole);
 
     msgBox.exec();
     if (msgBox.clickedButton() == publicIp)
         QDesktopServices::openUrl(QUrl("steam://connect/" + PublicServerAddress));
     else if (msgBox.clickedButton() == localIp)
         QDesktopServices::openUrl(QUrl("steam://connect/" + LocalServerAddress));
-}
 
+}
 
 void ServerWindow::on_btnGotoServerFolder_clicked()
 {

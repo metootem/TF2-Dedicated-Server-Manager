@@ -20,20 +20,6 @@ SettingsDialog::~SettingsDialog()
     delete ui;
 }
 
-QString SettingsDialog::GetPublicIP()
-{
-    QProcess GetIP;
-    GetIP.start("curl", QStringList() << "https://api.ipify.org");
-    GetIP.waitForFinished(5000);
-    QString IP = GetIP.readAllStandardOutput();
-    GetIP.terminate();
-    if (IP.isEmpty())
-        qInfo() << "Couldn't get Public IP.";
-    else
-        qInfo() << "Got Public IP:" << IP;
-    return IP;
-}
-
 SettingsStruct SettingsDialog::ParseSettings()
 {
     Settings.valid = true;
@@ -79,7 +65,7 @@ SettingsStruct SettingsDialog::ParseSettings()
 
     Settings.ColorTheme = IniSettings.value(QString("%0/color_theme").arg(OS)).toString();
     Settings.ServerDirectories = IniSettings.value(QString("%0/server_directories").arg(OS)).toStringList();
-    Settings.PublicIP = GetPublicIP();
+    //Settings.PublicIP = GetPublicIP();
 
     colorTheme = Settings.ColorTheme;
 

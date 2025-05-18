@@ -31,12 +31,14 @@ public:
 
     bool LoadConfig();
     void SettingsChanged( SettingsStruct settings );
+    QString PublicIP;
 
     ~MainWindow();
 
 public slots:
     void ServerApplied( QString ServerFolder );
     void ShowSystemNotification( QString, QString, int );
+    QString GetPublicIP();
 
 signals:
     void PassSettingsChanged( SettingsStruct Settings );
