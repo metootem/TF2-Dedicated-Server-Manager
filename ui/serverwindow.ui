@@ -448,7 +448,7 @@
                 </property>
                 <property name="toolTip">
                  <string>Open this server's console.
-Currently not working and OS Console is automatically used.</string>
+Currently not working as OS Console is automatically used.</string>
                 </property>
                 <property name="text">
                  <string/>
@@ -5343,9 +5343,9 @@ ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
                <colorrole role="Base">
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
-                  <red>30</red>
-                  <green>30</green>
-                  <blue>30</blue>
+                  <red>62</red>
+                  <green>62</green>
+                  <blue>62</blue>
                  </color>
                 </brush>
                </colorrole>
@@ -5453,9 +5453,9 @@ ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
                <colorrole role="Base">
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
-                  <red>30</red>
-                  <green>30</green>
-                  <blue>30</blue>
+                  <red>62</red>
+                  <green>62</green>
+                  <blue>62</blue>
                  </color>
                 </brush>
                </colorrole>
@@ -5611,6 +5611,9 @@ ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
             <property name="indentation">
              <number>20</number>
             </property>
+            <property name="animated">
+             <bool>true</bool>
+            </property>
             <attribute name="headerVisible">
              <bool>true</bool>
             </attribute>
@@ -5700,9 +5703,9 @@ ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
                <colorrole role="Base">
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
-                  <red>30</red>
-                  <green>30</green>
-                  <blue>30</blue>
+                  <red>62</red>
+                  <green>62</green>
+                  <blue>62</blue>
                  </color>
                 </brush>
                </colorrole>
@@ -5810,9 +5813,9 @@ ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
                <colorrole role="Base">
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
-                  <red>30</red>
-                  <green>30</green>
-                  <blue>30</blue>
+                  <red>62</red>
+                  <green>62</green>
+                  <blue>62</blue>
                  </color>
                 </brush>
                </colorrole>

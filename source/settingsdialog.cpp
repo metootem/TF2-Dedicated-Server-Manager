@@ -86,7 +86,7 @@ void SettingsDialog::on_btnApply_clicked()
     {
         auto item = ui->treeSrvDirs->topLevelItem(i);
         QString dir = item->text(0);
-        if (!dir.isEmpty() && !dir.contains(" ") && !dir.contains(":"))
+        if (!dir.isEmpty() && !dir.contains(" "))
             dirList << dir;
         else
         {

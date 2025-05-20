@@ -58,10 +58,8 @@ void ServerWindow::SettingsChanged(SettingsStruct Settings)
 
 void ServerWindow::LoadStyles(QString colorTheme)
 {
-
     this->setStyleSheet(QString("QInputDialog { background-color: #2b2b2b; }"
                    "QMessageBox { background-color: #2b2b2b; }"));
-                        //"QLabel { color: %0; }").arg(textColor));
 
     ui->listProps->setStyleSheet(QString("QListWidget { border: none; border-left: 3px solid %0; selection-background-color: %0; } QListWidget::item:selected { background-color: %0; }").arg(colorTheme));
     if (OS == "windows")
@@ -92,6 +90,7 @@ void ServerWindow::LoadServerConfig(QDir directory)
     AdditionalParametersWindow = new AdditionalParametersDialog(this, &IniSettings);
 
     CheckServerConfigFiles();
+    ui->cmbConfigFile->setCurrentText("server.cfg");
 }
 
 
@@ -340,6 +339,7 @@ void ServerWindow::InstallServerFinished()
     }
 
     CheckServerConfigFiles();
+    ui->cmbConfigFile->setCurrentText("server.cfg");
 }
 
 
@@ -849,9 +849,13 @@ void ServerWindow::on_btnRefreshConfigList_clicked()
 
 void ServerWindow::CheckServerConfigFiles()
 {
+    QString text = ui->cmbConfigFile->currentText();
+
     ui->cmbConfigFile->clear();
     for (QFileInfo file : QDir(ServerFolder + "/Server/tf/cfg").entryInfoList(QStringList() << "*.cfg" << "*.txt", QDir::Files))
         ui->cmbConfigFile->addItem(file.fileName());
+
+    ui->cmbConfigFile->setCurrentText(text);
 }
 
 void ServerWindow::LoadServerConfigFileData()
@@ -976,21 +980,25 @@ void ServerWindow::on_btnFindConVar_clicked()
 void ServerWindow::on_btnNewConfigFile_clicked()
 {
     bool ok;
-    QString name = QInputDialog::getText(this, "Change Server Nickname",
-                                               "Server Nickname:", QLineEdit::Normal,
+    QString name = QInputDialog::getText(this, "Create New Config File",
+                                               "File Name (without type):", QLineEdit::Normal,
                                                "", &ok);
 
-    if (!ok || name.isEmpty() || name.contains(":") || name.contains(" "))
+    if (!ok || name.isEmpty() || name.contains(":") || name.contains(" ") || name.contains("."))
         return;
 
-    QFile file(ServerFolder + "/Server/tf/cfg/" + name + ".cfg");
+    QString ext = QInputDialog::getItem(this, "Choose File Type", "File Type:", QStringList() << ".txt" << ".cfg", 0, false, &ok);
+    if (!ok || ext.isEmpty())
+        return;
+
+    QFile file(ServerFolder + "/Server/tf/cfg/" + name + ext);
     if (file.open(QIODevice::WriteOnly))
     {
         file.close();
 
         CheckServerConfigFiles();
 
-        ui->cmbConfigFile->setCurrentText(name + ".cfg");
+        ui->cmbConfigFile->setCurrentText(name + ext);
     }
 }
 
@@ -1000,118 +1008,89 @@ void ServerWindow::on_btnSaveConfig_clicked()
     QFile file (ServerFolder + "/Server/tf/cfg/" + fileName);
     if (file.open(QIODevice::WriteOnly))
     {
+        qInfo() << fileName;
+
         int topLevelCount = ui->treeConfigFileData->topLevelItemCount();
         QString output;
-        if (!topLevelCount)
+        if (fileName.length() > 4)
         {
-            file.flush();
-            file.close();
-
-            emit SystemNotification("No data saved", fileName, 3000);
-
-            return;
-        }
-        if (fileName.length() < 8)
-        {
-            for (int i=0; i<topLevelCount; i++)
+            if (fileName.first(4) == "motd")
             {
-                QTreeWidgetItem *topItem = ui->treeConfigFileData->topLevelItem(i);
+                qInfo() << "motd";
+                output = ui->txtConfigFileData->toPlainText();
+                file.write(output.toStdString().c_str());
 
-                QString comment;
-                if (!topItem->toolTip(0).isEmpty())
-                {
-                    QString string = topItem->toolTip(0);
-                    QTextStream in(&string);
-                    while (!in.atEnd())
-                        comment += "//" + in.readLine() + "\n";
-                }
-
-                output += comment + (topItem->text(0) == "//" ? "" : topItem->text(0)) + (!topItem->text(1).isEmpty() ? " " + topItem->text(1) : "") + "\n";
-
-                for (int j=0; j<topItem->childCount(); j++)
-                {
-                    QTreeWidgetItem *childItem = topItem->child(j);
-
-                    comment.clear();
-                    if (!childItem->toolTip(0).isEmpty())
-                    {
-                        //comment = "\n";
-                        QString string = childItem->toolTip(0);
-                        QTextStream in(&string);
-                        while (!in.atEnd())
-                            comment += "//" + in.readLine() + "\n";
-                    }
-
-                    output += comment + (childItem->text(0) == "//" ? "" : childItem->text(0)) + " " + childItem->text(1) + "\n" + (!comment.isEmpty() ? "\n" : "");
-                }
-            }
-        }
-        else if (fileName.first(4) == "motd")
-            output = ui->txtConfigFileData->toPlainText().toStdString().c_str();
-        else if (fileName.first(8) == "mapcycle")
-        {
-            int topLevelCount = ui->treeConfigFileData->topLevelItemCount();
-            output.clear();
-            if (!topLevelCount)
-            {
                 file.flush();
                 file.close();
 
-                emit SystemNotification("No data saved", fileName, 3000);
-
+                emit SystemNotification("Saved config", fileName, 3000);
                 return;
             }
-            for (int i=0; i<topLevelCount; i++)
-            {
-                QTreeWidgetItem *topItem = ui->treeConfigFileData->topLevelItem(i);
-
-                QString comment;
-                if (!topItem->toolTip(0).isEmpty())
-                {
-                    QString string = topItem->toolTip(0);
-                    QTextStream in(&string);
-                    while (!in.atEnd())
-                        comment += "//" + in.readLine() + "\n";
-                }
-
-                output += (i > 0 ? "\n" : "") + comment + (topItem->text(0) == "//" ? "" : topItem->text(0));
-            }
         }
-        else
+
+        if (fileName.length() > 8)
         {
-            for (int i=0; i<topLevelCount; i++)
+            if (fileName.first(8) == "mapcycle")
             {
-                QTreeWidgetItem *topItem = ui->treeConfigFileData->topLevelItem(i);
+                qInfo() << "mapcycle";
+                int topLevelCount = ui->treeConfigFileData->topLevelItemCount();
 
-                QString comment;
-                if (!topItem->toolTip(0).isEmpty())
+                for (int i=0; i<topLevelCount; i++)
                 {
-                    QString string = topItem->toolTip(0);
-                    QTextStream in(&string);
-                    while (!in.atEnd())
-                        comment += "//" + in.readLine() + "\n";
-                }
+                    QTreeWidgetItem *topItem = ui->treeConfigFileData->topLevelItem(i);
 
-                output += comment + (topItem->text(0) == "//" ? "" : topItem->text(0)) + (!topItem->text(1).isEmpty() ? " " + topItem->text(1) : "") + "\n";
-
-                for (int j=0; j<topItem->childCount(); j++)
-                {
-                    QTreeWidgetItem *childItem = topItem->child(j);
-
-                    comment.clear();
-                    if (!childItem->toolTip(0).isEmpty())
+                    QString comment;
+                    if (!topItem->toolTip(0).isEmpty())
                     {
-                        //comment = "\n";
-                        QString string = childItem->toolTip(0);
+                        QString string = topItem->toolTip(0);
                         QTextStream in(&string);
                         while (!in.atEnd())
                             comment += "//" + in.readLine() + "\n";
                     }
 
-                    output += comment + (childItem->text(0) == "//" ? "" : childItem->text(0)) + " " + childItem->text(1) + "\n" + (!comment.isEmpty() ? "\n" : "");
+                    output += (i > 0 ? "\n" : "") + comment + (topItem->text(0) == "//" ? "" : topItem->text(0));
+                    file.write(output.toStdString().c_str());
+                    file.flush();
+                    file.close();
+                    emit SystemNotification("Saved config", fileName, 3000);
+                    return;
                 }
             }
         }
+
+        for (int i=0; i<topLevelCount; i++)
+        {
+            QTreeWidgetItem *topItem = ui->treeConfigFileData->topLevelItem(i);
+
+            QString comment;
+            if (!topItem->toolTip(0).isEmpty())
+            {
+                QString string = topItem->toolTip(0);
+                QTextStream in(&string);
+                while (!in.atEnd())
+                    comment += "//" + in.readLine() + "\n";
+            }
+
+            output += comment + (topItem->text(0) == "//" ? "" : topItem->text(0)) + (!topItem->text(1).isEmpty() ? " " + topItem->text(1) : "") + "\n";
+
+            for (int j=0; j<topItem->childCount(); j++)
+            {
+                QTreeWidgetItem *childItem = topItem->child(j);
+
+                comment.clear();
+                if (!childItem->toolTip(0).isEmpty())
+                {
+                    //comment = "\n";
+                    QString string = childItem->toolTip(0);
+                    QTextStream in(&string);
+                    while (!in.atEnd())
+                        comment += "//" + in.readLine() + "\n";
+                }
+
+                output += comment + (childItem->text(0) == "//" ? "" : childItem->text(0)) + " " + childItem->text(1) + "\n" + (!comment.isEmpty() ? "\n" : "");
+            }
+        }
+
         file.write(output.toStdString().c_str());
 
         file.flush();
