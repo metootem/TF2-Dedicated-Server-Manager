@@ -268,9 +268,16 @@ void MainWindow::on_btnAddServer_clicked()
         return;
     }
 
-    bool ok;
-    QString strDir = QInputDialog::getItem(this, "Select servers directory", "Servers directory:", ServerDirs, 0, false, &ok);
+    bool ok = true;
+    QString strDir;
+    qInfo() << ServerDirs.first();
+    qInfo() << ServerDirs.count();
+    if (ServerDirs.count() == 1)
+        strDir = ServerDirs.first();
+    else
+        strDir = QInputDialog::getItem(this, "Select servers directory", "Servers directory:", ServerDirs, 0, false, &ok);
 
+    qInfo() << strDir;
     if (!QDir(strDir).exists() && !strDir.isEmpty())
     {
         QMessageBox msgBox(QMessageBox::Icon::Question, "Directory doesn't exist",
