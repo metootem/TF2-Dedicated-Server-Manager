@@ -262,6 +262,12 @@ void MainWindow::on_btnSettings_clicked()
 
 void MainWindow::on_btnAddServer_clicked()
 {
+    if (ServerDirs.isEmpty())
+    {
+        on_btnSettings_clicked();
+        return;
+    }
+
     bool ok;
     QString strDir = QInputDialog::getItem(this, "Select servers directory", "Servers directory:", ServerDirs, 0, false, &ok);
 
