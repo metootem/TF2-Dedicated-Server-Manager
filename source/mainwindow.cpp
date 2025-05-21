@@ -273,7 +273,7 @@ void MainWindow::on_btnAddServer_clicked()
         auto *accept = msgBox.addButton("Accept", QMessageBox::ButtonRole::AcceptRole);
         msgBox.addButton("Cancel", QMessageBox::ButtonRole::RejectRole);
         msgBox.exec();
-        if (msgBox.clickedButton() != accept)
+        if (msgBox.clickedButton() == accept)
         {
             QDir dir;
             if (!dir.mkdir(strDir))
@@ -357,5 +357,12 @@ void MainWindow::on_tabServers_tabBarDoubleClicked(int index)
         return;
     IniSettings->setValue(QString("%0/nick").arg(QDir(ServerFolder).dirName()), servername);
     IniSettings->setValue(QString("%0/os").arg(QDir(ServerFolder).dirName()), OS);
+}
+
+
+void MainWindow::on_btnAbout_clicked()
+{
+    auto aboutDialog = new AboutDialog(this);
+    aboutDialog->show();
 }
 

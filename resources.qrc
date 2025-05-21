@@ -13,6 +13,9 @@
         <file>resources/Icons/Refresh.svg</file>
         <file>resources/Icons/ReloadFile.svg</file>
         <file>resources/Icons/NewFile.svg</file>
+        <file>resources/Icons/About.svg</file>
+        <file>resources/Icons/DropClosed.svg</file>
+        <file>resources/Icons/DropOpen.svg</file>
     </qresource>
     <qresource prefix="/palettes">
         <file>resources/Palettes/MainPalette.xml</file>

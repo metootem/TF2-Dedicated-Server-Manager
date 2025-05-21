@@ -46,19 +46,19 @@ SettingsStruct SettingsDialog::ParseSettings()
         {
             for (QString strDir : dirList)
             {
-                if (strDir.contains(" "))
+                /*if (strDir.contains(" "))
                 {
                     Settings.valid = false;
                     ui->lblSrvDirError->setText("Directory can't have spaces!");
                     ui->lblSrvDirError->show();
                 }
                 else
-                {
+                {*/
                     auto item = new QTreeWidgetItem(ui->treeSrvDirs);
                     item->setText(0, strDir);
                     item->setFlags(item->flags() | Qt::ItemIsEditable);
                     ui->treeSrvDirs->addTopLevelItem(item);
-                }
+               //}
             }
         }
     }
@@ -86,7 +86,7 @@ void SettingsDialog::on_btnApply_clicked()
     {
         auto item = ui->treeSrvDirs->topLevelItem(i);
         QString dir = item->text(0);
-        if (!dir.isEmpty() && !dir.contains(" "))
+        if (!dir.isEmpty())
             dirList << dir;
         else
         {

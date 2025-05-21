@@ -10,6 +10,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    source/aboutdialog.cpp \
     source/additionalparametersdialog.cpp \
     source/configconvardialog.cpp \
     source/filedownloader.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
     source/steamcmddialog.cpp \
 
 HEADERS += \
+    source/aboutdialog.h \
     source/additionalparametersdialog.h \
     source/configconvardialog.h \
     source/filedownloader.h \
@@ -33,6 +35,7 @@ HEADERS += \
     source/steamcmddialog.h \
 
 FORMS += \
+    ui/aboutdialog.ui \
     ui/additionalparametersdialog.ui \
     ui/configconvardialog.ui \
     ui/mainwindow.ui \

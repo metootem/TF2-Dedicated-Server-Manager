@@ -15,6 +15,7 @@
 
 #include "settingsdialog.h"
 #include "serverwindow.h"
+#include "aboutdialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -59,6 +60,8 @@ private slots:
     void on_tabServers_tabCloseRequested(int index);
 
     void on_tabServers_tabBarDoubleClicked(int index);
+
+    void on_btnAbout_clicked();
 
 private:
     Ui::MainWindow *ui;

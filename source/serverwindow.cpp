@@ -18,6 +18,7 @@ ServerWindow::ServerWindow(SettingsStruct Settings, QWidget *parent, QString nam
     ui->PropsConfigs->hide();
     ui->lblFolderError->hide();
     ui->lblTip->hide();
+    ui->PropsMain_Advanced->hide();
 
     OS = QSysInfo::productType();
     if (OS != "windows" && OS != "macos")
@@ -62,6 +63,14 @@ void ServerWindow::LoadStyles(QString colorTheme)
                    "QMessageBox { background-color: #2b2b2b; }"));
 
     ui->listProps->setStyleSheet(QString("QListWidget { border: none; border-left: 3px solid %0; selection-background-color: %0; } QListWidget::item:selected { background-color: %0; }").arg(colorTheme));
+
+    ui->btnAdvancedDropDown->setStyleSheet(QString("QPushButton {"
+                                                   "border: none;"
+                                                   "background-color: rgba(0, 0, 0, 0); } "
+                                                   "QPushButton::hover { background-color: %0; }"
+                                                   "QPushButton::pressed { background-color: %1; }"
+                                                   "QPushButton:disabled { color: #3b3b3b; }").arg(colorTheme, QColor(colorTheme).darker(130).name()));
+
     if (OS == "windows")
         ui->cmbConfigFile->setStyleSheet("QComboBox {\n	\ncolor: #000000;\n}");
     else if (OS == "linux")
@@ -88,6 +97,10 @@ void ServerWindow::LoadServerConfig(QDir directory)
     ui->lineMap->setText(IniSettings.value("map").toString());
 
     AdditionalParametersWindow = new AdditionalParametersDialog(this, &IniSettings);
+
+    ui->lineToken->setText(IniSettings.value("token").toString());
+
+    ui->linePassword->setText(IniSettings.value("password").toString());
 
     CheckServerConfigFiles();
     ui->cmbConfigFile->setCurrentText("server.cfg");
@@ -388,13 +401,13 @@ void ServerWindow::on_btnApply_clicked()
         qInfo() << "Folder is invalid!";
         apply = false;
     }
-    else if (ui->lineFolderName->text().contains(" "))
+    /*else if (ui->lineFolderName->text().contains(" "))
     {
         ui->lblFolderError->setText("Folder name can't have spaces!");
         ui->lblFolderError->show();
         qInfo() << "Folder name can't have spaces!";
         apply = false;
-    }
+    }*/
     else if (ui->lineFolderName->text().contains(":"))
     {
         ui->lblFolderError->setText("Folder name can't be a directory!");
@@ -457,18 +470,31 @@ void ServerWindow::on_btnApply_clicked()
 
         qInfo() << ServerFolder;
         qInfo() << "Saving server config.";
+
         IniSettings.setValue("server_name", ui->lineServerName->text());
         qInfo() << "server_name...";
+
         IniSettings.setValue("ip", ui->lineIP->text());
         qInfo() << "ip...";
+
         IniSettings.setValue("port", ui->linePort->text());
         qInfo() << "port...";
+
         IniSettings.setValue("players", ui->spinMaxPlayers->value());
         qInfo() << "players...";
+
         IniSettings.setValue("map", ui->lineMap->text());
         qInfo() << "map...";
+
         IniSettings.setValue("parameters", AdditionalParametersWindow->GetParameters());
         qInfo() << "parameters...";
+
+        IniSettings.setValue("token", ui->lineToken->text());
+        qInfo() << "token...";
+
+        IniSettings.setValue("password", ui->linePassword->text());
+        qInfo() << "password...";
+
         IniSettings.setValue("os", OS);
         qInfo() << "os...";
 
@@ -503,6 +529,12 @@ void ServerWindow::on_btnStartServer_clicked()
 
     if (!ui->lineServerName->text().isEmpty())
         args << "+hostname" << "\"" + ui->lineServerName->text() + "\"";
+
+    if (!ui->lineToken->text().isEmpty())
+        args << "+sv_setsteamaccount" << ui->lineToken->text();
+
+    if (!ui->linePassword->text().isEmpty())
+        args << "+sv_password" << "\"" + ui->linePassword->text() + "\"";
 
     QStringList additionalParams = AdditionalParametersWindow->GetParameters();
     for (int i = 2; i < additionalParams.count(); i+=3)
@@ -677,7 +709,7 @@ void ServerWindow::on_btnConnectToServer_clicked()
 void ServerWindow::on_btnGotoServerFolder_clicked()
 {
     if (!ui->lineFolderName->text().isEmpty())
-        QDesktopServices::openUrl(QDir(ServerFolder).absolutePath()+"/");
+        QDesktopServices::openUrl(QUrl::fromLocalFile(ServerFolder));
 }
 
 
@@ -693,15 +725,6 @@ void ServerWindow::on_btnCopyIp_clicked()
     clip->setText(IP);
 
     emit SystemNotification("Copied Public IP to clipboard", IP, 3000);
-/*
-    if (QSystemTrayIcon::isSystemTrayAvailable())
-    {
-        QSystemTrayIcon icon;
-        icon.setIcon(QIcon(":/tf2dsm.ico"));
-        icon.show();
-        icon.showMessage("Copied Public IP to clipboard", IP);
-        icon.hide();
-    }*/
 }
 
 
@@ -725,6 +748,20 @@ void ServerWindow::on_btnSteamCMDConsole_clicked()
 {
     if (SteamCMDWindow != nullptr)
         SteamCMDWindow->show();
+}
+
+void ServerWindow::on_btnAdvancedDropDown_clicked()
+{
+    if (ui->PropsMain_Advanced->isHidden())
+    {
+        ui->btnAdvancedDropDown->setIcon(QIcon(":/icons/resources/Icons/DropOpen.svg"));
+        ui->PropsMain_Advanced->show();
+    }
+    else
+    {
+        ui->btnAdvancedDropDown->setIcon(QIcon(":/icons/resources/Icons/DropClosed.svg"));
+        ui->PropsMain_Advanced->hide();
+    }
 }
 
 void ServerWindow::on_listProps_currentRowChanged(int currentRow)
@@ -911,7 +948,7 @@ void ServerWindow::on_btnReloadConfig_clicked()
 
 void ServerWindow::on_btnOpenConfig_clicked()
 {
-    QDesktopServices::openUrl(ServerFolder + "/Server/tf/cfg/" + ui->cmbConfigFile->currentText());
+    QDesktopServices::openUrl(QUrl::fromLocalFile(ServerFolder + "/Server/tf/cfg/" + ui->cmbConfigFile->currentText()));
 }
 
 void ServerWindow::on_btnConfigSpecial_clicked()
@@ -1269,9 +1306,6 @@ QString ServerWindow::ServerCfgExample()
 {
     return QString("// General Settings //\n"
            "\n"
-           "// Hostname for server.\n"
-           "hostname %0\n"
-           "\n"
            "// Overrides the max players reported to prospective clients\n"
            "sv_visiblemaxplayers 32\n"
            "\n"
@@ -1461,6 +1495,6 @@ QString ServerWindow::ServerCfgExample()
            "mp_chattime 10\n"
            "\n"
            "// Enable party mode\n"
-           "tf_birthday 0\n").arg(ui->lineServerName->text());
+           "tf_birthday 0\n");
 }
 

@@ -1380,7 +1380,7 @@ QPushButton::pressed {
         <string notr="true"/>
        </property>
        <property name="text">
-        <string>&lt;a href=&quot;https://developer.valvesoftware.com/wiki/Command_line_options#Source_Dedicated_Server&quot;&gt;Command Line Parameters&lt;/a&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://developer.valvesoftware.com/wiki/Command_line_options#Source_Dedicated_Server&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;Command Line Parameters&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::TextFormat::RichText</enum>

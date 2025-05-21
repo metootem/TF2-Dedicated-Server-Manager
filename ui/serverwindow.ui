@@ -378,16 +378,16 @@
          <number>6</number>
         </property>
         <property name="leftMargin">
-         <number>4</number>
+         <number>9</number>
         </property>
         <property name="topMargin">
-         <number>4</number>
+         <number>9</number>
         </property>
         <property name="rightMargin">
-         <number>4</number>
+         <number>9</number>
         </property>
         <property name="bottomMargin">
-         <number>4</number>
+         <number>9</number>
         </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -3975,6 +3975,139 @@ ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
            </widget>
           </item>
          </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="btnAdvancedDropDown">
+            <property name="minimumSize">
+             <size>
+              <width>29</width>
+              <height>29</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>29</width>
+              <height>29</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/resources/Icons/DropClosed.svg</normaloff>:/icons/resources/Icons/DropClosed.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>12</width>
+              <height>12</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblAdvanced">
+            <property name="minimumSize">
+             <size>
+              <width>75</width>
+              <height>29</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>75</width>
+              <height>29</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Advanced</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QWidget" name="PropsMain_Advanced" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <item>
+            <layout class="QGridLayout" name="gridLayout_3">
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item row="1" column="0">
+              <widget class="QLabel" name="lblPassword">
+               <property name="toolTip">
+                <string>Leave empty if a password is not required to join this server.</string>
+               </property>
+               <property name="text">
+                <string>Password:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QLineEdit" name="linePassword">
+               <property name="toolTip">
+                <string>Leave empty if a password is not required to join this server.</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QLineEdit" name="lineToken">
+               <property name="toolTip">
+                <string>Your steam game server account token is required for your server to be listed in TF2 searches, see https://steamcommunity.com/dev/managegameservers.
+This can be left empty.</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="lblLogin">
+               <property name="toolTip">
+                <string>Your steam game server account token is required for your server to be listed in TF2 searches, see https://steamcommunity.com/dev/managegameservers.
+This can be left empty.</string>
+               </property>
+               <property name="text">
+                <string>Token:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="3">
+              <widget class="QLabel" name="label">
+               <property name="maximumSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>https://steamcommunity.com/dev/managegameservers</string>
+               </property>
+               <property name="text">
+                <string>&lt;a href=&quot;https://steamcommunity.com/dev/managegameservers&quot;&gt;&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/icons/resources/Icons/About.svg&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&lt;/a&gt;</string>
+               </property>
+               <property name="openExternalLinks">
+                <bool>true</bool>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::TextInteractionFlag::TextBrowserInteraction</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
         </item>
         <item>
          <spacer name="verticalSpacer_2">
