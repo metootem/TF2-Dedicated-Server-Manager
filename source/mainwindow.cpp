@@ -88,6 +88,7 @@ void MainWindow::LoadStyles(QString colorTheme)
     this->setStyleSheet(QString("QInputDialog { background-color: #2b2b2b; }"
                                 "QMessageBox { background-color: #2b2b2b; }"
                                 "QLabel { color: #ffffff; }"
+                                "QToolTip { color: #ffffff; background-color: #2b2b2b; border: 1px solid #5e5e5e;}"
                                 ""
                                 "QTabBar::tab {"
                                 "border: 0px solid;"
@@ -334,7 +335,7 @@ void MainWindow::on_tabServers_tabCloseRequested(int index)
         if (msgBox2.clickedButton() == remove)
         {
             QDir dir(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder);
-            if (dir.dirName() != ".")
+            if (dir.dirName() != "." && !ServerDirs.contains(dir.path()))
                 dir.removeRecursively();
 
             IniSettings->remove(dir.dirName());

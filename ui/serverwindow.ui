@@ -402,7 +402,7 @@
             <item row="1" column="2">
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <property name="spacing">
-               <number>7</number>
+               <number>2</number>
               </property>
               <item>
                <widget class="QPushButton" name="btnConnectToServer">
@@ -436,13 +436,13 @@
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>42</width>
+                  <width>48</width>
                   <height>25</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>42</width>
+                  <width>48</width>
                   <height>25</height>
                  </size>
                 </property>
@@ -464,19 +464,19 @@ Currently not working as OS Console is automatically used.</string>
             <item row="1" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <property name="spacing">
-               <number>7</number>
+               <number>0</number>
               </property>
               <item>
                <widget class="QCheckBox" name="chkBeta">
                 <property name="minimumSize">
                  <size>
-                  <width>82</width>
+                  <width>90</width>
                   <height>25</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>82</width>
+                  <width>90</width>
                   <height>25</height>
                  </size>
                 </property>
@@ -2845,6 +2845,18 @@ Can't go over 32 without proper ConVars.</string>
           </item>
           <item row="4" column="1">
            <widget class="QLineEdit" name="lineMap">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>28</height>
+             </size>
+            </property>
             <property name="toolTip">
              <string>First map that will be loaded upon server startup.
 Empty picks a random map.</string>
@@ -3195,6 +3207,18 @@ Empty picks a random map.</string>
           </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="lineFolderName">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>28</height>
+             </size>
+            </property>
             <property name="toolTip">
              <string>Folder in the Servers Directory where this server's files will be located.</string>
             </property>
@@ -3537,6 +3561,18 @@ Empty picks a random map.</string>
           </item>
           <item row="3" column="1">
            <widget class="QSpinBox" name="spinMaxPlayers">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>28</height>
+             </size>
+            </property>
             <property name="toolTip">
              <string>Maximum amount of players that can join the server.
 Can't go over 32 without proper ConVars.</string>
@@ -3562,13 +3598,13 @@ Can't go over 32 without proper ConVars.</string>
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>25</height>
+                <height>28</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>25</height>
+                <height>28</height>
                </size>
               </property>
               <property name="toolTip">
@@ -3929,13 +3965,13 @@ Can't go over 32 without proper ConVars.</string>
               <property name="minimumSize">
                <size>
                 <width>80</width>
-                <height>25</height>
+                <height>28</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>80</width>
-                <height>25</height>
+                <height>28</height>
                </size>
               </property>
               <property name="text">
@@ -3947,6 +3983,18 @@ Can't go over 32 without proper ConVars.</string>
           </item>
           <item row="0" column="1">
            <widget class="QLineEdit" name="lineServerName">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>28</height>
+             </size>
+            </property>
             <property name="toolTip">
              <string>Name that is displayed in TF2's server browser.
 ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
@@ -3955,6 +4003,18 @@ ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
           </item>
           <item row="5" column="1">
            <widget class="QPushButton" name="btnParameters">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>28</height>
+             </size>
+            </property>
             <property name="text">
              <string>Set Additional Parameters</string>
             </property>
@@ -4058,6 +4118,18 @@ ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
              </item>
              <item row="1" column="2">
               <widget class="QLineEdit" name="linePassword">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>28</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>28</height>
+                </size>
+               </property>
                <property name="toolTip">
                 <string>Leave empty if a password is not required to join this server.</string>
                </property>
@@ -4065,6 +4137,18 @@ ConVar &quot;hostname&quot; in server.cfg overrides this value.</string>
              </item>
              <item row="0" column="2">
               <widget class="QLineEdit" name="lineToken">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>28</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>28</height>
+                </size>
+               </property>
                <property name="toolTip">
                 <string>Your steam game server account token is required for your server to be listed in TF2 searches, see https://steamcommunity.com/dev/managegameservers.
 This can be left empty.</string>
