@@ -42,7 +42,6 @@ void Cfg_LoadMapsDialog::LoadMaps(QStringList prefixFilter)
     for (QFileInfo fileInfo : QDir(MapDir).entryInfoList(prefixFilter, QDir::Files))
     {
         QString file = fileInfo.fileName().first(fileInfo.fileName().length()-4);
-        qInfo() << file;
         if (!mapList.contains(file))
             AddMapToList(file);
     }

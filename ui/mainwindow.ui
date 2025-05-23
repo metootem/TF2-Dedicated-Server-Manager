@@ -1681,13 +1681,13 @@ QPushButton::pressed {
        <widget class="QLabel" name="lblServers">
         <property name="minimumSize">
          <size>
-          <width>60</width>
+          <width>90</width>
           <height>20</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>60</width>
+          <width>90</width>
           <height>20</height>
          </size>
         </property>
@@ -2020,7 +2020,7 @@ QPushButton::pressed {
          <string>Servers</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+         <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
         </property>
        </widget>
       </item>

@@ -577,7 +577,8 @@ void ServerWindow::on_btnStartServer_clicked()
             bool started = false;
             for (QString term : Terminals)
             {
-                if (Process->startDetached(term, QStringList() << "-e" << Command << args))
+                QString exec = (term == "gnome-terminal" ? "--" : "-e");
+                if (Process->startDetached(term, QStringList() << exec << Command << args))
                 {
                     qInfo() << "Found terminal: " + term;
                     started = true;
@@ -586,14 +587,29 @@ void ServerWindow::on_btnStartServer_clicked()
             }
             if (!started)
             {
-                bool ok;
-                QString term = QInputDialog::getText(this, tr("Linux Terminal Not Found"),
+                bool ok = true;
+                QSettings iniSettings(ServerFolder+"/server.ini", QSettings::IniFormat);
+                QString term = iniSettings.value(QString("%0/terminal").arg(QSysInfo::productType())).toString();
+                QString exec = iniSettings.value(QString("%0/exec").arg(QSysInfo::productType())).toString();
+
+                if (term.isEmpty())
+                    term = QInputDialog::getText(this, tr("Linux Terminal Not Found"),
                                                      tr("Your Terminal:"), QLineEdit::Normal,
                                                      QDir::home().dirName(), &ok);
                 if (!ok || term.isEmpty())
                     return;
 
-                Process->startDetached(term, QStringList() << "-e" << Command << args);
+                if (exec.isEmpty())
+                    exec = QInputDialog::getText(this, tr("Terminal execute command"),
+                                                     tr("Execute command:"), QLineEdit::Normal,
+                                                     QDir::home().dirName(), &ok);
+
+                if (!ok)
+                    return;
+
+                iniSettings.setValue(QString("%0/terminal").arg(QSysInfo::productType()), term);
+                iniSettings.setValue(QString("%0/exec").arg(QSysInfo::productType()), exec);
+                Process->startDetached(term, QStringList() << exec << Command << args);
             }
         }
         return;
@@ -963,7 +979,6 @@ void ServerWindow::on_btnConfigSpecial_clicked()
             QStringList parentItems;
             for (int i=0; i<ui->treeConfigFileData->topLevelItemCount(); i++)
                 parentItems << ui->treeConfigFileData->topLevelItem(i)->text(0);
-            qInfo() << parentItems;
 
             auto mapsDialog = new Cfg_LoadMapsDialog(ServerFolder + "/Server/tf/maps", this);
             if (mapsDialog->exec() == QDialog::Accepted)
