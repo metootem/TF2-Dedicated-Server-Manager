@@ -12,6 +12,7 @@ CONFIG += c++17
 SOURCES += \
     source/aboutdialog.cpp \
     source/additionalparametersdialog.cpp \
+    source/cfg_loadmapsdialog.cpp \
     source/configconvardialog.cpp \
     source/filedownloader.cpp \
     source/main.cpp \
@@ -25,6 +26,7 @@ SOURCES += \
 HEADERS += \
     source/aboutdialog.h \
     source/additionalparametersdialog.h \
+    source/cfg_loadmapsdialog.h \
     source/configconvardialog.h \
     source/filedownloader.h \
     source/mainwindow.h \
@@ -37,6 +39,7 @@ HEADERS += \
 FORMS += \
     ui/aboutdialog.ui \
     ui/additionalparametersdialog.ui \
+    ui/cfg_loadmapsdialog.ui \
     ui/configconvardialog.ui \
     ui/mainwindow.ui \
     ui/selectmapdialog.ui \

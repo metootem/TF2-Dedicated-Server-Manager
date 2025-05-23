@@ -27,6 +27,7 @@
 #include "additionalparametersdialog.h"
 #include "selectmapdialog.h"
 #include "configconvardialog.h"
+#include "cfg_loadmapsdialog.h"
 
 enum VisualState
 {

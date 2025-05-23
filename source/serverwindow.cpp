@@ -958,18 +958,33 @@ void ServerWindow::on_btnConfigSpecial_clicked()
     {
         if (fileName.first(8) == "mapcycle")
         {
-            ui->treeConfigFileData->clear();
+            //ui->treeConfigFileData->clear();
 
             QStringList parentItems;
             for (int i=0; i<ui->treeConfigFileData->topLevelItemCount(); i++)
-                parentItems << ui->treeConfigFileData->topLevelItem(i)->text(0) + ".bsp";
+                parentItems << ui->treeConfigFileData->topLevelItem(i)->text(0);
             qInfo() << parentItems;
-            for (QFileInfo fileInfo : QDir(ServerFolder + "/Server/tf/maps").entryInfoList(QStringList() << "*.bsp", QDir::Files))
+
+            auto mapsDialog = new Cfg_LoadMapsDialog(ServerFolder + "/Server/tf/maps", this);
+            if (mapsDialog->exec() == QDialog::Accepted)
+            {
+                QStringList newMapList = mapsDialog->ReturnMaps();
+                for (QString map : newMapList)
+                {
+                    if (!parentItems.contains(map))
+                        AddConfigTreeItem(map, "", "");
+                }
+                delete mapsDialog;
+            }
+            else
+                return;
+
+            /*for (QFileInfo fileInfo : QDir(ServerFolder + "/Server/tf/maps").entryInfoList(QStringList() << "*.bsp", QDir::Files))
             {
                 qInfo() << fileInfo.fileName().first(fileInfo.fileName().length()-4);
                 if (!parentItems.contains(fileInfo.fileName()))
                     AddConfigTreeItem(fileInfo.fileName().first(fileInfo.fileName().length()-4), "", "");
-            }
+            }*/
         }
     }
 }
