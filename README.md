@@ -17,6 +17,9 @@ Inspired by Crazy..'s TF2 Server Manager.<br/>
 - Easy SourceMod install and configuration
 - Custom server console implementation
 
+## Known issues
+- Certain config files aren't formatted correctly
+
 
 ## Preview
 ### Screenshots were taken on Linux, certain visuals may differ from the Windows build!
