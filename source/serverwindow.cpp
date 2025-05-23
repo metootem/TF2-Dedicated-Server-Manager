@@ -1086,12 +1086,12 @@ void ServerWindow::on_btnSaveConfig_clicked()
                     }
 
                     output += (i > 0 ? "\n" : "") + comment + (topItem->text(0) == "//" ? "" : topItem->text(0));
-                    file.write(output.toStdString().c_str());
-                    file.flush();
-                    file.close();
-                    emit SystemNotification("Saved config", fileName, 3000);
-                    return;
                 }
+                file.write(output.toStdString().c_str());
+                file.flush();
+                file.close();
+                emit SystemNotification("Saved config", fileName, 3000);
+                return;
             }
         }
 
