@@ -128,6 +128,8 @@ private slots:
 
     void on_btnAdvancedDropDown_clicked();
 
+    void on_btnClearConfig_clicked();
+
 private:
     Ui::ServerWindow *ui;
 

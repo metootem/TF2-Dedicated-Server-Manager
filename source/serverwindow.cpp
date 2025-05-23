@@ -1152,6 +1152,12 @@ void ServerWindow::on_btnSaveConfig_clicked()
     }
 }
 
+void ServerWindow::on_btnClearConfig_clicked()
+{
+    ui->treeConfigFileData->clear();
+    ui->txtConfigFileData->clear();
+}
+
 void ServerWindow::on_cmbConfigFile_currentTextChanged(const QString &arg1)
 {
     ui->treeConfigFileData->clear();

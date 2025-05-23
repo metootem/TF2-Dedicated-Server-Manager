@@ -4949,6 +4949,25 @@ This can be left empty.</string>
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="btnClearConfig">
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>29</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>29</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Clear</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer_3">
             <property name="orientation">
              <enum>Qt::Orientation::Horizontal</enum>
