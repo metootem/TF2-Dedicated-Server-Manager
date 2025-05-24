@@ -12,6 +12,13 @@ Inspired by Crazy..'s TF2 Server Manager.<br/>
 - Config manager
 - Multiple server directories
 - Customizable app color theme
+## Installation
+### Windows
+1. Go to [releases](https://github.com/metootem/TF2-Dedicated-Server-Manager/releases) and download the proper build for your OS
+2. Extract contents of archive to a folder
+3. Launch TF2ServerManager.exe
+### Linux
+Coming soon, but it's basically the same as Windows
 
 ## Upcoming features (in the near future).
 - Easy SourceMod install and configuration
