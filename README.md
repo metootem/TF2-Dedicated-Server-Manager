@@ -14,11 +14,13 @@ Inspired by Crazy..'s TF2 Server Manager.<br/>
 - Customizable app color theme
 ## Installation
 ### Windows
-1. Go to [releases](https://github.com/metootem/TF2-Dedicated-Server-Manager/releases) and download the proper build for your OS
+1. Go to [releases](https://github.com/metootem/TF2-Dedicated-Server-Manager/releases) and download the windows zip
 2. Extract contents of archive to a folder
 3. Launch TF2ServerManager.exe
 ### Linux
-Coming soon, but it's basically the same as Windows
+1. Go to [releases](https://github.com/metootem/TF2-Dedicated-Server-Manager/releases) and download the AppImage
+2. Make sure you have the [requirements](https://wiki.teamfortress.com/wiki/Linux_dedicated_server#Requirements) to be able to run servers
+3. Open AppImage
 
 ## Upcoming features (in the near future).
 - Easy SourceMod install and configuration
@@ -26,6 +28,7 @@ Coming soon, but it's basically the same as Windows
 
 ## Known issues
 - Certain config files aren't formatted correctly
+- SteamCMD takes a good while to provide output on Windows
 
 
 ## Preview
