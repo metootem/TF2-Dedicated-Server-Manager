@@ -22,6 +22,8 @@ Inspired by Crazy..'s TF2 Server Manager.<br/>
 2. Make sure you have the [requirements](https://wiki.teamfortress.com/wiki/Linux_dedicated_server#Requirements) to be able to run servers
 3. Open AppImage
 
+Head over to the [wiki](https://github.com/metootem/TF2-Dedicated-Server-Manager/wiki) for more information and guides.
+
 ## Upcoming features (in the near future).
 - Easy SourceMod install and configuration
 - Custom server console implementation
