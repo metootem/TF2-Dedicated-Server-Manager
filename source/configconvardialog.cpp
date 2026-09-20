@@ -8,7 +8,7 @@ ConfigConVarDialog::ConfigConVarDialog(QStringList parentItems, QWidget *parent)
     ui->setupUi(this);
 
     new QListWidgetItem("New ConVar", ui->listParentConVars);
-    for(QString name : parentItems)
+    for(const QString &name : parentItems)
     {
         new QListWidgetItem(name, ui->listParentConVars);
     }
@@ -25,7 +25,6 @@ void ConfigConVarDialog::on_btnSelect_clicked()
     selectedIndex = ui->listParentConVars->currentIndex().row();
     this->accept();
 }
-
 
 void ConfigConVarDialog::on_btnCancel_clicked()
 {

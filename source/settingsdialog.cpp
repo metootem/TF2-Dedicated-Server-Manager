@@ -26,7 +26,9 @@ SettingsStruct SettingsDialog::ParseSettings()
     Settings.OS = OS;
 
     if (!IniSettings.contains(QString("%0/color_theme").arg(OS)))
+    {
         IniSettings.setValue(QString("%0/color_theme").arg(OS), "#cf6a32");
+    }
 
     if (!IniSettings.contains(tr("%0/server_directories").arg(OS)))
     {
@@ -44,7 +46,7 @@ SettingsStruct SettingsDialog::ParseSettings()
         }
         else
         {
-            for (QString strDir : dirList)
+            for (const QString &strDir : std::as_const(dirList))
             {
                 /*if (strDir.contains(" "))
                 {
@@ -87,7 +89,9 @@ void SettingsDialog::on_btnApply_clicked()
         auto item = ui->treeSrvDirs->topLevelItem(i);
         QString dir = item->text(0);
         if (!dir.isEmpty())
+        {
             dirList << dir;
+        }
         else
         {
             qInfo() << dir;
@@ -108,7 +112,7 @@ void SettingsDialog::on_btnApply_clicked()
 
     if (apply)
     {
-        for (QString strDir : dirList)
+        for (const QString &strDir : std::as_const(dirList))
         {
             if (!QDir(strDir).exists())
             {
@@ -172,7 +176,9 @@ void SettingsDialog::on_btnColor_clicked()
     QColor hex = QColorDialog::getColor(QColor(colorTheme), this, tr("Select Color"));
 
     if (!hex.isValid())
+    {
         return;
+    }
     ui->btnColor->setStyleSheet(QString("border: 2px solid #232323;\nborder-radius: 0px;\nbackground-color: %0;").arg(hex.name()));
     colorTheme = hex.name();
 }

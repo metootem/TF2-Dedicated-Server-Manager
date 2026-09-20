@@ -350,7 +350,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label_6">
+    <widget class="QLabel" name="lblTitle">
      <property name="palette">
       <palette>
        <active>
@@ -682,7 +682,7 @@
       </font>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;TF2 Dedicated Server Manager &lt;span style=&quot; font-size:14pt;&quot;&gt;v1.0 May 2025&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;TF2 Dedicated Server Manager &lt;span style=&quot; font-size:14pt;&quot;&gt;[VERSION] [DATE]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
@@ -692,7 +692,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="lblLogo">
        <property name="minimumSize">
         <size>
          <width>200</width>
@@ -714,7 +714,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="lblCredits">
        <property name="palette">
         <palette>
          <active>
@@ -1060,7 +1060,7 @@ Written in Qt</string>
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="lblLink1">
      <property name="font">
       <font>
        <pointsize>12</pointsize>
@@ -1078,7 +1078,7 @@ Written in Qt</string>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_5">
+    <widget class="QLabel" name="lblLink2">
      <property name="font">
       <font>
        <pointsize>12</pointsize>
@@ -1109,7 +1109,7 @@ Written in Qt</string>
     </spacer>
    </item>
    <item>
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="lblLicensing">
      <property name="palette">
       <palette>
        <active>

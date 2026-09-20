@@ -26,7 +26,7 @@ void SteamCMDDialog::NewProcess(QProcess *process)
     ui->txtOutput->append(tr("Running SteamCMD...\nOutput may take a while, please be patient.\n\n"));
     ui->barProgress->setValue(0);
     connect(process, SIGNAL(readyRead()), SLOT(ReadOutput()));
-    connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(InstallFinished(int, QProcess::ExitStatus)));
+    connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(InstallFinished(int,QProcess::ExitStatus)));
     Process = process;
     errorCode = 0;
 }
@@ -58,23 +58,30 @@ void SteamCMDDialog::ReadOutput()
 void SteamCMDDialog::InstallFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
     if (this->isHidden())
+    {
         this->show();
+    }
 
-    qInfo() << "Finished Running SteamCMD.";
+    qInfo() << "Finished Running SteamCMD." << exitCode;
     if (exitStatus == QProcess::NormalExit)
     {
         ui->barProgress->setValue(100);
         ui->txtOutput->append(tr("Finished Running SteamCMD."));
         if (!errorCode)
+        {
             ui->txtOutput->append(tr("Check console output for any errors."));
+        }
         else
         {
             if (errorCode & Error_NoDiskSpace)
+            {
                 ui->txtOutput->append(tr("No disk space available to install server."));
-
+            }
         }
     }
     else
+    {
         ui->txtOutput->append(tr("There was an error installing the server. Error: %0\n").arg(Process->errorString()));
+    }
 }
 

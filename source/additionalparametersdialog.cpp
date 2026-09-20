@@ -22,6 +22,18 @@ AdditionalParametersDialog::~AdditionalParametersDialog()
     delete ui;
 }
 
+void AdditionalParametersDialog::LoadStyle(QString style)
+{
+    if (style.isEmpty())
+    {
+        return;
+    }
+
+    //this->setStyleSheet(style);
+
+    //qInfo() << "new style:" << style;
+}
+
 void AdditionalParametersDialog::FirstTimeSetup()
 {
     AddParameter("+sv_pure", "0", Qt::Checked);

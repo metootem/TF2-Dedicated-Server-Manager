@@ -28,9 +28,13 @@ ServerWindow::ServerWindow(SettingsStruct Settings, QWidget *parent, QString nam
     QStringList dirList = mainIniSettings.value(QString("%0/server_directories").arg(OS)).toStringList();
 
     if (!dirList.contains(directory))
+    {
         LoadServerConfig(QDir(directory));
+    }
     else
+    {
         LoadServerFirstTimeSetup();
+    }
     ServerFolder = directory;
 
     qInfo() << "Loading Settings.";
@@ -54,10 +58,15 @@ void ServerWindow::SettingsChanged(SettingsStruct Settings)
 {
     PublicIP = Settings.PublicIP;
 
-    LoadStyles(Settings.ColorTheme);
+    //LoadStyles(Settings.ColorTheme);
 }
 
-void ServerWindow::LoadStyles(QString colorTheme)
+void ServerWindow::UpdateStyles(QString colorTheme, QString fullStyle)
+{
+    LoadStyles(colorTheme, fullStyle);
+}
+
+void ServerWindow::LoadStyles(QString colorTheme, QString fullStyle)
 {
     this->setStyleSheet(QString("QInputDialog { background-color: #2b2b2b; }"
                    "QMessageBox { background-color: #2b2b2b; }"));
@@ -72,10 +81,15 @@ void ServerWindow::LoadStyles(QString colorTheme)
                                                    "QPushButton:disabled { color: #3b3b3b; }").arg(colorTheme, QColor(colorTheme).darker(130).name()));
 
     if (OS == "windows")
+    {
         ui->cmbConfigFile->setStyleSheet("QComboBox {\n	\ncolor: #000000;\n}");
+    }
     else if (OS == "linux")
+    {
         ui->cmbConfigFile->setStyleSheet(QString("QComboBox {\n	background-color: %0;\ncolor: #ffffff;\n}").arg(colorTheme));
+    }
 
+    AdditionalParametersWindow->LoadStyle(fullStyle);
     //qInfo() << "Updated Styles.";
 }
 
@@ -345,14 +359,237 @@ void ServerWindow::InstallServerFinished()
     QFile serverCfg(ServerFolder + "/Server/tf/cfg/server.cfg");
     if (!serverCfg.exists())
     {
-        serverCfg.open(QIODevice::WriteOnly);
-        serverCfg.write(ServerCfgExample().toStdString().c_str());
-        serverCfg.flush();
-        serverCfg.close();
+        if (serverCfg.open(QIODevice::WriteOnly))
+        {
+            serverCfg.write(ServerCfgExample().toStdString().c_str());
+            serverCfg.flush();
+            serverCfg.close();
+        }
     }
 
     CheckServerConfigFiles();
     ui->cmbConfigFile->setCurrentText("server.cfg");
+}
+
+QString ServerWindow::GetName()
+{
+    return ui->lineServerName->text();
+}
+
+QString ServerWindow::GetIP(bool copyToClipboard)
+{
+    QString IP;
+    if (ui->lineIP->text() == "0.0.0.0" || ui->lineIP->text().isEmpty())
+    {
+        IP = PublicIP + ":" + ui->linePort->text();
+    }
+    else
+    {
+        IP = ui->lineIP->text() + ":" + ui->linePort->text();
+    }
+
+    if (copyToClipboard)
+    {
+        QClipboard *clip = QApplication::clipboard();
+        clip->setText(IP);
+
+        emit SystemNotification("Copied Public IP to clipboard", IP, 3000);
+    }
+
+    return IP;
+}
+
+void ServerWindow::StartServer()
+{
+    if (!SRCDSExists())
+    {
+        on_btnInstallServer_clicked();
+        return;
+    }
+
+    QString Command;
+    if (OS == "linux")
+        Command = QString("%0/Server/srcds_run").arg(ServerFolder);
+    else
+        Command = QString("%0/Server/srcds.exe").arg(ServerFolder);
+
+    QStringList args = {"-console", "-game", "tf"};
+
+    args << "+ip" << ui->lineIP->text();
+    args << "-port" << ui->linePort->text();
+    args << "+maxplayers" << ui->spinMaxPlayers->text();
+
+    if (ui->lineMap->text().isEmpty())
+        args << "+randommap";
+    else
+        args << "+map" << ui->lineMap->text();
+
+    if (!ui->lineServerName->text().isEmpty())
+        args << "+hostname" << "\"" + ui->lineServerName->text() + "\"";
+
+    if (!ui->lineToken->text().isEmpty())
+        args << "+sv_setsteamaccount" << ui->lineToken->text();
+
+    if (!ui->linePassword->text().isEmpty())
+        args << "+sv_password" << "\"" + ui->linePassword->text() + "\"";
+
+    QStringList additionalParams = AdditionalParametersWindow->GetParameters();
+    for (int i = 2; i < additionalParams.count(); i+=3)
+    {
+        if (additionalParams[i] != "True")
+            continue;
+        if (additionalParams[i-2].first(1) == "-" || additionalParams[i-2].first(1) == "+")
+        {
+            args << additionalParams[i-2];
+            if (!additionalParams[i-1].isEmpty())
+                args << additionalParams[i-1];
+        }
+    }
+
+    qInfo() << "Running srcds: " << Command;
+    qInfo() << "Arguments: " << args;
+
+    auto Process = new QProcess(this);
+
+    Process->setProcessChannelMode(QProcess::MergedChannels);
+    Process->setWorkingDirectory(QString("%0/Server").arg(ServerFolder));
+
+    if (ui->chkConsole->isChecked())
+    {
+        qInfo() << "Running server in system console.";
+        if (OS == "windows")
+        {
+            Process->startDetached("cmd.exe", QStringList() << "/k" << Command << args);
+            Process->deleteLater();
+        }
+        else
+        {
+            QStringList Terminals = {"gnome-terminal", "konsole", "xterm"};
+            bool started = false;
+            for (const QString &term : std::as_const(Terminals))
+            {
+                QString exec = (term == "gnome-terminal" ? "--" : "-e");
+                if (Process->startDetached(term, QStringList() << exec << Command << args))
+                {
+                    qInfo() << "Found terminal: " + term;
+                    started = true;
+                    break;
+                }
+            }
+            if (!started)
+            {
+                bool ok = true;
+                QSettings iniSettings(ServerFolder+"/server.ini", QSettings::IniFormat);
+                QString term = iniSettings.value(QString("%0/terminal").arg(QSysInfo::productType())).toString();
+                QString exec = iniSettings.value(QString("%0/exec").arg(QSysInfo::productType())).toString();
+
+                if (term.isEmpty())
+                {
+                    term = QInputDialog::getText(this, tr("Linux Terminal Not Found"),
+                                                 tr("Your Terminal:"), QLineEdit::Normal,
+                                                 QDir::home().dirName(), &ok);
+                }
+                if (!ok || term.isEmpty())
+                {
+                    return;
+                }
+
+                if (exec.isEmpty())
+                {
+                    exec = QInputDialog::getText(this, tr("Terminal execute command"),
+                                                 tr("Execute command:"), QLineEdit::Normal,
+                                                 QDir::home().dirName(), &ok);
+                }
+
+                if (!ok)
+                {
+                    return;
+                }
+
+                iniSettings.setValue(QString("%0/terminal").arg(QSysInfo::productType()), term);
+                iniSettings.setValue(QString("%0/exec").arg(QSysInfo::productType()), exec);
+                Process->startDetached(term, QStringList() << exec << Command << args);
+            }
+        }
+        return;
+    }
+
+    Process->start(Command, args, QProcess::ReadWrite | QProcess::Text | QProcess::Unbuffered);
+
+    if (Process->waitForStarted())
+    {
+        qInfo() << "server running";
+        auto ServerConsoleDial = new ServerConsoleDialog(this, Process, ui->lineServerName->text());
+        ServerConsole = ServerConsoleDial;
+
+        if (!ui->chkConsole->isChecked())
+        {
+            ServerConsole->show();
+        }
+
+        SetServerVisualState(ServerStarted);
+
+        connect(Process, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(ServerStateChanged(QProcess::ProcessState)));
+
+        emit ServerActivated();
+    }
+    else
+    {
+        SetServerVisualState(VisualState::ServerStopped);
+    }
+}
+
+void ServerWindow::JoinServer()
+{
+    QString LocalServerAddress;
+    QHostAddress host(QHostAddress::LocalHost);
+    QList<QHostAddress> addressList = QNetworkInterface::allAddresses();
+    for (const QHostAddress &address : std::as_const(addressList))
+    {
+        if (address.protocol() == QAbstractSocket::IPv4Protocol &&
+            address != host &&
+            !address.isLoopback() && address.toString().right(2) != ".1") // dirty workaround
+        {
+            LocalServerAddress = address.toString() + ":" + ui->linePort->text();
+            break; // main local IP should always be first, right?
+        }
+    }
+
+    QString PublicServerAddress = PublicIP + ":" + ui->linePort->text();
+
+    QMessageBox msgBox(QMessageBox::Icon::Question, "",
+                       tr("Through which IP to join server?\nPublic: %0\nLocal: %1").arg(PublicServerAddress).arg(LocalServerAddress, 1), {}, this);
+
+    auto *publicIp = msgBox.addButton("Public IP", QMessageBox::ButtonRole::AcceptRole);
+    if (PublicServerAddress.isEmpty())
+    {
+        publicIp->setEnabled(false);
+    }
+
+    auto *localIp = msgBox.addButton("Local IP", QMessageBox::ButtonRole::AcceptRole);
+    auto *customIp = msgBox.addButton("Custom IP", QMessageBox::ButtonRole::AcceptRole);
+    msgBox.addButton("Cancel", QMessageBox::RejectRole);
+
+    msgBox.exec();
+
+    if (msgBox.clickedButton() == publicIp)
+    {
+        QDesktopServices::openUrl(QUrl("steam://connect/" + PublicServerAddress));
+    }
+    else if (msgBox.clickedButton() == localIp)
+    {
+        QDesktopServices::openUrl(QUrl("steam://connect/" + LocalServerAddress));
+    }
+    else if (msgBox.clickedButton() == customIp)
+    {
+        bool ok;
+        QString input = QInputDialog::getText(this, tr("Type Custom IP and Port"),
+                                              tr("IP and Port:"), QLineEdit::Normal, QString(), &ok);
+        if (ok && !input.isEmpty())
+        {
+            QDesktopServices::openUrl(QUrl("steam://connect/" + input));
+        }
+    }
 }
 
 
@@ -393,7 +630,9 @@ void ServerWindow::on_btnApply_clicked()
     bool apply = true;
 
     if (ui->lineServerName->text().isEmpty())
+    {
         ui->lineServerName->setText("Team Fortress 2 Server");
+    }
     qInfo() << "Server Name:" << ui->lineServerName->text();
     if (ui->lineFolderName->text().isEmpty())
     {
@@ -416,15 +655,21 @@ void ServerWindow::on_btnApply_clicked()
         apply = false;
     }
     else
+    {
         qInfo() << "Folder:" << ui->lineFolderName->text();
+    }
 
 
     if (ui->lineIP->text().isEmpty())
+    {
         ui->lineIP->setText("0.0.0.0");
+    }
     qInfo() << "IP:" << ui->lineIP->text();
 
     if (ui->linePort->text().isEmpty())
+    {
         ui->linePort->setText("27015");
+    }
     qInfo() << "Port:" << ui->linePort->text();
 
     if (apply)
@@ -445,12 +690,16 @@ void ServerWindow::on_btnApply_clicked()
 
         QDir parentDir(ServerFolder);
         if (settings.ServerDirectories.contains(ServerFolder))
+        {
             ServerFolder = QString("%0/%1").arg(parentDir.path(), ui->lineFolderName->text());
+        }
         else if (QDir(ServerFolder).dirName() != ui->lineFolderName->text())
         {
             parentDir.cdUp();
             if (QFile::rename(ServerFolder, QString("%0/%1").arg(parentDir.path(), ui->lineFolderName->text())))
+            {
                 ServerFolder = QString("%0/%1").arg(parentDir.path(), ui->lineFolderName->text());
+            }
             else
             {
                 ui->lblFolderError->setText("Server Folder cannot be renamed currently!");
@@ -510,132 +759,7 @@ void ServerWindow::on_btnApply_clicked()
 
 void ServerWindow::on_btnStartServer_clicked()
 {
-    QString Command;
-    if (OS == "linux")
-        Command = QString("%0/Server/srcds_run").arg(ServerFolder);
-    else
-        Command = QString("%0/Server/srcds.exe").arg(ServerFolder);
-
-    QStringList args = {"-console", "-game", "tf"};
-
-    args << "+ip" << ui->lineIP->text();
-    args << "-port" << ui->linePort->text();
-    args << "+maxplayers" << ui->spinMaxPlayers->text();
-
-    if (ui->lineMap->text().isEmpty())
-        args << "+randommap";
-    else
-        args << "+map" << ui->lineMap->text();
-
-    if (!ui->lineServerName->text().isEmpty())
-        args << "+hostname" << "\"" + ui->lineServerName->text() + "\"";
-
-    if (!ui->lineToken->text().isEmpty())
-        args << "+sv_setsteamaccount" << ui->lineToken->text();
-
-    if (!ui->linePassword->text().isEmpty())
-        args << "+sv_password" << "\"" + ui->linePassword->text() + "\"";
-
-    QStringList additionalParams = AdditionalParametersWindow->GetParameters();
-    for (int i = 2; i < additionalParams.count(); i+=3)
-    {
-        if (additionalParams[i] != "True")
-            continue;
-        if (additionalParams[i-2].first(1) == "-" || additionalParams[i-2].first(1) == "+")
-        {
-            args << additionalParams[i-2];
-            if (!additionalParams[i-1].isEmpty())
-                args << additionalParams[i-1];
-        }
-    }
-
-    qInfo() << "Running srcds: " << Command;
-    qInfo() << "Arguments: " << args;
-
-    auto Process = new QProcess(this);
-
-    //ServerProcess = Process;
-    Process->setProcessChannelMode(QProcess::MergedChannels);
-    Process->setWorkingDirectory(QString("%0/Server").arg(ServerFolder));
-
-    //QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    //env.insert("LD_LIBRARY_PATH", ".:bin:" + env.value("LD_LIBRARY_PATH"));
-    //Process->setProcessEnvironment(env);
-    //qInfo() << env.value("LD_LIBRARY_PATH");
-
-    if (ui->chkConsole->isChecked())
-    {
-        qInfo() << "Running server in system console.";
-        if (OS == "windows")
-        {
-            Process->startDetached("cmd.exe", QStringList() << "/k" << Command << args);
-            Process->deleteLater();
-        }
-        else
-        {
-            QStringList Terminals = {"gnome-terminal", "konsole", "xterm"};
-            bool started = false;
-            for (QString term : Terminals)
-            {
-                QString exec = (term == "gnome-terminal" ? "--" : "-e");
-                if (Process->startDetached(term, QStringList() << exec << Command << args))
-                {
-                    qInfo() << "Found terminal: " + term;
-                    started = true;
-                    break;
-                }
-            }
-            if (!started)
-            {
-                bool ok = true;
-                QSettings iniSettings(ServerFolder+"/server.ini", QSettings::IniFormat);
-                QString term = iniSettings.value(QString("%0/terminal").arg(QSysInfo::productType())).toString();
-                QString exec = iniSettings.value(QString("%0/exec").arg(QSysInfo::productType())).toString();
-
-                if (term.isEmpty())
-                    term = QInputDialog::getText(this, tr("Linux Terminal Not Found"),
-                                                     tr("Your Terminal:"), QLineEdit::Normal,
-                                                     QDir::home().dirName(), &ok);
-                if (!ok || term.isEmpty())
-                    return;
-
-                if (exec.isEmpty())
-                    exec = QInputDialog::getText(this, tr("Terminal execute command"),
-                                                     tr("Execute command:"), QLineEdit::Normal,
-                                                     QDir::home().dirName(), &ok);
-
-                if (!ok)
-                    return;
-
-                iniSettings.setValue(QString("%0/terminal").arg(QSysInfo::productType()), term);
-                iniSettings.setValue(QString("%0/exec").arg(QSysInfo::productType()), exec);
-                Process->startDetached(term, QStringList() << exec << Command << args);
-            }
-        }
-        return;
-    }
-
-    Process->start(Command, args, QProcess::ReadWrite | QProcess::Text | QProcess::Unbuffered);
-
-    if (Process->waitForStarted())
-    {
-        qInfo() << "server running";
-        auto ServerConsoleDial = new ServerConsoleDialog(this, Process, ui->lineServerName->text());
-        ServerConsole = ServerConsoleDial;
-
-        if (!ui->chkConsole->isChecked())
-            ServerConsole->show();
-
-        SetServerVisualState(ServerStarted);
-
-        connect(Process, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(ServerStateChanged(QProcess::ProcessState)));
-
-        emit ServerActivated();
-    }
-    else
-    {
-        SetServerVisualState(VisualState::ServerStopped);
-    }
+    StartServer();
 }
 
 /*
@@ -692,57 +816,23 @@ void ServerWindow::on_btnShowConsole_clicked()
         ServerConsole->setFocus();
 }
 
-
 void ServerWindow::on_btnConnectToServer_clicked()
 {
-    QString LocalServerAddress;
-    QHostAddress host(QHostAddress::LocalHost);
-    for (QHostAddress address : QNetworkInterface::allAddresses())
-    {
-        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != host)
-            LocalServerAddress = address.toString() + ":" + ui->linePort->text();
-    }
-
-    QString PublicServerAddress = PublicIP + ":" + ui->linePort->text();
-
-    QMessageBox msgBox(QMessageBox::Icon::Question, "",
-                       tr("Through which IP to join server?\nPublic: %0\nLocal: %1").arg(PublicServerAddress).arg(LocalServerAddress, 1), {}, this);
-
-    auto *publicIp = msgBox.addButton("Public IP", QMessageBox::ButtonRole::AcceptRole);
-    if (PublicServerAddress.isEmpty())
-        publicIp->setEnabled(false);
-    auto *localIp = msgBox.addButton("Local IP", QMessageBox::ButtonRole::AcceptRole);
-    msgBox.addButton("Cancel", QMessageBox::RejectRole);
-
-    msgBox.exec();
-    if (msgBox.clickedButton() == publicIp)
-        QDesktopServices::openUrl(QUrl("steam://connect/" + PublicServerAddress));
-    else if (msgBox.clickedButton() == localIp)
-        QDesktopServices::openUrl(QUrl("steam://connect/" + LocalServerAddress));
-
+    JoinServer();
 }
 
 void ServerWindow::on_btnGotoServerFolder_clicked()
 {
     if (!ui->lineFolderName->text().isEmpty())
+    {
         QDesktopServices::openUrl(QUrl::fromLocalFile(ServerFolder));
+    }
 }
-
 
 void ServerWindow::on_btnCopyIp_clicked()
 {
-    QClipboard *clip = QApplication::clipboard();
-    QString IP;
-    if (ui->lineIP->text() == "0.0.0.0" || ui->lineIP->text().isEmpty())
-        IP = PublicIP + ":" + ui->linePort->text();
-    else
-        IP = ui->lineIP->text() + ":" + ui->linePort->text();
-
-    clip->setText(IP);
-
-    emit SystemNotification("Copied Public IP to clipboard", IP, 3000);
+    GetIP(true);
 }
-
 
 void ServerWindow::on_btnSelectMap_clicked()
 {
@@ -800,7 +890,6 @@ void ServerWindow::on_listProps_currentRowChanged(int currentRow)
     }
     }
 }
-
 
 void ServerWindow::SetServerVisualState(VisualState state)
 {
@@ -905,8 +994,11 @@ void ServerWindow::CheckServerConfigFiles()
     QString text = ui->cmbConfigFile->currentText();
 
     ui->cmbConfigFile->clear();
-    for (QFileInfo file : QDir(ServerFolder + "/Server/tf/cfg").entryInfoList(QStringList() << "*.cfg" << "*.txt", QDir::Files))
+    QFileInfoList fileList = QDir(ServerFolder + "/Server/tf/cfg").entryInfoList(QStringList() << "*.cfg" << "*.txt", QDir::Files);
+    for (const QFileInfo &file : std::as_const(fileList))
+    {
         ui->cmbConfigFile->addItem(file.fileName());
+    }
 
     ui->cmbConfigFile->setCurrentText(text);
 }
@@ -984,10 +1076,12 @@ void ServerWindow::on_btnConfigSpecial_clicked()
             if (mapsDialog->exec() == QDialog::Accepted)
             {
                 QStringList newMapList = mapsDialog->ReturnMaps();
-                for (QString map : newMapList)
+                for (const QString &map : std::as_const(newMapList))
                 {
                     if (!parentItems.contains(map))
+                    {
                         AddConfigTreeItem(map, "", "");
+                    }
                 }
                 delete mapsDialog;
             }
@@ -1254,8 +1348,10 @@ void ServerWindow::on_cmbConfigFile_currentTextChanged(const QString &arg1)
                 if (!conVarCommentLines.isEmpty())
                 {
                     QString toolTip;
-                    for (QString comment : conVarCommentLines)
+                    for (const QString &comment : std::as_const(conVarCommentLines))
+                    {
                         toolTip += comment;
+                    }
 
                     AddConfigTreeItem("//", "", toolTip, (parentItemIndex >= 0 ? ui->treeConfigFileData->topLevelItem(parentItemIndex) : nullptr));
                 }
@@ -1282,7 +1378,7 @@ void ServerWindow::on_cmbConfigFile_currentTextChanged(const QString &arg1)
             {
                 QString conVar;
                 int charCount = 0;
-                for (QChar c : line)
+                for (const QChar &c : std::as_const(line))
                 {
                     charCount++;
                     if (c == ' ')
@@ -1291,8 +1387,10 @@ void ServerWindow::on_cmbConfigFile_currentTextChanged(const QString &arg1)
                 }
 
                 QString toolTip;
-                for (QString comment : conVarCommentLines)
+                for (const QString &comment : std::as_const(conVarCommentLines))
+                {
                     toolTip += comment;
+                }
 
                 AddConfigTreeItem(conVar, line.last(line.length()-charCount), toolTip, (parentItemIndex >= 0 ? ui->treeConfigFileData->topLevelItem(parentItemIndex) : nullptr));
 

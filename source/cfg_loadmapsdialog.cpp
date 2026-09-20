@@ -24,7 +24,7 @@ QStringList Cfg_LoadMapsDialog::ReturnMaps()
     QStringList mapList;
     for (int i=0; i<ui->listMaps->count(); i++)
     {
-        auto item = ui->listMaps->item(i);
+        QListWidgetItem *item = ui->listMaps->item(i);
         mapList << item->text();
     }
     return mapList;
@@ -33,17 +33,24 @@ QStringList Cfg_LoadMapsDialog::ReturnMaps()
 void Cfg_LoadMapsDialog::LoadMaps(QStringList prefixFilter)
 {
     if (prefixFilter.isEmpty())
+    {
         prefixFilter << "*.bsp";
+    }
 
     QStringList mapList;
     for (int i=0; i<ui->listMaps->count(); i++)
+    {
         mapList << ui->listMaps->item(i)->text();
+    }
 
-    for (QFileInfo fileInfo : QDir(MapDir).entryInfoList(prefixFilter, QDir::Files))
+    QFileInfoList fileList = QDir(MapDir).entryInfoList(prefixFilter, QDir::Files);
+    for (const QFileInfo &fileInfo : std::as_const(fileList))
     {
         QString file = fileInfo.fileName().first(fileInfo.fileName().length()-4);
         if (!mapList.contains(file))
+        {
             AddMapToList(file);
+        }
     }
 }
 
@@ -51,16 +58,20 @@ QStringList Cfg_LoadMapsDialog::GetPrefixFilter()
 {
     QStringList filterList;
     for (int i=0; i<ui->listPrefix->count(); i++)
+    {
         filterList << ui->listPrefix->item(i)->text() + "_*.bsp";
+    }
     return filterList;
 }
 
 void Cfg_LoadMapsDialog::AddMapToList(QString map)
 {
     if (map.isEmpty())
+    {
         return;
+    }
 
-    auto item = new QListWidgetItem(ui->listMaps);
+    QListWidgetItem *item = new QListWidgetItem(ui->listMaps);
     item->setText(map);
     ui->listMaps->addItem(item);
 }
@@ -69,18 +80,25 @@ void Cfg_LoadMapsDialog::on_btnAddSrv_clicked()
 {
     QDir srvFolder(MapDir);
     for (int i=0; i<3; i++)
+    {
         srvFolder.cdUp();
+    }
 
     auto selectMapDialog = new SelectMapDialog(this, srvFolder.path());
     if (selectMapDialog->exec() == QDialog::Accepted)
+    {
         AddMapToList(selectMapDialog->SelectMap());
+    }
 }
 
 
 void Cfg_LoadMapsDialog::on_btnRmvSrv_clicked()
 {
-    for (auto item : ui->listMaps->selectedItems())
+    QList<QListWidgetItem *> widgetList = ui->listMaps->selectedItems();
+    for (QListWidgetItem *item : std::as_const(widgetList))
+    {
         delete item;
+    }
 }
 
 
@@ -103,9 +121,11 @@ void Cfg_LoadMapsDialog::on_btnAddPrefix_clicked()
     QString prefix = QInputDialog::getText(this, "Add Prefix Filter", "Map prefix (without underscore):", QLineEdit::Normal, "", &ok);
 
     if (!ok || prefix.isEmpty())
+    {
         return;
+    }
 
-    auto item = new QListWidgetItem(ui->listPrefix);
+    QListWidgetItem *item = new QListWidgetItem(ui->listPrefix);
     item->setText(prefix);
     ui->listPrefix->addItem(item);
     LoadMaps(QStringList() << prefix+"_*.bsp");
@@ -121,16 +141,19 @@ void Cfg_LoadMapsDialog::on_btnRmvPrefix_clicked()
     msgBox.addButton("No", QMessageBox::ButtonRole::RejectRole);
     msgBox.exec();
     if (msgBox.clickedButton() == accept)
+    {
         remove = true;
+    }
 
-    for (auto item : ui->listPrefix->selectedItems())
+    QList<QListWidgetItem*> selectedItems = ui->listPrefix->selectedItems();
+    for (QListWidgetItem *item : std::as_const(selectedItems))
     {
         if (remove)
         {
             QString prefix = item->text() + "_";
             for (int i=0; i<ui->listMaps->count(); i++)
             {
-                auto mapItem = ui->listMaps->item(i);
+                QListWidgetItem *mapItem = ui->listMaps->item(i);
                 if (mapItem->text().length() >= prefix.length())
                 {
                     if (mapItem->text().first(prefix.length()) == prefix)

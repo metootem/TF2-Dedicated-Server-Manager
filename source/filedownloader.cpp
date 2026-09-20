@@ -34,13 +34,21 @@ void FileDownloader::fileDownloaded(QNetworkReply* reply)
 {
     if (reply->error() == QNetworkReply::NoError)
     {
-        TargetFile.open(QIODevice::WriteOnly);
-        TargetFile.write(reply->readAll());
-        TargetFile.flush();
-        TargetFile.close();
-        qInfo() << "downloaded file";
-        loop.exit();
-        emit finished();
+        if (TargetFile.open(QIODevice::WriteOnly))
+        {
+            TargetFile.write(reply->readAll());
+            TargetFile.flush();
+            TargetFile.close();
+            qInfo() << "downloaded file";
+            loop.exit();
+            emit finished();
+        }
+        else
+        {
+            QString error = "Couldn't write to file.";
+            qInfo() << error;
+            emit ErrorFound(error);
+        }
     }
     else
     {

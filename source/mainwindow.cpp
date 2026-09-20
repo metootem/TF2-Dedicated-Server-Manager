@@ -6,16 +6,45 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    AppVersion = "v1.01";
+    AppVersionDate = "September 2026";
     OS = QSysInfo::productType();
     if (OS != "windows" && OS != "macos")
         OS = "linux";
-    IniSettings = new QSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
 
-    if (QSystemTrayIcon::isSystemTrayAvailable())
+    IniSettings = new QSettings("tf2-dsm_config.ini", QSettings::Format::IniFormat);
+    ui->lblVersion->setText(tr("%0 %1").arg(AppVersion, AppVersionDate));
+
+    /*if (QSystemTrayIcon::isSystemTrayAvailable())
     {
         SystemTrayIcon = new QSystemTrayIcon(this);
         SystemTrayIcon->setIcon(QIcon(":/tf2dsm.ico"));
         SystemTrayIcon->setVisible(true);
+
+        QMenu *menu = new QMenu();
+
+        menu->addSeparator();
+
+        QAction *quitAct = new QAction();
+        quitAct->setText("Close");
+
+        connect(quitAct, &QAction::triggered, []() {
+            QApplication::quit();
+        });
+        menu->addAction(quitAct);
+        SystemTrayIcon->setContextMenu(menu);
+
+        connect(SystemTrayIcon, &QSystemTrayIcon::activated, this, &MainWindow::FocusWindow);
+    }*/
+
+    SysTrayHandler = new SystemTrayHandler(this);
+    if (SysTrayHandler->Exists())
+    {
+        connect(SysTrayHandler, &SystemTrayHandler::Clicked, this, &MainWindow::FocusWindow);
+        connect(SysTrayHandler, &SystemTrayHandler::Close, this, &MainWindow::CloseApp);
+        connect(SysTrayHandler, &SystemTrayHandler::RequestServerNick, this, &MainWindow::sysTrayRequestServerNick);
+        connect(this, &MainWindow::ServerNickChanged, SysTrayHandler, &SystemTrayHandler::ServerNickChanged);
     }
 
     PublicIP = GetPublicIP();
@@ -26,10 +55,26 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::ShowSystemNotification(QString title, QString message, int length)
+void MainWindow::FocusWindow()
 {
-    if (QSystemTrayIcon::isSystemTrayAvailable())
-        SystemTrayIcon->showMessage(title, message, QIcon(":/tf2dms.ico"), length);
+    this->showNormal();
+    this->raise();
+    this->activateWindow();
+    this->setFocus();
+}
+
+void MainWindow::CloseApp()
+{
+    QApplication::quit();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (!event->spontaneous())
+        return;
+
+    delete SysTrayHandler;
+    event->accept();
 }
 
 QString MainWindow::GetPublicIP()
@@ -40,9 +85,13 @@ QString MainWindow::GetPublicIP()
     QString IP = GetIP.readAllStandardOutput();
     GetIP.terminate();
     if (IP.isEmpty())
+    {
         qInfo() << "Couldn't get Public IP.";
+    }
     else
+    {
         qInfo() << "Got Public IP:" << IP;
+    }
     return IP;
 }
 
@@ -107,6 +156,8 @@ void MainWindow::LoadStyles(QString colorTheme)
                                 "font: 13pt \"Noto Sans\";"
                                 "color: #ffffff; }"
                                 ""
+                                "QCheckBox { background-color: #2b2b2b; }"
+                                ""
                                 "QPushButton::hover { background-color: %1; }"
                                 "QPushButton::pressed { background-color: %2; }"
                                 "QPushButton:disabled { color: #3b3b3b; }"
@@ -125,41 +176,62 @@ void MainWindow::LoadStyles(QString colorTheme)
         ui->tabServers->setStyleSheet("QTabWidget::pane { border: none; background-color: #2b2b2b; }");
     }
     else
+    {
         ui->tabServers->setStyleSheet(QString("QTabWidget::pane { border-bottom: 0px solid #5a5a5a;"
                                               "border-top: 2px solid %0;"
                                               "background-color: #2b2b2b; }").arg(colorTheme));
+        for (int tabIndex=0; tabIndex < ui->tabServers->count(); tabIndex++)
+        {
+            ServerWindow *server = (ServerWindow*)ui->tabServers->widget(tabIndex);
+
+            server->UpdateStyles(colorTheme, this->styleSheet());
+        }
+    }
 }
 
-
-void MainWindow::AddServer(QString servername, QString serverFolder)
+// System Tray Handler
+void MainWindow::ShowSystemNotification(QString title, QString message, int length)
 {
-    QString name = servername;
-    int found_count = 0;
-    do
+    if (SysTrayHandler->Exists())
     {
-        found_count++;
-        if (found_count > 1)
-            name = tr("%0 %1").arg(servername).arg(found_count, 1);
-    } while (ServerTabExists(name));
+        SysTrayHandler->ShowMessage(title, message, length);
+    }
+}
 
-    qInfo() << " ";
-    qInfo() << "Adding Server Tab: " + name;
-    auto newServerWindow = new ServerWindow(Settings, this, name, serverFolder);
-    int index = ui->tabServers->addTab(newServerWindow, name);
+QString MainWindow::sysTrayRequestServerNick(ServerWindow* server)
+{
+    return GetServerNick(server);
+}
 
-    connect(this, SIGNAL(PassSettingsChanged(SettingsStruct)), newServerWindow, SLOT(SettingsChanged(SettingsStruct)));
+void MainWindow::AddServerToSysTray(ServerWindow *server)
+{
+    if (SysTrayHandler->Exists())
+    {
+        SysTrayHandler->AddServerToSysTray(server);
+    }
+}
 
-    connect(newServerWindow, SIGNAL(ServerApplied(QString)), this, SLOT(ServerApplied(QString)));
-    connect(newServerWindow, SIGNAL(ServerActivated()), this, SLOT(ServerActivated()));
-    connect(newServerWindow, SIGNAL(ServerDeactivated()), this, SLOT(ServerDeactivated()));
-    connect(newServerWindow, SIGNAL(SystemNotification(QString, QString, int)), SLOT(ShowSystemNotification(QString, QString, int)));
+void MainWindow::RemoveServerFromSysTray(ServerWindow *server)
+{
+    if (SysTrayHandler->Exists())
+    {
+        SysTrayHandler->RemoveServerFromSysTray(server);
+    }
+}
 
-    if (serverFolder.isEmpty())
-        ui->tabServers->setTabIcon(index, QIcon(":/icons/resources/Icons/Add.svg"));
-    else
-        ui->tabServers->setTabIcon(index, QIcon(":/icons/resources/Icons/ServerInactive.svg"));
-
-    LoadStyles(Settings.ColorTheme);
+// Servers
+QString MainWindow::GetServerNick(ServerWindow* target)
+{
+    int count = ui->tabServers->count();
+    for (int srvIndex=0; srvIndex < count; srvIndex++)
+    {
+        ServerWindow *server = (ServerWindow*)ui->tabServers->widget(srvIndex);
+        if (server == target)
+        {
+            return ui->tabServers->tabText(srvIndex);
+        }
+    }
+    return "";
 }
 
 bool MainWindow::ServerTabExists(QString name)
@@ -170,6 +242,82 @@ bool MainWindow::ServerTabExists(QString name)
             return true;
     }
     return false;
+}
+
+void MainWindow::FocusServer(ServerWindow *server)
+{
+    qInfo() << server->GetName();
+}
+
+void MainWindow::AddServer(QString servername, QString serverFolder)
+{
+    QString name = servername;
+    int found_count = 0;
+    while (ServerTabExists(name))
+    {
+        found_count++;
+        if (found_count == 1)
+        {
+            name = tr("%0 %1").arg(servername).arg(found_count, 1);
+        }
+    }
+
+    qInfo() << " ";
+    qInfo() << "Adding Server Tab: " + name;
+    ServerWindow *newServerWindow = new ServerWindow(Settings, this, name, serverFolder);
+    int index = ui->tabServers->addTab(newServerWindow, name);
+
+    connect(this, SIGNAL(PassSettingsChanged(SettingsStruct)), newServerWindow, SLOT(SettingsChanged(SettingsStruct)));
+
+    connect(newServerWindow, SIGNAL(ServerApplied(QString)), this, SLOT(ServerApplied(QString)));
+    connect(newServerWindow, SIGNAL(ServerActivated()), this, SLOT(ServerActivated()));
+    connect(newServerWindow, SIGNAL(ServerDeactivated()), this, SLOT(ServerDeactivated()));
+    connect(newServerWindow, SIGNAL(SystemNotification(QString,QString,int)), SLOT(ShowSystemNotification(QString,QString,int)));
+
+    if (serverFolder.isEmpty())
+    {
+        ui->tabServers->setTabIcon(index, QIcon(":/icons/resources/Icons/Add.svg"));
+    }
+    else
+    {
+        ui->tabServers->setTabIcon(index, QIcon(":/icons/resources/Icons/ServerInactive.svg"));
+    }
+
+    LoadStyles(Settings.ColorTheme);
+
+    if (QSystemTrayIcon::isSystemTrayAvailable())
+    {
+        AddServerToSysTray(newServerWindow);
+    }
+
+    qInfo() << "nick:" << GetServerNick(newServerWindow);
+}
+
+void MainWindow::RemoveServer(int index, bool removeFiles)
+{
+    ServerWindow *server = (ServerWindow*)ui->tabServers->widget(index);
+
+    if (QSystemTrayIcon::isSystemTrayAvailable())
+    {
+        RemoveServerFromSysTray(server);
+    }
+
+    QString path = server->ServerFolder;
+    QDir dir(path);
+    if (removeFiles)
+    {
+        if (dir.dirName() != "." && !ServerDirs.contains(dir.path()))
+            dir.removeRecursively();
+
+        IniSettings->remove(dir.dirName());
+    }
+    else
+    {
+        QFile serverFile(QString("%0/server.ini").arg(path));
+        serverFile.remove();
+    }
+    IniSettings->remove(dir.dirName());
+    ui->tabServers->removeTab(index);
 }
 
 void MainWindow::ServerApplied(QString ServerFolder)
@@ -199,10 +347,16 @@ void MainWindow::RefreshServerTab()
 {
     for (int i=0; i<ui->tabServers->count(); i++) // Remove server tabs
     {
-        auto srvWindow = ((ServerWindow*)ui->tabServers->widget(i));
-        if (ServerDirs.contains(srvWindow->ServerFolder))
+        auto server = ((ServerWindow*)ui->tabServers->widget(i));
+
+        if (QSystemTrayIcon::isSystemTrayAvailable())
+        {
+            RemoveServerFromSysTray(server);
+        }
+
+        if (ServerDirs.contains(server->ServerFolder))
             continue;
-        QDir dir(srvWindow->ServerFolder);
+        QDir dir(server->ServerFolder);
         dir.cdUp();
         if (ServerDirs.contains(dir.path()))
             continue;
@@ -210,44 +364,62 @@ void MainWindow::RefreshServerTab()
         ui->tabServers->removeTab(i--);
     }
 
-    for (QString srvDir : ServerDirs) // Find new servers
+    for (const QString &srvDir : std::as_const(ServerDirs)) // Find new servers
     {
         qInfo() << "Searching in" << srvDir;
         QDir ServerDir(srvDir);
         QFileInfoList fileList = ServerDir.entryInfoList(QDir::Filter::Dirs);
-        for (QFileInfo file : fileList)
+        for (const QFileInfo &file : std::as_const(fileList))
         {
-            if (QFile(QString("%0/server.ini").arg(file.absoluteFilePath())).exists())
+            QString iniPath = QString("%0/server.ini").arg(file.absoluteFilePath());
+            if (!QFile(iniPath).exists())
             {
-                QSettings fileIniSettings(QString("%0/server.ini").arg(file.absoluteFilePath()), QSettings::IniFormat);
-                if (!IniSettings->contains(file.fileName()) && fileIniSettings.value("os").toString() == OS)
-                {
-                    IniSettings->setValue(QString("%0/nick").arg(file.fileName()), file.fileName());
-                    IniSettings->setValue(QString("%0/os").arg(file.fileName()), OS);
-                }
-                QString serverNick = IniSettings->value(QString("%0/nick").arg(file.fileName())).toString();
-                if (ServerTabExists(serverNick) || fileIniSettings.value("os").toString() != OS)
-                    continue;
-                if (serverNick.isEmpty())
-                    serverNick = file.fileName();
-                AddServer(serverNick, file.filePath());
-                ui->tabServers->setCurrentIndex(ui->tabServers->count()-1);
+                continue;
             }
+
+            QString folderName = file.fileName();
+            QSettings fileIniSettings(iniPath, QSettings::IniFormat);
+            if (!IniSettings->contains(QString("%0/nick").arg(folderName)) && fileIniSettings.value("os").toString() == OS)
+            {
+                IniSettings->setValue(QString("%0/nick").arg(folderName), folderName);
+                IniSettings->setValue(QString("%0/os").arg(folderName), OS);
+            }
+
+            QString serverNick = IniSettings->value(QString("%0/nick").arg(folderName)).toString();
+            if (ServerTabExists(serverNick) || fileIniSettings.value("os").toString() != OS)
+            {
+                continue;
+            }
+            if (serverNick.isEmpty())
+            {
+                serverNick = folderName;
+            }
+            AddServer(serverNick, file.filePath());
+            ui->tabServers->setCurrentIndex(ui->tabServers->count()-1);
         }
     }
 
-    for (QString server : IniSettings->childGroups()) // Remove unused servers from config
+    QStringList childGroups = IniSettings->childGroups();
+
+    for (const QString &server : std::as_const(childGroups)) // Remove unused servers from config
     {
         if (server == OS)
-            continue;
-        bool remove = true;
-        for (QString parentDir : ServerDirs)
         {
-            if (QDir(QString("%0/%1").arg(parentDir, server)).exists() && server != ".")
+            continue;
+        }
+        bool remove = true;
+        for (const QString &parentDir : std::as_const(ServerDirs))
+        {
+            QString con = QString("%0/%1").arg(parentDir, server);
+            if (QDir(con).exists() && server != ".")
+            {
                 remove = false;
+            }
         }
         if (remove)
+        {
             IniSettings->remove(server);
+        }
     }
 }
 
@@ -271,8 +443,6 @@ void MainWindow::on_btnAddServer_clicked()
 
     bool ok = true;
     QString strDir;
-    qInfo() << ServerDirs.first();
-    qInfo() << ServerDirs.count();
     if (ServerDirs.count() == 1)
         strDir = ServerDirs.first();
     else
@@ -325,6 +495,7 @@ void MainWindow::on_tabServers_tabCloseRequested(int index)
     auto *keepFiles = msgBox.addButton("Keep server files", QMessageBox::ButtonRole::AcceptRole);
     msgBox.addButton("Cancel", QMessageBox::ButtonRole::RejectRole);
     msgBox.exec();
+
     if (msgBox.clickedButton() == full)
     {
         QMessageBox msgBox2(QMessageBox::Icon::Warning, "Are you double sure?",
@@ -332,26 +503,15 @@ void MainWindow::on_tabServers_tabCloseRequested(int index)
         auto *remove = msgBox2.addButton("I'm sure.", QMessageBox::DestructiveRole);
         msgBox2.addButton("Nevermind.", QMessageBox::RejectRole);
         msgBox2.exec();
+
         if (msgBox2.clickedButton() == remove)
         {
-            QDir dir(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder);
-            if (dir.dirName() != "." && !ServerDirs.contains(dir.path()))
-                dir.removeRecursively();
-
-            IniSettings->remove(dir.dirName());
-
-            ui->tabServers->removeTab(index);
+            RemoveServer(index, true);
         }
     }
     else if (msgBox.clickedButton() == keepFiles)
     {
-        QFile serverFile(QString("%0/server.ini").arg(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder));
-        serverFile.remove();
-
-        QString folder = QDir(((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder).dirName();
-        IniSettings->remove(folder);
-
-        ui->tabServers->removeTab(index);
+        RemoveServer(index, false);
     }
 
     LoadStyles(Settings.ColorTheme);
@@ -364,19 +524,29 @@ void MainWindow::on_tabServers_tabBarDoubleClicked(int index)
                                                "Server Nickname:", QLineEdit::Normal,
                                                ui->tabServers->tabText(index), &ok);
     if (servername.isEmpty() || !ok)
+    {
         return;
+    }
     ui->tabServers->setTabText(index, servername);
-    QString ServerFolder = ((ServerWindow*)ui->tabServers->currentWidget())->ServerFolder;
+
+    ServerWindow *server = (ServerWindow*)ui->tabServers->currentWidget();
+    QString ServerFolder = server->ServerFolder;
     if (ServerFolder.isEmpty())
+    {
         return;
+    }
+
     IniSettings->setValue(QString("%0/nick").arg(QDir(ServerFolder).dirName()), servername);
     IniSettings->setValue(QString("%0/os").arg(QDir(ServerFolder).dirName()), OS);
+
+    qInfo() << "emitting new nick" << servername;
+    emit ServerNickChanged(server, servername);
 }
 
 
 void MainWindow::on_btnAbout_clicked()
 {
-    auto aboutDialog = new AboutDialog(this);
+    AboutDialog *aboutDialog = new AboutDialog(this, AppVersion, AppVersionDate);
     aboutDialog->show();
 }
 

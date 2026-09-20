@@ -55,6 +55,12 @@ public:
     QString ServerFolder;
     bool ServerInstalling = false;
 
+    void UpdateStyles(QString colorTheme, QString fullStyle);
+    QString GetName();
+    QString GetIP(bool copyToClipboard);
+    void StartServer();
+    void JoinServer();
+
     ~ServerWindow();
 
 public slots:
@@ -70,7 +76,7 @@ signals:
     void SystemNotification(QString, QString, int);
 
 private slots:
-    void LoadStyles( QString colorTheme );
+    void LoadStyles( QString colorTheme, QString fullStyle="" );
     void LoadServerConfig( QDir directory );
     void LoadServerFirstTimeSetup();
 

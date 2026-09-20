@@ -12,7 +12,7 @@ class AboutDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AboutDialog(QWidget *parent = nullptr);
+    explicit AboutDialog(QWidget *parent = nullptr, QString appVersion="", QString appDate="");
     ~AboutDialog();
 
 private:

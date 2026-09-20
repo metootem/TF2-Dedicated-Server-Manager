@@ -306,6 +306,11 @@
    <iconset resource="../resources.qrc">
     <normaloff>:/icons/resources/Images/tf2dsm_logo.png</normaloff>:/icons/resources/Images/tf2dsm_logo.png</iconset>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QTabWidget::tab-bar {
+	background-color: rgb(255, 26, 163);
+}</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -1412,9 +1417,9 @@ QPushButton::pressed {
         <colorrole role="Button">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
-           <red>207</red>
-           <green>106</green>
-           <blue>50</blue>
+           <red>30</red>
+           <green>30</green>
+           <blue>30</blue>
           </color>
          </brush>
         </colorrole>
@@ -1475,9 +1480,9 @@ QPushButton::pressed {
         <colorrole role="Highlight">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
-           <red>207</red>
-           <green>106</green>
-           <blue>50</blue>
+           <red>46</red>
+           <green>207</green>
+           <blue>202</blue>
           </color>
          </brush>
         </colorrole>
@@ -1522,9 +1527,9 @@ QPushButton::pressed {
         <colorrole role="Button">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
-           <red>207</red>
-           <green>106</green>
-           <blue>50</blue>
+           <red>30</red>
+           <green>30</green>
+           <blue>30</blue>
           </color>
          </brush>
         </colorrole>
@@ -1585,9 +1590,9 @@ QPushButton::pressed {
         <colorrole role="Highlight">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
-           <red>207</red>
-           <green>106</green>
-           <blue>50</blue>
+           <red>46</red>
+           <green>207</green>
+           <blue>202</blue>
           </color>
          </brush>
         </colorrole>
@@ -1632,9 +1637,9 @@ QPushButton::pressed {
         <colorrole role="Button">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
-           <red>207</red>
-           <green>106</green>
-           <blue>50</blue>
+           <red>30</red>
+           <green>30</green>
+           <blue>30</blue>
           </color>
          </brush>
         </colorrole>
@@ -1721,6 +1726,12 @@ QPushButton::pressed {
         </colorrole>
        </disabled>
       </palette>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
      </property>
      <property name="showDropIndicator" stdset="0">
       <bool>false</bool>

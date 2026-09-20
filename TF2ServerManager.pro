@@ -22,6 +22,7 @@ SOURCES += \
     source/serverwindow.cpp \
     source/settingsdialog.cpp \
     source/steamcmddialog.cpp \
+    source/system_tray_handler.cpp
 
 HEADERS += \
     source/aboutdialog.h \
@@ -35,6 +36,7 @@ HEADERS += \
     source/serverwindow.h \
     source/settingsdialog.h \
     source/steamcmddialog.h \
+    source/system_tray_handler.h
 
 FORMS += \
     ui/aboutdialog.ui \

@@ -15,6 +15,7 @@ class AdditionalParametersDialog : public QDialog
 public:
     explicit AdditionalParametersDialog(QWidget *parent = nullptr, QSettings *IniSettings = nullptr);
 
+    void LoadStyle(QString style);
     void LoadParameters( QSettings* );
     void FirstTimeSetup();
     QStringList GetParameters();
