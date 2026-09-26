@@ -350,6 +350,18 @@
      </property>
      <item>
       <widget class="QComboBox" name="cmbFilter">
+       <property name="minimumSize">
+        <size>
+         <width>158</width>
+         <height>26</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>158</width>
+         <height>26</height>
+        </size>
+       </property>
        <item>
         <property name="text">
          <string>All</string>
@@ -359,10 +371,16 @@
      </item>
      <item>
       <widget class="QLineEdit" name="lineFilter">
-       <property name="maximumSize">
+       <property name="minimumSize">
         <size>
          <width>350</width>
-         <height>16777215</height>
+         <height>26</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>26</height>
         </size>
        </property>
        <property name="maxLength">
@@ -373,10 +391,42 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="btnRefresh">
+       <property name="minimumSize">
+        <size>
+         <width>26</width>
+         <height>26</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>26</width>
+         <height>26</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Reload Map Directory</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources.qrc">
+         <normaloff>:/icons/resources/Icons/Refresh.svg</normaloff>:/icons/resources/Icons/Refresh.svg</iconset>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
     <widget class="QListWidget" name="listMaps">
+     <property name="minimumSize">
+      <size>
+       <width>548</width>
+       <height>384</height>
+      </size>
+     </property>
      <property name="palette">
       <palette>
        <active>
@@ -724,6 +774,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnSelect">
+       <property name="minimumSize">
+        <size>
+         <width>80</width>
+         <height>26</height>
+        </size>
+       </property>
        <property name="text">
         <string>Select</string>
        </property>

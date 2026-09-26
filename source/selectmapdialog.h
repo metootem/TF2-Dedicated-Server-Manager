@@ -16,6 +16,7 @@ public:
     explicit SelectMapDialog(QWidget *parent = nullptr, QString ServerFolder = "");
 
     void LoadAvailableMaps(QString path);
+    void SortMapList();
     QString GetMapPrefix(QString mapName);
     QString SelectMap();
 
@@ -27,12 +28,22 @@ private slots:
 
     void on_lineFilter_textChanged();
 
+    void on_btnRefresh_clicked();
+
 private:
     Ui::SelectMapDialog *ui;
 
+    void ClearPrefixFilter();
+
     QString DirPath;
-    QStringList MapList;
+    QStringList FullMapList;
     QStringList NoPrefixMapList;
+
+    QStringList PrefixList;
+    QList<QStringList> MapsList;
+
+    void printInfo(const QString &message);
+
 };
 
 #endif // SELECTMAPDIALOG_H
