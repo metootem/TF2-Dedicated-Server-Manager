@@ -306,8 +306,10 @@ void MainWindow::RemoveServer(int index, bool removeFiles)
     QDir dir(path);
     if (removeFiles)
     {
-        if (dir.dirName() != "." && !ServerDirs.contains(dir.path()))
+        if (server->ServerDirectoryExists())
+        {
             dir.removeRecursively();
+        }
 
         IniSettings->remove(dir.dirName());
     }
@@ -489,6 +491,13 @@ void MainWindow::on_btnAddServer_clicked()
 
 void MainWindow::on_tabServers_tabCloseRequested(int index)
 {
+    ServerWindow *server = (ServerWindow*)ui->tabServers->widget(index);
+    if (!server->ServerDirectoryExists())
+    {
+        RemoveServer(index, false);
+        return;
+    }
+
     QMessageBox msgBox(QMessageBox::Icon::Warning, "Removing Server",
                        tr("Are you sure you want to remove the server \"%0\"?").arg(ui->tabServers->tabText(index)), {}, this);
     auto *full = msgBox.addButton("Delete server AND files", QMessageBox::ButtonRole::DestructiveRole);

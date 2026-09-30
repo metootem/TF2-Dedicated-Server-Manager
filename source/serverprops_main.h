@@ -34,6 +34,8 @@ public:
     void FirstTimeSetup();
     void LoadServerConfig( const QDir );
 
+    QString GetServerDirectory();
+    QString GetServerFolder();
     QString GetName();
     QString GetIP(bool copyToClipboard);
 

@@ -345,6 +345,16 @@ void ServerProps_Main::InstallServerFinished()
     emit ServerInstalled();
 }
 
+QString ServerProps_Main::GetServerDirectory()
+{
+    return ServerFolder;
+}
+
+QString ServerProps_Main::GetServerFolder()
+{
+    return ui->lineFolderName->text();
+}
+
 QString ServerProps_Main::GetName()
 {
     return ui->lineServerName->text();

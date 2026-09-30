@@ -25,6 +25,8 @@ public:
     QString parentFolder;
     QString ServerFolder;
 
+    bool ServerDirectoryExists();
+
     ~ServerWindow();
 
 public slots:

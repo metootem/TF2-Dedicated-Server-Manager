@@ -65,6 +65,23 @@ void ServerWindow::printInfo(const QString message)
     qInfo() << QString("ServerWindow: %0").arg(message);
 }
 
+bool ServerWindow::ServerDirectoryExists()
+{
+    QString folder = SrvMain->GetServerFolder();
+    if (folder.isEmpty())
+    {
+        return false;
+    }
+
+    QDir path = QDir(SrvMain->GetServerDirectory());
+    if (path.dirName() != folder)
+    {
+        return false;
+    }
+
+    return path.exists();
+}
+
 void ServerWindow::SettingsChanged(SettingsStruct Settings)
 {
     PublicIP = Settings.PublicIP;
@@ -231,6 +248,7 @@ void ServerWindow::ServerApplied(QString directory)
 {
     SetServerVisualState();
     //emit PassServerApplied(directory);
+    ServerFolder = SrvMain->GetServerDirectory();
 }
 
 void ServerWindow::ServerInstalled()
