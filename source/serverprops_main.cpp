@@ -899,6 +899,7 @@ void ServerProps_Main::SetServerVisualState(VisualState state)
 
         ui->btnStartServer->setEnabled(false);
         ui->btnApply->setEnabled(false);
+        break;
     }
     case VisualState::ServerStopped:
     {
@@ -908,6 +909,7 @@ void ServerProps_Main::SetServerVisualState(VisualState state)
         //ui->btnConnectToServer->setEnabled(false);
         ui->btnShowConsole->setEnabled(false);
         ui->btnStopServer->setEnabled(false);
+        break;
     }
     case VisualState::ServerDownloading:
     {
@@ -916,6 +918,7 @@ void ServerProps_Main::SetServerVisualState(VisualState state)
         ui->btnStartServer->setEnabled(false);
         ui->btnStopServer->setEnabled(false);
         ui->btnApply->setEnabled(false);
+        break;
     }
     case VisualState::ServerInstalling:
     {
@@ -925,6 +928,7 @@ void ServerProps_Main::SetServerVisualState(VisualState state)
         ui->btnStartServer->setEnabled(false);
         ui->btnStopServer->setEnabled(false);
         ui->btnApply->setEnabled(false);
+        break;
     }
     case VisualState::ServerFinishedInstalling:
     {
@@ -942,6 +946,7 @@ void ServerProps_Main::SetServerVisualState(VisualState state)
         ServerInstalling = false;
 
         ui->btnApply->setEnabled(true);
+        break;
     }
     }
 }
