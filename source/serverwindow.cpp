@@ -984,11 +984,6 @@ void ServerWindow::SetServerVisualState(VisualState state)
     }
 }
 
-void ServerWindow::on_btnRefreshConfigList_clicked()
-{
-    CheckServerConfigFiles();
-}
-
 void ServerWindow::CheckServerConfigFiles()
 {
     QString text = ui->cmbConfigFile->currentText();
@@ -1008,6 +1003,11 @@ void ServerWindow::LoadServerConfigFileData()
 
 }
 
+void ServerWindow::on_btnRefreshConfigList_clicked()
+{
+    CheckServerConfigFiles();
+}
+
 void ServerWindow::on_btnAddConVar_clicked()
 {
     QStringList parentItems;
@@ -1015,7 +1015,9 @@ void ServerWindow::on_btnAddConVar_clicked()
     {
         QString name = ui->treeConfigFileData->topLevelItem(i)->text(0);
         if (name.first(2) == "//" && name.last(2) == "//" && name.length() > 3)
+        {
             parentItems << name;
+        }
     }
 
     auto dialog = new ConfigConVarDialog(parentItems, this);
@@ -1070,7 +1072,11 @@ void ServerWindow::on_btnConfigSpecial_clicked()
 
             QStringList parentItems;
             for (int i=0; i<ui->treeConfigFileData->topLevelItemCount(); i++)
-                parentItems << ui->treeConfigFileData->topLevelItem(i)->text(0);
+            {
+                QString displayItem = ui->treeConfigFileData->topLevelItem(i)->text(0);
+                parentItems << displayItem;
+                printInfo(QString("parentItems: %0 %1").arg(i).arg(displayItem));
+            }
 
             auto mapsDialog = new Cfg_LoadMapsDialog(ServerFolder + "/Server/tf/maps", this);
             if (mapsDialog->exec() == QDialog::Accepted)
@@ -1632,3 +1638,7 @@ QString ServerWindow::ServerCfgExample()
            "tf_birthday 0\n");
 }
 
+void ServerWindow::printInfo(const QString message)
+{
+    qInfo() << QString("ServerWindow: %0").arg(message);
+}

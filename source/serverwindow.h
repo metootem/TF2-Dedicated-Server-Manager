@@ -149,6 +149,8 @@ private:
     SteamCMDDialog *SteamCMDWindow;
     AdditionalParametersDialog *AdditionalParametersWindow;
 
+    void printInfo(const QString);
+
 };
 
 #endif // SERVERWINDOW_H

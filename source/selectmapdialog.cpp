@@ -29,7 +29,6 @@ SelectMapDialog::~SelectMapDialog()
 
 void SelectMapDialog::LoadAvailableMaps(QString path)
 {
-    qInfo() << "Loading directory:" << path;
     ui->listMaps->clear();
     ClearPrefixFilter();
 
@@ -62,7 +61,6 @@ void SelectMapDialog::LoadAvailableMaps(QString path)
 
         if (prefix != currentPrefix)
         {
-            qInfo() << "New prefix:" << prefix;
             PrefixList << prefix;
 
             if (!currentPrefix.isEmpty())
@@ -77,7 +75,6 @@ void SelectMapDialog::LoadAvailableMaps(QString path)
         mapName = mapName.right(mapName.length()-prefix.length()-1);
 
         mapList << mapName;
-        qInfo() << "Adding map:" << currentPrefix << mapName;
     }
 
     MapsList << mapList; // append last set of maps.
@@ -205,7 +202,6 @@ QString SelectMapDialog::GetMapPrefix(QString mapName)
 void SelectMapDialog::ClearPrefixFilter()
 {
     QComboBox *cmbFilter = ui->cmbFilter;
-    qInfo() << "Clearing prefix filter" << cmbFilter->count();
 
     if (cmbFilter->currentIndex() <= -1)
     {
