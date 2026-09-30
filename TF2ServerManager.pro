@@ -19,12 +19,15 @@ SOURCES += \
     source/mainwindow.cpp \
     source/selectmapdialog.cpp \
     source/serverconsoledialog.cpp \
+    source/serverprops_config.cpp \
+    source/serverprops_main.cpp \
     source/serverwindow.cpp \
     source/settingsdialog.cpp \
     source/steamcmddialog.cpp \
     source/system_tray_handler.cpp
 
 HEADERS += \
+    serverprops/shared.h \
     source/aboutdialog.h \
     source/additionalparametersdialog.h \
     source/cfg_loadmapsdialog.h \
@@ -33,6 +36,8 @@ HEADERS += \
     source/mainwindow.h \
     source/selectmapdialog.h \
     source/serverconsoledialog.h \
+    source/serverprops_config.h \
+    source/serverprops_main.h \
     source/serverwindow.h \
     source/settingsdialog.h \
     source/steamcmddialog.h \
@@ -46,6 +51,8 @@ FORMS += \
     ui/mainwindow.ui \
     ui/selectmapdialog.ui \
     ui/serverconsoledialog.ui \
+    ui/serverprops_config.ui \
+    ui/serverprops_main.ui \
     ui/serverwindow.ui \
     ui/settingsdialog.ui \
     ui/steamcmddialog.ui

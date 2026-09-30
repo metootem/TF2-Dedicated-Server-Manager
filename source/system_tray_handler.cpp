@@ -131,7 +131,7 @@ void SystemTrayHandler::AddServerToSysTray(ServerWindow *server)
     connect(startAct, &QAction::triggered, server, &ServerWindow::StartServer);
 
     QAction *copyAct = new QAction();
-    copyAct->setText(QString("IP: %0").arg(server->GetIP(false)));
+    copyAct->setText(QString("IP: %0").arg(server->GetServerIP(false)));
     connect(copyAct, &QAction::triggered, this, &SystemTrayHandler::slotCopyIP);
 
     QAction *joinAct = new QAction();
@@ -218,7 +218,7 @@ void SystemTrayHandler::slotCopyIP()
         ServerWindow* server = getServerFromSysTray(mainAction);
         if (server != nullptr)
         {
-            printInfo(server->GetIP(true));
+            printInfo(server->GetServerIP(true));
         }
         else
         {

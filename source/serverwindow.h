@@ -2,42 +2,13 @@
 #define SERVERWINDOW_H
 
 #include <QWidget>
-#include <QDir>
-#include <QFile>
-#include <QProcess>
-#include <QTextBrowser>
-#include <QThread>
-#include <QMessageBox>
-#include <QInputDialog>
-#include <QDesktopServices>
-#include <QTimer>
-#include <QClipboard>
-#include <QSystemTrayIcon>
-#include <QIcon>
-#include <QTreeWidgetItem>
-#include <QScrollBar>
-
-#include <QHostAddress>
-#include <QNetworkInterface>
 
 #include "settingsdialog.h"
-#include "serverconsoledialog.h"
-#include "filedownloader.h"
-#include "steamcmddialog.h"
-#include "additionalparametersdialog.h"
-#include "selectmapdialog.h"
-#include "configconvardialog.h"
-#include "cfg_loadmapsdialog.h"
 
-enum VisualState
-{
-    ServerDefault = 0,
-    ServerStarted,
-    ServerStopped,
-    ServerDownloading,
-    ServerInstalling,
-    ServerFinishedInstalling,
-};
+#include "serverprops/shared.h"
+
+#include "serverprops_main.h"
+#include "serverprops_config.h"
 
 namespace Ui {
 class ServerWindow;
@@ -53,88 +24,42 @@ public:
 
     QString parentFolder;
     QString ServerFolder;
-    bool ServerInstalling = false;
-
-    void UpdateStyles(QString colorTheme, QString fullStyle);
-    QString GetName();
-    QString GetIP(bool copyToClipboard);
-    void StartServer();
-    void JoinServer();
 
     ~ServerWindow();
 
 public slots:
     void SettingsChanged(SettingsStruct Settings);
-    void InstallServerFinished();
+    void UpdateStyles(QString colorTheme, QString fullStyle);
+
+    QString GetServerName();
+    QString GetServerIP( bool );
+
+    void StartServer();
+    void JoinServer();
 
 signals:
-    void ServerApplied( QString ServerFolder );
+    void PassServerApplied( QString ServerFolder );
 
-    void ServerActivated();
-    void ServerDeactivated();
+    void PassServerActivated();
+    void PassServerDeactivated();
 
-    void SystemNotification(QString, QString, int);
+    void PassSystemNotification(const QString, const QString, int);
 
 private slots:
     void LoadStyles( QString colorTheme, QString fullStyle="" );
     void LoadServerConfig( QDir directory );
     void LoadServerFirstTimeSetup();
+    void SetServerVisualState(VisualState state = ServerDefault);
+    void SystemNotification(const QString, const QString, int);
 
-    bool SteamCMDExists();
-    bool SteamCMDZipExists();
-    bool SRCDSExists();
-    void DownloadSteamCMD();
-    void InstallSteamCMD();
-    void InstallServer();
+    void AddPropToLayout(QWidget *prop, QString title);
+    void HidePropLayout(QWidget *prop);
+    void ShowPropLayout(QWidget *prop);
+
+    void ServerApplied( const QString );
+    void ServerInstalled();
 
     void on_listProps_currentRowChanged(int currentRow);
-
-    void on_btnApply_clicked();
-
-    void on_btnShowConsole_clicked();
-    void on_btnSteamCMDConsole_clicked();
-
-    void on_btnInstallServer_clicked();
-    void on_btnStartServer_clicked();
-    //void on_btnStopServer_clicked();
-    void on_btnConnectToServer_clicked();
-
-    void on_btnCopyIp_clicked();
-    void on_btnParameters_clicked();
-    void on_btnSelectMap_clicked();
-
-    void SetServerVisualState(VisualState state = ServerDefault);
-
-    void CheckServerConfigFiles();
-    void LoadServerConfigFileData();
-    void AddConfigTreeItem(QString ConVar, QString Value, QString Comment, QTreeWidgetItem* parent = nullptr);
-    QString ServerCfgExample();
-
-    void on_cmbConfigFile_currentTextChanged(const QString &arg1);
-
-    void on_btnAddConVar_clicked();
-
-    void on_btnDelConVar_clicked();
-
-    void on_btnSaveConfig_clicked();
-
-    void on_btnReloadConfig_clicked();
-
-    void on_btnOpenConfig_clicked();
-
-    void on_btnConfigSpecial_clicked();
-
-    void on_btnFindConVar_clicked();
-
-    void on_btnGotoServerFolder_clicked();
-
-    void on_btnRefreshConfigList_clicked();
-
-    void on_btnNewConfigFile_clicked();
-
-    void on_btnAdvancedDropDown_clicked();
-
-    void on_btnClearConfig_clicked();
 
 private:
     Ui::ServerWindow *ui;
@@ -143,11 +68,9 @@ private:
     QString PublicIP;
 
     //QSettings *IniSettings;
-    QProcess *SteamCMDProcess;
-    QProcess *ServerProcess;
-    ServerConsoleDialog *ServerConsole;
-    SteamCMDDialog *SteamCMDWindow;
-    AdditionalParametersDialog *AdditionalParametersWindow;
+
+    ServerProps_Main *SrvMain;
+    ServerProps_Config *SrvConfig;
 
     void printInfo(const QString);
 

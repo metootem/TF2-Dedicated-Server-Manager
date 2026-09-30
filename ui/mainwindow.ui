@@ -12,7 +12,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>800</width>
+    <width>1000</width>
     <height>640</height>
    </size>
   </property>
@@ -431,7 +431,7 @@ QPushButton::pressed {
          <string notr="true">color: #6b6b6b;</string>
         </property>
         <property name="text">
-         <string>August</string>
+         <string>[DATE]</string>
         </property>
        </widget>
       </item>

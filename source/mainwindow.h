@@ -48,7 +48,7 @@ public slots:
     void CloseApp();
     void FocusServer( ServerWindow *server );
     void ServerApplied( QString ServerFolder );
-    void ShowSystemNotification( QString, QString, int );
+    void ShowSystemNotification( const QString, const QString, int );
     QString GetPublicIP();
 
 protected:

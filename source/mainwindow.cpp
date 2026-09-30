@@ -239,14 +239,16 @@ bool MainWindow::ServerTabExists(QString name)
     for (int i=0; i<ui->tabServers->count(); i++)
     {
         if (ui->tabServers->tabText(i) == name)
+        {
             return true;
+        }
     }
     return false;
 }
 
 void MainWindow::FocusServer(ServerWindow *server)
 {
-    qInfo() << server->GetName();
+    qInfo() << server->GetServerName();
 }
 
 void MainWindow::AddServer(QString servername, QString serverFolder)
@@ -269,10 +271,10 @@ void MainWindow::AddServer(QString servername, QString serverFolder)
 
     connect(this, SIGNAL(PassSettingsChanged(SettingsStruct)), newServerWindow, SLOT(SettingsChanged(SettingsStruct)));
 
-    connect(newServerWindow, SIGNAL(ServerApplied(QString)), this, SLOT(ServerApplied(QString)));
-    connect(newServerWindow, SIGNAL(ServerActivated()), this, SLOT(ServerActivated()));
-    connect(newServerWindow, SIGNAL(ServerDeactivated()), this, SLOT(ServerDeactivated()));
-    connect(newServerWindow, SIGNAL(SystemNotification(QString,QString,int)), SLOT(ShowSystemNotification(QString,QString,int)));
+    connect(newServerWindow, SIGNAL(PassServerApplied(QString)), this, SLOT(ServerApplied(QString)));
+    connect(newServerWindow, SIGNAL(PassServerActivated()), this, SLOT(ServerActivated()));
+    connect(newServerWindow, SIGNAL(PassServerDeactivated()), this, SLOT(ServerDeactivated()));
+    connect(newServerWindow, SIGNAL(PassSystemNotification(QString,QString,int)), SLOT(ShowSystemNotification(QString,QString,int)));
 
     if (serverFolder.isEmpty())
     {
@@ -289,8 +291,6 @@ void MainWindow::AddServer(QString servername, QString serverFolder)
     {
         AddServerToSysTray(newServerWindow);
     }
-
-    qInfo() << "nick:" << GetServerNick(newServerWindow);
 }
 
 void MainWindow::RemoveServer(int index, bool removeFiles)
