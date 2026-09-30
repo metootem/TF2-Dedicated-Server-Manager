@@ -169,10 +169,10 @@ void MainWindow::LoadStyles(QString colorTheme)
                                 "QProgressBar::chunk { background-color: %0; }"
                                 ).arg(colorTheme, QColor(colorTheme).lighter(130).name(), QColor(colorTheme).darker(130).name()));
 
-    ui->lblAddServer->hide();
+    ui->lblAddServer->setText("");
     if (!ui->tabServers->count())
     {
-        ui->lblAddServer->show();
+        ui->lblAddServer->setText("Add a new server!");
         ui->tabServers->setStyleSheet("QTabWidget::pane { border: none; background-color: #2b2b2b; }");
     }
     else
@@ -320,6 +320,11 @@ void MainWindow::RemoveServer(int index, bool removeFiles)
     }
     IniSettings->remove(dir.dirName());
     ui->tabServers->removeTab(index);
+
+    if (!ui->tabServers->count())
+    {
+        ui->lblAddServer->setText("Add a new server!");
+    }
 }
 
 void MainWindow::ServerApplied(QString ServerFolder)
@@ -356,12 +361,10 @@ void MainWindow::RefreshServerTab()
             RemoveServerFromSysTray(server);
         }
 
-        if (ServerDirs.contains(server->ServerFolder))
+        if (!server->ServerDirectoryExists())
+        {
             continue;
-        QDir dir(server->ServerFolder);
-        dir.cdUp();
-        if (ServerDirs.contains(dir.path()))
-            continue;
+        }
         qInfo() << "Removed server tab" << ui->tabServers->tabText(i);
         ui->tabServers->removeTab(i--);
     }
@@ -557,5 +560,11 @@ void MainWindow::on_btnAbout_clicked()
 {
     AboutDialog *aboutDialog = new AboutDialog(this, AppVersion, AppVersionDate);
     aboutDialog->show();
+}
+
+
+void MainWindow::on_btnReloadServers_clicked()
+{
+    RefreshServerTab();
 }
 

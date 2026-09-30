@@ -75,6 +75,7 @@ private slots:
     void on_btnAbout_clicked();
     void on_tabServers_tabCloseRequested(int index);
     void on_tabServers_tabBarDoubleClicked(int index);
+    void on_btnReloadServers_clicked();
 
     QString sysTrayRequestServerNick( ServerWindow* );
 
