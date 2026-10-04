@@ -52,7 +52,30 @@ void SteamCMDDialog::ReadOutput()
     ui->txtOutput->insertPlainText(output);
 
     if (output.contains("0x202"))
-        errorCode += 1;
+    {
+        errorCode = Error_NoDiskSpace;
+    }
+    else if (output.contains("0x206"))
+    {
+        errorCode = Error_Unknown;
+    }
+    else if (output.contains("0x402"))
+    {
+        errorCode = Error_SteamDown;
+    }
+    else if (output.contains("0x426"))
+    {
+        errorCode = Error_Interrupted;
+    }
+    else if (output.contains("0x606"))
+    {
+        errorCode = Error_NoPermission;
+    }
+    else if (output.contains("0x6"))
+    {
+        errorCode = Error_NoConnection;
+    }
+
 }
 
 void SteamCMDDialog::InstallFinished(int exitCode, QProcess::ExitStatus exitStatus)
@@ -73,10 +96,41 @@ void SteamCMDDialog::InstallFinished(int exitCode, QProcess::ExitStatus exitStat
         }
         else
         {
-            if (errorCode & Error_NoDiskSpace)
+            QString error;
+            switch (errorCode)
             {
-                ui->txtOutput->append(tr("No disk space available to install server."));
+            case Error_NoDiskSpace:
+            {
+                error = tr("No disk space available to install server. Code: 0x202");
+                break;
             }
+            case Error_Unknown:
+            {
+                error = tr("Unknown error occurred.");
+                break;
+            }
+            case Error_SteamDown:
+            {
+                error = tr("Steam servers are currently down. Retry later. Code: 0x402");
+                break;
+            }
+            case Error_Interrupted:
+            {
+                error = tr("SteamCMD process has been interrupted. Please wait for other processes to finish. Code: 0x462");
+                break;
+            }
+            case Error_NoPermission:
+            {
+                error = tr("Unable to write to the disk. Code: 0x606");
+                break;
+            }
+            case Error_NoConnection:
+            {
+                error = tr("Couldn't connect to content servers. Code: 0x6");
+                break;
+            }
+            }
+            ui->txtOutput->append(error);
         }
     }
     else

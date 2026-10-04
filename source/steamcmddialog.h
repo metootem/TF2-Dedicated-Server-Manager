@@ -6,6 +6,11 @@
 #include <QScrollBar>
 
 #define Error_NoDiskSpace (1 << 0)
+#define Error_Unknown (1 << 1)
+#define Error_SteamDown (1 << 2)
+#define Error_Interrupted (1 << 3)
+#define Error_NoPermission (1 << 4)
+#define Error_NoConnection (1 << 5)
 
 namespace Ui {
 class SteamCMDDialog;
