@@ -7,8 +7,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    AppVersion = "v1.01";
-    AppVersionDate = "September 2026";
+    AppVersion = "v1.02";
+    AppVersionDate = "October 2026";
     OS = QSysInfo::productType();
     if (OS != "windows" && OS != "macos")
         OS = "linux";
