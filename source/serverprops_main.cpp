@@ -610,6 +610,10 @@ void ServerProps_Main::on_btnApply_clicked()
     ui->btnGotoServerFolder->setEnabled(false);
     ui->lblTip->hide();
     ui->lblFolderError->hide();
+    if (OS == "windows")
+    {
+        ui->lineFolderName->setText(ui->lineFolderName->text().replace(" ", ""));
+    }
 
     bool apply = true;
 
